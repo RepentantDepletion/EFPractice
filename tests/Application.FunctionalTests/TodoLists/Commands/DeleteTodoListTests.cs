@@ -1,29 +1,29 @@
-﻿using EFPractice.Application.TodoLists.Commands.CreateTodoList;
-using EFPractice.Application.TodoLists.Commands.DeleteTodoList;
+﻿using EFPractice.Application.TaskLists.Commands.CreateTaskList;
+using EFPractice.Application.TaskLists.Commands.DeleteTaskList;
 using EFPractice.Domain.Entities;
 
-namespace EFPractice.Application.FunctionalTests.TodoLists.Commands;
+namespace EFPractice.Application.FunctionalTests.TaskLists.Commands;
 
-public class DeleteTodoListTests : TestBase
+public class DeleteTaskListTests : TestBase
 {
     [Test]
-    public async Task ShouldRequireValidTodoListId()
+    public async Task ShouldRequireValidTaskListId()
     {
-        var command = new DeleteTodoListCommand(99);
+        var command = new DeleteTaskListCommand(99);
         await Should.ThrowAsync<NotFoundException>(() => TestApp.SendAsync(command));
     }
 
     [Test]
-    public async Task ShouldDeleteTodoList()
+    public async Task ShouldDeleteTaskList()
     {
-        var listId = await TestApp.SendAsync(new CreateTodoListCommand
+        var listId = await TestApp.SendAsync(new CreateTaskListCommand
         {
             Title = "New List"
         });
 
-        await TestApp.SendAsync(new DeleteTodoListCommand(listId));
+        await TestApp.SendAsync(new DeleteTaskListCommand(listId));
 
-        var list = await TestApp.FindAsync<TodoList>(listId);
+        var list = await TestApp.FindAsync<TaskList>(listId);
 
         list.ShouldBeNull();
     }

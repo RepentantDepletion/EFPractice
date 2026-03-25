@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EFPractice.Infrastructure.Data.Configurations;
 
-public class TodoListConfiguration : IEntityTypeConfiguration<TodoList>
+public class TaskListConfiguration : IEntityTypeConfiguration<TaskList>
 {
-    public void Configure(EntityTypeBuilder<TodoList> builder)
+    public void Configure(EntityTypeBuilder<TaskList> builder)
     {
         builder.Property(t => t.Title)
             .HasMaxLength(200)

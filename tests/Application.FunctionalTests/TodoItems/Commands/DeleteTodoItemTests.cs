@@ -1,6 +1,6 @@
 ﻿using EFPractice.Application.userTasks.Commands.CreateuserTask;
 using EFPractice.Application.userTasks.Commands.DeleteuserTask;
-using EFPractice.Application.TodoLists.Commands.CreateTodoList;
+using EFPractice.Application.TaskLists.Commands.CreateTaskList;
 using EFPractice.Domain.Entities;
 
 namespace EFPractice.Application.FunctionalTests.userTasks.Commands;
@@ -18,7 +18,7 @@ public class DeleteuserTaskTests : TestBase
     [Test]
     public async Task ShouldDeleteuserTask()
     {
-        var listId = await TestApp.SendAsync(new CreateTodoListCommand
+        var listId = await TestApp.SendAsync(new CreateTaskListCommand
         {
             Title = "New List"
         });

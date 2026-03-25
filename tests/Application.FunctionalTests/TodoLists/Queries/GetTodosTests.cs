@@ -1,8 +1,8 @@
-﻿using EFPractice.Application.TodoLists.Queries.GetTodos;
+﻿using EFPractice.Application.TaskLists.Queries.GetTodos;
 using EFPractice.Domain.Entities;
 using EFPractice.Domain.ValueObjects;
 
-namespace EFPractice.Application.FunctionalTests.TodoLists.Queries;
+namespace EFPractice.Application.FunctionalTests.TaskLists.Queries;
 
 public class GetTodosTests : TestBase
 {
@@ -23,7 +23,7 @@ public class GetTodosTests : TestBase
     {
         await TestApp.RunAsDefaultUserAsync();
 
-        await TestApp.AddAsync(new TodoList
+        await TestApp.AddAsync(new TaskList
         {
             Title = "Shopping",
             Colour = Colour.Blue,

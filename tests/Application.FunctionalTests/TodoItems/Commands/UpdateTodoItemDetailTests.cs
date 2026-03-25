@@ -1,7 +1,7 @@
 ﻿using EFPractice.Application.userTasks.Commands.CreateuserTask;
 using EFPractice.Application.userTasks.Commands.UpdateuserTask;
 using EFPractice.Application.userTasks.Commands.UpdateuserTaskDetail;
-using EFPractice.Application.TodoLists.Commands.CreateTodoList;
+using EFPractice.Application.TaskLists.Commands.CreateTaskList;
 using EFPractice.Domain.Entities;
 using EFPractice.Domain.Enums;
 
@@ -22,7 +22,7 @@ public class UpdateuserTaskDetailTests : TestBase
     {
         var userId = await TestApp.RunAsDefaultUserAsync();
 
-        var listId = await TestApp.SendAsync(new CreateTodoListCommand
+        var listId = await TestApp.SendAsync(new CreateTaskListCommand
         {
             Title = "New List"
         });

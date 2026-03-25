@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 using AutoMapper;
 using EFPractice.Application.Common.Interfaces;
-using EFPractice.Application.TodoLists.Queries.GetTodos;
+using EFPractice.Application.TaskLists.Queries.GetTodos;
 using EFPractice.Domain.Entities;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
@@ -34,7 +34,7 @@ public class MappingTests
     }
 
     [Test]
-    [TestCase(typeof(TodoList), typeof(TodoListDto))]
+    [TestCase(typeof(TaskList), typeof(TaskListDto))]
     [TestCase(typeof(userTask), typeof(userTaskDto))]
     public void ShouldSupportMappingFromSourceToDestination(Type source, Type destination)
     {

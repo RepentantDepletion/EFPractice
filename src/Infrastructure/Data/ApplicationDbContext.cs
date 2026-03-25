@@ -11,7 +11,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-    public DbSet<TodoList> TodoLists => Set<TodoList>();
+    public DbSet<TaskList> TaskLists => Set<TaskList>();
 
     public DbSet<userTask> userTasks => Set<userTask>();
 

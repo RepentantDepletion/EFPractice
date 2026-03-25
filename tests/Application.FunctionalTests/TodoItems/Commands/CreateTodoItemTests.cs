@@ -1,6 +1,6 @@
 ﻿using EFPractice.Application.Common.Exceptions;
 using EFPractice.Application.userTasks.Commands.CreateuserTask;
-using EFPractice.Application.TodoLists.Commands.CreateTodoList;
+using EFPractice.Application.TaskLists.Commands.CreateTaskList;
 using EFPractice.Domain.Entities;
 
 namespace EFPractice.Application.FunctionalTests.userTasks.Commands;
@@ -20,7 +20,7 @@ public class CreateuserTaskTests : TestBase
     {
         var userId = await TestApp.RunAsDefaultUserAsync();
 
-        var listId = await TestApp.SendAsync(new CreateTodoListCommand
+        var listId = await TestApp.SendAsync(new CreateTaskListCommand
         {
             Title = "New List"
         });

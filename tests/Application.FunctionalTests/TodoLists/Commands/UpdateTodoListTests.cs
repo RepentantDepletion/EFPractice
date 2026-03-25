@@ -1,33 +1,33 @@
 ﻿using EFPractice.Application.Common.Exceptions;
-using EFPractice.Application.TodoLists.Commands.CreateTodoList;
-using EFPractice.Application.TodoLists.Commands.UpdateTodoList;
+using EFPractice.Application.TaskLists.Commands.CreateTaskList;
+using EFPractice.Application.TaskLists.Commands.UpdateTaskList;
 using EFPractice.Domain.Entities;
 
-namespace EFPractice.Application.FunctionalTests.TodoLists.Commands;
+namespace EFPractice.Application.FunctionalTests.TaskLists.Commands;
 
-public class UpdateTodoListTests : TestBase
+public class UpdateTaskListTests : TestBase
 {
     [Test]
-    public async Task ShouldRequireValidTodoListId()
+    public async Task ShouldRequireValidTaskListId()
     {
-        var command = new UpdateTodoListCommand { Id = 99, Title = "New Title" };
+        var command = new UpdateTaskListCommand { Id = 99, Title = "New Title" };
         await Should.ThrowAsync<NotFoundException>(() => TestApp.SendAsync(command));
     }
 
     [Test]
     public async Task ShouldRequireUniqueTitle()
     {
-        var listId = await TestApp.SendAsync(new CreateTodoListCommand
+        var listId = await TestApp.SendAsync(new CreateTaskListCommand
         {
             Title = "New List"
         });
 
-        await TestApp.SendAsync(new CreateTodoListCommand
+        await TestApp.SendAsync(new CreateTaskListCommand
         {
             Title = "Other List"
         });
 
-        var command = new UpdateTodoListCommand
+        var command = new UpdateTaskListCommand
         {
             Id = listId,
             Title = "Other List"
@@ -40,16 +40,16 @@ public class UpdateTodoListTests : TestBase
     }
 
     [Test]
-    public async Task ShouldUpdateTodoList()
+    public async Task ShouldUpdateTaskList()
     {
         var userId = await TestApp.RunAsDefaultUserAsync();
 
-        var listId = await TestApp.SendAsync(new CreateTodoListCommand
+        var listId = await TestApp.SendAsync(new CreateTaskListCommand
         {
             Title = "New List"
         });
 
-        var command = new UpdateTodoListCommand
+        var command = new UpdateTaskListCommand
         {
             Id = listId,
             Title = "Updated List Title"
@@ -57,7 +57,7 @@ public class UpdateTodoListTests : TestBase
 
         await TestApp.SendAsync(command);
 
-        var list = await TestApp.FindAsync<TodoList>(listId);
+        var list = await TestApp.FindAsync<TaskList>(listId);
 
         list.ShouldNotBeNull();
         list!.Title.ShouldBe(command.Title);

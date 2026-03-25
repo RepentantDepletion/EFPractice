@@ -1,27 +1,27 @@
 ﻿using EFPractice.Application.Common.Exceptions;
-using EFPractice.Application.TodoLists.Commands.CreateTodoList;
+using EFPractice.Application.TaskLists.Commands.CreateTaskList;
 using EFPractice.Domain.Entities;
 
-namespace EFPractice.Application.FunctionalTests.TodoLists.Commands;
+namespace EFPractice.Application.FunctionalTests.TaskLists.Commands;
 
-public class CreateTodoListTests : TestBase
+public class CreateTaskListTests : TestBase
 {
     [Test]
     public async Task ShouldRequireMinimumFields()
     {
-        var command = new CreateTodoListCommand();
+        var command = new CreateTaskListCommand();
         await Should.ThrowAsync<ValidationException>(() => TestApp.SendAsync(command));
     }
 
     [Test]
     public async Task ShouldRequireUniqueTitle()
     {
-        await TestApp.SendAsync(new CreateTodoListCommand
+        await TestApp.SendAsync(new CreateTaskListCommand
         {
             Title = "Shopping"
         });
 
-        var command = new CreateTodoListCommand
+        var command = new CreateTaskListCommand
         {
             Title = "Shopping"
         };
@@ -30,18 +30,18 @@ public class CreateTodoListTests : TestBase
     }
 
     [Test]
-    public async Task ShouldCreateTodoList()
+    public async Task ShouldCreateTaskList()
     {
         var userId = await TestApp.RunAsDefaultUserAsync();
 
-        var command = new CreateTodoListCommand
+        var command = new CreateTaskListCommand
         {
             Title = "Tasks"
         };
 
         var id = await TestApp.SendAsync(command);
 
-        var list = await TestApp.FindAsync<TodoList>(id);
+        var list = await TestApp.FindAsync<TaskList>(id);
 
         list.ShouldNotBeNull();
         list!.Title.ShouldBe(command.Title);

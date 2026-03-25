@@ -44,30 +44,30 @@ Authorization: Bearer {{BearerToken}}
 
 ###
 
-# GET TodoLists
-GET {{Web_HostAddress}}/api/TodoLists
+# GET TaskLists
+GET {{Web_HostAddress}}/api/TaskLists
 Authorization: Bearer {{BearerToken}}
 
 ###
 
-# POST TodoLists
-POST {{Web_HostAddress}}/api/TodoLists
+# POST TaskLists
+POST {{Web_HostAddress}}/api/TaskLists
 Authorization: Bearer {{BearerToken}}
 Content-Type: application/json
 
-// CreateTodoListCommand
+// CreateTaskListCommand
 {
   "Title": "Backlog"
 }
 
 ###
 
-# PUT TodoLists
-PUT {{Web_HostAddress}}/api/TodoLists/1
+# PUT TaskLists
+PUT {{Web_HostAddress}}/api/TaskLists/1
 Authorization: Bearer {{BearerToken}}
 Content-Type: application/json
 
-// UpdateTodoListCommand
+// UpdateTaskListCommand
 {
   "Id": 1,
   "Title": "Product Backlog"
@@ -75,8 +75,8 @@ Content-Type: application/json
 
 ###
 
-# DELETE TodoLists
-DELETE {{Web_HostAddress}}/api/TodoLists/1
+# DELETE TaskLists
+DELETE {{Web_HostAddress}}/api/TaskLists/1
 Authorization: Bearer {{BearerToken}}
 
 ###

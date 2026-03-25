@@ -89,9 +89,9 @@ public class ApplicationDbContextInitialiser
 
         // Default data
         // Seed, if necessary
-        if (!_context.TodoLists.Any())
+        if (!_context.TaskLists.Any())
         {
-            _context.TodoLists.Add(new TodoList
+            _context.TaskLists.Add(new TaskList
             {
                 Title = "Tasks",
                 Colour = Colour.Green,
