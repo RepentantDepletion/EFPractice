@@ -31,6 +31,7 @@ public async Task<TaskListDto> Handle(
         CancellationToken cancellationToken)
     {
         var result = await _context.TaskLists
+            .AsNoTracking()
             .Where(tl => tl.Id == request.Id)
             .ProjectTo<TaskListDto>(_mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(cancellationToken);

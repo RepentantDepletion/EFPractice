@@ -13,7 +13,6 @@ public class TaskLists : IEndpointGroup
 {
     public static void Map(RouteGroupBuilder groupBuilder)
     {
-        groupBuilder.RequireAuthorization();
 
         groupBuilder.MapGet(GetTaskLists);
         groupBuilder.MapPost(CreateTaskList);
