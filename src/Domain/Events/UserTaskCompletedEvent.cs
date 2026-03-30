@@ -1,11 +1,11 @@
 ﻿namespace EFPractice.Domain.Events;
 
-public class userTaskCompletedEvent : BaseEvent
+public class UserTaskCompletedEvent : BaseEvent
 {
-    public userTaskCompletedEvent(userTask item)
+    public UserTaskCompletedEvent(UserTask item)
     {
         Item = item;
     }
 
-    public userTask Item { get; }
+    public UserTask Item { get; }
 }

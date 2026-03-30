@@ -3,7 +3,7 @@ using EFPractice.Application.TaskLists.Commands.DeleteTaskList;
 using EFPractice.Application.TaskLists.Commands.UpdateTaskList;
 using EFPractice.Application.TaskLists.Queries.GetTasks;
 using EFPractice.Application.TaskLists.Queries.GetTodos;
-using EFPractice.Application.userTasks.Commands.GetuserTask;
+using EFPractice.Application.UserTasks.Commands.GetUserTask;
 using EFPractice.Domain.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
 

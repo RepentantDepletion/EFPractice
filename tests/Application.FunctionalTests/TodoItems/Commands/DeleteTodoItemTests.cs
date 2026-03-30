@@ -1,37 +1,37 @@
-﻿using EFPractice.Application.userTasks.Commands.CreateuserTask;
-using EFPractice.Application.userTasks.Commands.DeleteuserTask;
+﻿using EFPractice.Application.UserTasks.Commands.CreateUserTask;
+using EFPractice.Application.UserTasks.Commands.DeleteUserTask;
 using EFPractice.Application.TaskLists.Commands.CreateTaskList;
 using EFPractice.Domain.Entities;
 
-namespace EFPractice.Application.FunctionalTests.userTasks.Commands;
+namespace EFPractice.Application.FunctionalTests.UserTasks.Commands;
 
-public class DeleteuserTaskTests : TestBase
+public class DeleteUserTaskTests : TestBase
 {
     [Test]
-    public async Task ShouldRequireValiduserTaskId()
+    public async Task ShouldRequireValidUserTaskId()
     {
-        var command = new DeleteuserTaskCommand(99);
+        var command = new DeleteUserTaskCommand(99);
 
         await Should.ThrowAsync<NotFoundException>(() => TestApp.SendAsync(command));
     }
 
     [Test]
-    public async Task ShouldDeleteuserTask()
+    public async Task ShouldDeleteUserTask()
     {
         var listId = await TestApp.SendAsync(new CreateTaskListCommand
         {
             Title = "New List"
         });
 
-        var itemId = await TestApp.SendAsync(new CreateuserTaskCommand
+        var itemId = await TestApp.SendAsync(new CreateUserTaskCommand
         {
             ListId = listId,
             Title = "New Item"
         });
 
-        await TestApp.SendAsync(new DeleteuserTaskCommand(itemId));
+        await TestApp.SendAsync(new DeleteUserTaskCommand(itemId));
 
-        var item = await TestApp.FindAsync<userTask>(itemId);
+        var item = await TestApp.FindAsync<UserTask>(itemId);
 
         item.ShouldBeNull();
     }

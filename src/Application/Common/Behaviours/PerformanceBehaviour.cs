@@ -37,16 +37,16 @@ public class PerformanceBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequ
         if (elapsedMilliseconds > 500)
         {
             var requestName = typeof(TRequest).Name;
-            var userId = _user.Id ?? string.Empty;
+            var TaskID = _user.Id ?? string.Empty;
             var userName = string.Empty;
 
-            if (!string.IsNullOrEmpty(userId))
+            if (!string.IsNullOrEmpty(TaskID))
             {
-                userName = await _identityService.GetUserNameAsync(userId);
+                userName = await _identityService.GetUserNameAsync(TaskID);
             }
 
-            _logger.LogWarning("EFPractice Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@UserId} {@UserName} {@Request}",
-                requestName, elapsedMilliseconds, userId, userName, request);
+            _logger.LogWarning("EFPractice Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@TaskID} {@UserName} {@Request}",
+                requestName, elapsedMilliseconds, TaskID, userName, request);
         }
 
         return response;

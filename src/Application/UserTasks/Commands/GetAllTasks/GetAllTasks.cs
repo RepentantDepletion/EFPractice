@@ -2,14 +2,14 @@ using EFPractice.Application.Common.Interfaces;
 using EFPractice.Domain.Entities;
 using EFPractice.Domain.Enums;
 
-namespace EFPractice.Application.userTasks.Commands.GetuserTask;
+namespace EFPractice.Application.UserTasks.Commands.GetUserTask;
 
 public record GetTasksCommand(
     int? TaskID = null,
     PriorityLevel? Priority = null
-) : IRequest<List<userTask>>;
+) : IRequest<List<UserTask>>;
 
-public class GetTasksCommandHandler : IRequestHandler<GetTasksCommand, List<userTask>>
+public class GetTasksCommandHandler : IRequestHandler<GetTasksCommand, List<UserTask>>
 {
     private readonly IApplicationDbContext _context;
 
@@ -18,8 +18,8 @@ public class GetTasksCommandHandler : IRequestHandler<GetTasksCommand, List<user
         _context = context;
     }
 
-    public async Task<List<userTask>> Handle(GetTasksCommand request, CancellationToken cancellationToken)
+    public async Task<List<UserTask>> Handle(GetTasksCommand request, CancellationToken cancellationToken)
     {
-        return await _context.userTasks.ToListAsync();
+        return await _context.UserTasks.ToListAsync();
     }
 }

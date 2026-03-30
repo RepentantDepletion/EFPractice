@@ -2,7 +2,7 @@ using EFPractice.Application.Common.Interfaces;
 using EFPractice.Domain.Entities;
 using EFPractice.Domain.Enums;
 
-namespace EFPractice.Application.userTasks.Commands.GetuserTask;
+namespace EFPractice.Application.UserTasks.Commands.GetUserTask;
 
 public record GetTaskListCommand(
     int? ListID = null,

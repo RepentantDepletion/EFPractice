@@ -2,7 +2,7 @@
 
 namespace EFPractice.Application.TaskLists.Queries.GetTodos;
 
-public class userTaskDto
+public class UserTaskDto
 {
     public int Id { get; init; }
 
@@ -20,7 +20,7 @@ public class userTaskDto
     {
         public Mapping()
         {
-            CreateMap<userTask, userTaskDto>().ForMember(d => d.Priority, 
+            CreateMap<UserTask, UserTaskDto>().ForMember(d => d.Priority, 
                 opt => opt.MapFrom(s => (int)s.Priority));
         }
     }

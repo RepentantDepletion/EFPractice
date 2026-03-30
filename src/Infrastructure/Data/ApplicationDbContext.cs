@@ -7,13 +7,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EFPractice.Infrastructure.Data;
 
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
+public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
     public DbSet<TaskList> TaskLists => Set<TaskList>();
 
-    public DbSet<userTask> userTasks => Set<userTask>();
+    public DbSet<UserTask> UserTasks => Set<UserTask>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

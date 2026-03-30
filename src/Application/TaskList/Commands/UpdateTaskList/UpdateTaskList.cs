@@ -8,8 +8,6 @@ public record UpdateTaskListCommand : IRequest
     public int Id { get; init; }
 
     public string? Title { get; init; }
-
-    public string? Colour { get; init; }
 }
 
 public class UpdateTaskListCommandHandler : IRequestHandler<UpdateTaskListCommand>
@@ -30,9 +28,9 @@ public class UpdateTaskListCommandHandler : IRequestHandler<UpdateTaskListComman
 
         entity.Title = request.Title;
 
-        if (request.Colour is not null)
+        if (request.Title is not null)
         {
-            entity.Colour = Colour.From(request.Colour);
+            entity.Title = request.Title;
         }
 
         await _context.SaveChangesAsync(cancellationToken);

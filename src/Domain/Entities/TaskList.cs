@@ -6,7 +6,5 @@ public class TaskList : BaseAuditableEntity
 
     public int ListID { get; set; }
 
-    public Colour Colour { get; set; } = Colour.Grey;
-
-    public IList<userTask> Items { get; private set; } = new List<userTask>();
+    public IList<UserTask> Items { get; private set; } = new List<UserTask>();
 }

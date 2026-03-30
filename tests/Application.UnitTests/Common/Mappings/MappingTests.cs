@@ -35,7 +35,7 @@ public class MappingTests
 
     [Test]
     [TestCase(typeof(TaskList), typeof(TaskListDto))]
-    [TestCase(typeof(userTask), typeof(userTaskDto))]
+    [TestCase(typeof(UserTask), typeof(UserTaskDto))]
     public void ShouldSupportMappingFromSourceToDestination(Type source, Type destination)
     {
         var instance = GetInstanceOf(source);

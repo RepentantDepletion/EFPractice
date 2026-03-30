@@ -7,8 +7,6 @@ namespace EFPractice.Application.TaskLists.Commands.CreateTaskList;
 public record CreateTaskListCommand : IRequest<int>
 {
     public string? Title { get; init; }
-
-    public string? Colour { get; init; }
 }
 
 public class CreateTaskListCommandHandler : IRequestHandler<CreateTaskListCommand, int>
@@ -24,8 +22,7 @@ public class CreateTaskListCommandHandler : IRequestHandler<CreateTaskListComman
     {
         var entity = new TaskList
         {
-            Title = request.Title,
-            Colour = Colour.From(request.Colour ?? Colour.Grey)
+            Title = request.Title
         };
 
         _context.TaskLists.Add(entity);

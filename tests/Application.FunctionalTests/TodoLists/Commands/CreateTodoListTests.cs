@@ -32,7 +32,7 @@ public class CreateTaskListTests : TestBase
     [Test]
     public async Task ShouldCreateTaskList()
     {
-        var userId = await TestApp.RunAsDefaultUserAsync();
+        var TaskID = await TestApp.RunAsDefaultUserAsync();
 
         var command = new CreateTaskListCommand
         {
@@ -45,7 +45,7 @@ public class CreateTaskListTests : TestBase
 
         list.ShouldNotBeNull();
         list!.Title.ShouldBe(command.Title);
-        list.CreatedBy.ShouldBe(userId);
+        list.CreatedBy.ShouldBe(TaskID);
         list.Created.ShouldBe(DateTime.Now, TimeSpan.FromMilliseconds(10000));
     }
 }

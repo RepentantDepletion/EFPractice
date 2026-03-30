@@ -42,7 +42,7 @@ public class UpdateTaskListTests : TestBase
     [Test]
     public async Task ShouldUpdateTaskList()
     {
-        var userId = await TestApp.RunAsDefaultUserAsync();
+        var TaskID = await TestApp.RunAsDefaultUserAsync();
 
         var listId = await TestApp.SendAsync(new CreateTaskListCommand
         {
@@ -62,7 +62,7 @@ public class UpdateTaskListTests : TestBase
         list.ShouldNotBeNull();
         list!.Title.ShouldBe(command.Title);
         list.LastModifiedBy.ShouldNotBeNull();
-        list.LastModifiedBy.ShouldBe(userId);
+        list.LastModifiedBy.ShouldBe(TaskID);
         list.LastModified.ShouldBe(DateTime.Now, TimeSpan.FromMilliseconds(10000));
     }
 }

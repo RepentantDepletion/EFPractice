@@ -1,11 +1,18 @@
 using EFPractice.Application.Common.Interfaces;
+using EFPractice.Application.TaskLists.Queries.GetTodos;
 using EFPractice.Domain.Entities;
 using EFPractice.Domain.Enums;
 
-namespace EFPractice.Application.userTasks.Commands.GetuserTask;
+namespace EFPractice.Application.UserTasks.Commands.GetUserTask;
 
-public record GetuserTaskCommand : IRequest<userTask?>
+public record GetUserTaskCommand : IRequest<UserTask?>
 {
+
+    public GetUserTaskCommand(int id)
+    {
+        TaskID = id;
+    }
+
     public int TaskID { get; init; }
 
     public int ListId { get; init; }
@@ -17,20 +24,20 @@ public record GetuserTaskCommand : IRequest<userTask?>
     public PriorityLevel Priority { get; init; }
 }
 
-public class GetuserTaskCommandHandler : IRequestHandler<GetuserTaskCommand, userTask?>
+public class GetUserTaskCommandHandler : IRequestHandler<GetUserTaskCommand, UserTask?>
 {
     private readonly IApplicationDbContext _context;
 
-    public GetuserTaskCommandHandler(IApplicationDbContext context)
+    public GetUserTaskCommandHandler(IApplicationDbContext context)
     {
         _context = context;
     }
 
-    public async Task<userTask?> Handle(GetuserTaskCommand request, CancellationToken cancellationToken)
+    public async Task<UserTask?> Handle(GetUserTaskCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.userTasks.FindAsync(new object[] { request.TaskID }, cancellationToken);
+        var entity = await _context.UserTasks.FindAsync(request.TaskID , cancellationToken);
 
-        if (entity == null || entity.ListId != request.ListId)
+        if (entity == null || entity.ListID != request.ListId)
         {
             return null;
         }

@@ -1,12 +1,18 @@
-﻿namespace EFPractice.Domain.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 
-public class userTask : BaseAuditableEntity
+namespace EFPractice.Domain.Entities;
+
+public class UserTask : BaseAuditableEntity
 {
-    public int TaskID { get; set; }
+    [Key]
+
+    public required int TaskID { get; set; }
 
     public string? Title { get; set; }
 
-    public string? Note { get; set; }
+    public string? Description { get; set; }
 
     public PriorityLevel Priority { get; set; }
 
@@ -18,14 +24,13 @@ public class userTask : BaseAuditableEntity
         {
             if (value && !_done)
             {
-                AddDomainEvent(new userTaskCompletedEvent(this));
+                AddDomainEvent(new UserTaskCompletedEvent(this));
             }
 
             _done = value;
         }
     }
 
-    public TaskList List { get; set; } = null!;
-
-    public int ListId { get; set; }
+    public int ListID { get; set; }
+    public DateTime? Deadline { get; set; }
 }

@@ -29,13 +29,13 @@ public class GetTodosTests : TestBase
             Colour = Colour.Blue,
             Items =
                 {
-                    new userTask { Title = "Apples", Done = true },
-                    new userTask { Title = "Milk", Done = true },
-                    new userTask { Title = "Bread", Done = true },
-                    new userTask { Title = "Toilet paper" },
-                    new userTask { Title = "Pasta" },
-                    new userTask { Title = "Tissues" },
-                    new userTask { Title = "Tuna" }
+                    new UserTask { Title = "Apples", Done = true },
+                    new UserTask { Title = "Milk", Done = true },
+                    new UserTask { Title = "Bread", Done = true },
+                    new UserTask { Title = "Toilet paper" },
+                    new UserTask { Title = "Pasta" },
+                    new UserTask { Title = "Tissues" },
+                    new UserTask { Title = "Tuna" }
                 }
         });
 

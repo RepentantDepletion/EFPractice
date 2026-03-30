@@ -1,18 +1,18 @@
 ﻿using EFPractice.Domain.Events;
 using Microsoft.Extensions.Logging;
 
-namespace EFPractice.Application.userTasks.EventHandlers;
+namespace EFPractice.Application.UserTasks.EventHandlers;
 
-public class LoguserTaskCompleted : INotificationHandler<userTaskCompletedEvent>
+public class LogUserTaskCompleted : INotificationHandler<UserTaskCompletedEvent>
 {
-    private readonly ILogger<LoguserTaskCompleted> _logger;
+    private readonly ILogger<LogUserTaskCompleted> _logger;
 
-    public LoguserTaskCompleted(ILogger<LoguserTaskCompleted> logger)
+    public LogUserTaskCompleted(ILogger<LogUserTaskCompleted> logger)
     {
         _logger = logger;
     }
 
-    public Task Handle(userTaskCompletedEvent notification, CancellationToken cancellationToken)
+    public Task Handle(UserTaskCompletedEvent notification, CancellationToken cancellationToken)
     {
         _logger.LogInformation("EFPractice Domain Event: {DomainEvent}", notification.GetType().Name);
 

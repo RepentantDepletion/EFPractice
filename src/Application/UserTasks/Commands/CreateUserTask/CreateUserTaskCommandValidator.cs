@@ -1,8 +1,8 @@
-﻿namespace EFPractice.Application.userTasks.Commands.CreateuserTask;
+﻿namespace EFPractice.Application.UserTasks.Commands.CreateUserTask;
 
-public class CreateuserTaskCommandValidator : AbstractValidator<CreateuserTaskCommand>
+public class CreateUserTaskCommandValidator : AbstractValidator<CreateUserTaskCommand>
 {
-    public CreateuserTaskCommandValidator()
+    public CreateUserTaskCommandValidator()
     {
         RuleFor(v => v.Title)
             .MaximumLength(200)

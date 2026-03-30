@@ -13,7 +13,7 @@ public class LookupDto
         public Mapping()
         {
             CreateMap<TaskList, LookupDto>();
-            CreateMap<userTask, LookupDto>();
+            CreateMap<UserTask, LookupDto>();
         }
     }
 }

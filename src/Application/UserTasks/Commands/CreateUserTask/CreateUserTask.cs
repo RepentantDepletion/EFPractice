@@ -1,34 +1,40 @@
-﻿using EFPractice.Application.Common.Interfaces;
+﻿using System.Security.Cryptography.X509Certificates;
+using EFPractice.Application.Common.Interfaces;
 using EFPractice.Domain.Entities;
 
-namespace EFPractice.Application.userTasks.Commands.CreateuserTask;
+namespace EFPractice.Application.UserTasks.Commands.CreateUserTask;
 
-public record CreateuserTaskCommand : IRequest<int>
+public record CreateUserTaskCommand : IRequest<int>
 {
-    public int ListId { get; init; }
-
+    public int TaskID { get; init; }
     public string? Title { get; init; }
+    public string? Description { get; init; }
+    public DateTime? Deadline { get; init; }
+    public int ListID { get; init; }
 }
 
-public class CreateuserTaskCommandHandler : IRequestHandler<CreateuserTaskCommand, int>
+public class CreateUserTaskCommandHandler : IRequestHandler<CreateUserTaskCommand, int>
 {
     private readonly IApplicationDbContext _context;
 
-    public CreateuserTaskCommandHandler(IApplicationDbContext context)
+    public CreateUserTaskCommandHandler(IApplicationDbContext context)
     {
         _context = context;
     }
 
-    public async Task<int> Handle(CreateuserTaskCommand request, CancellationToken cancellationToken)
+    public async Task<int> Handle(CreateUserTaskCommand request, CancellationToken cancellationToken)
     {
-        var entity = new userTask
+        var entity = new UserTask
         {
-            ListId = request.ListId,
+            TaskID = request.TaskID,
             Title = request.Title,
+            Description = request.Description,
+            Deadline = request.Deadline,
+            ListID = request.ListID,
             Done = false
         };
 
-        _context.userTasks.Add(entity);
+        _context.UserTasks.Add(entity);
 
         await _context.SaveChangesAsync(cancellationToken);
 

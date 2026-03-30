@@ -21,15 +21,15 @@ public class LoggingBehaviour<TRequest> : IRequestPreProcessor<TRequest>
     public async Task Process(TRequest request, CancellationToken cancellationToken)
     {
         var requestName = typeof(TRequest).Name;
-        var userId = _user.Id ?? string.Empty;
+        var TaskID = _user.Id ?? string.Empty;
         string? userName = string.Empty;
 
-        if (!string.IsNullOrEmpty(userId))
+        if (!string.IsNullOrEmpty(TaskID))
         {
-            userName = await _identityService.GetUserNameAsync(userId);
+            userName = await _identityService.GetUserNameAsync(TaskID);
         }
 
-        _logger.LogInformation("EFPractice Request: {Name} {@UserId} {@UserName} {@Request}",
-            requestName, userId, userName, request);
+        _logger.LogInformation("EFPractice Request: {Name} {@TaskID} {@UserName} {@Request}",
+            requestName, TaskID, userName, request);
     }
 }

@@ -1,8 +1,8 @@
-﻿namespace EFPractice.Application.userTasks.Commands.UpdateuserTask;
+﻿namespace EFPractice.Application.UserTasks.Commands.UpdateUserTask;
 
-public class UpdateuserTaskCommandValidator : AbstractValidator<UpdateuserTaskCommand>
+public class UpdateUserTaskCommandValidator : AbstractValidator<UpdateUserTaskCommand>
 {
-    public UpdateuserTaskCommandValidator()
+    public UpdateUserTaskCommandValidator()
     {
         RuleFor(v => v.Title)
             .MaximumLength(200)

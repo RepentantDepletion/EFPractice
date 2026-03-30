@@ -414,7 +414,7 @@ FodyWeavers.xsd
 # globs
 Makefile.in
 *.userprefs
-*.usertasks
+*.UserTasks
 config.make
 config.status
 aclocal.m4

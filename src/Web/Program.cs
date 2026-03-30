@@ -28,7 +28,6 @@ else
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<IApplicationDbContext>();
-    await DbSeeder.SeedAsync(context);
 }
 
 app.UseHttpsRedirection();

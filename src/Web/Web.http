@@ -81,21 +81,21 @@ Authorization: Bearer {{BearerToken}}
 
 ###
 
-# GET userTasks
+# GET UserTasks
 @PageNumber = 1
 @PageSize = 10
-GET {{Web_HostAddress}}/api/userTasks?ListId=1&PageNumber={{PageNumber}}&PageSize={{PageSize}}
+GET {{Web_HostAddress}}/api/UserTasks?ListId=1&PageNumber={{PageNumber}}&PageSize={{PageSize}}
 
 Authorization: Bearer {{BearerToken}}
 
 ###
 
-# POST userTasks
-POST {{Web_HostAddress}}/api/userTasks
+# POST UserTasks
+POST {{Web_HostAddress}}/api/UserTasks
 Authorization: Bearer {{BearerToken}}
 Content-Type: application/json
 
-// CreateuserTaskCommand
+// CreateUserTaskCommand
 {
   "ListId": 1,
   "Title": "Eat a burrito 🌯"
@@ -103,12 +103,12 @@ Content-Type: application/json
 
 ###
 
-#PUT userTasks UpdateItemDetails
-PUT {{Web_HostAddress}}/api/userTasks/UpdateItemDetails?Id=1
+#PUT UserTasks UpdateItemDetails
+PUT {{Web_HostAddress}}/api/UserTasks/UpdateItemDetails?Id=1
 Authorization: Bearer {{BearerToken}}
 Content-Type: application/json
 
-// UpdateuserTaskDetailCommand
+// UpdateUserTaskDetailCommand
 {
   "Id": 1,
   "ListId": 1,
@@ -118,12 +118,12 @@ Content-Type: application/json
 
 ###
 
-# PUT userTasks
-PUT {{Web_HostAddress}}/api/userTasks/1
+# PUT UserTasks
+PUT {{Web_HostAddress}}/api/UserTasks/1
 Authorization: Bearer {{BearerToken}}
 Content-Type: application/json
 
-// UpdateuserTaskCommand
+// UpdateUserTaskCommand
 {
   "Id": 1,
   "Title": "Eat a yummy burrito 🌯",
@@ -132,8 +132,8 @@ Content-Type: application/json
 
 ###
 
-# DELETE userTask
-DELETE {{Web_HostAddress}}/api/userTasks/1
+# DELETE UserTask
+DELETE {{Web_HostAddress}}/api/UserTasks/1
 Authorization: Bearer {{BearerToken}}
 
 ###

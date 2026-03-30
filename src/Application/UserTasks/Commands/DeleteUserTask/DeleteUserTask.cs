@@ -1,26 +1,26 @@
 ﻿using EFPractice.Application.Common.Interfaces;
 
-namespace EFPractice.Application.userTasks.Commands.DeleteuserTask;
+namespace EFPractice.Application.UserTasks.Commands.DeleteUserTask;
 
-public record DeleteuserTaskCommand(int Id) : IRequest;
+public record DeleteUserTaskCommand(int Id) : IRequest;
 
-public class DeleteuserTaskCommandHandler : IRequestHandler<DeleteuserTaskCommand>
+public class DeleteUserTaskCommandHandler : IRequestHandler<DeleteUserTaskCommand>
 {
     private readonly IApplicationDbContext _context;
 
-    public DeleteuserTaskCommandHandler(IApplicationDbContext context)
+    public DeleteUserTaskCommandHandler(IApplicationDbContext context)
     {
         _context = context;
     }
 
-    public async Task Handle(DeleteuserTaskCommand request, CancellationToken cancellationToken)
+    public async Task Handle(DeleteUserTaskCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.userTasks
+        var entity = await _context.UserTasks
             .FindAsync([request.Id], cancellationToken);
 
         Guard.Against.NotFound(request.Id, entity);
 
-        _context.userTasks.Remove(entity);
+        _context.UserTasks.Remove(entity);
 
         await _context.SaveChangesAsync(cancellationToken);
     }

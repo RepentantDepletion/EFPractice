@@ -1,8 +1,8 @@
 ﻿using EFPractice.Application.Common.Interfaces;
 
-namespace EFPractice.Application.userTasks.Commands.UpdateuserTask;
+namespace EFPractice.Application.UserTasks.Commands.UpdateUserTask;
 
-public record UpdateuserTaskCommand : IRequest
+public record UpdateUserTaskCommand : IRequest
 {
     public int Id { get; init; }
 
@@ -11,18 +11,18 @@ public record UpdateuserTaskCommand : IRequest
     public bool Done { get; init; }
 }
 
-public class UpdateuserTaskCommandHandler : IRequestHandler<UpdateuserTaskCommand>
+public class UpdateUserTaskCommandHandler : IRequestHandler<UpdateUserTaskCommand>
 {
     private readonly IApplicationDbContext _context;
 
-    public UpdateuserTaskCommandHandler(IApplicationDbContext context)
+    public UpdateUserTaskCommandHandler(IApplicationDbContext context)
     {
         _context = context;
     }
 
-    public async Task Handle(UpdateuserTaskCommand request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateUserTaskCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.userTasks
+        var entity = await _context.UserTasks
             .FindAsync([request.Id], cancellationToken);
 
         Guard.Against.NotFound(request.Id, entity);

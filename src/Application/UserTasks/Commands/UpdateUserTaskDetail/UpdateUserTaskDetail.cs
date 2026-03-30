@@ -1,38 +1,38 @@
 ﻿using EFPractice.Application.Common.Interfaces;
 using EFPractice.Domain.Enums;
 
-namespace EFPractice.Application.userTasks.Commands.UpdateuserTaskDetail;
+namespace EFPractice.Application.UserTasks.Commands.UpdateUserTaskDetail;
 
-public record UpdateuserTaskDetailCommand : IRequest
+public record UpdateUserTaskDetailCommand : IRequest
 {
     public int Id { get; init; }
 
-    public int ListId { get; init; }
+    public int ListID { get; init; }
 
     public PriorityLevel Priority { get; init; }
 
-    public string? Note { get; init; }
+    public string? Description { get; init; }
 }
 
-public class UpdateuserTaskDetailCommandHandler : IRequestHandler<UpdateuserTaskDetailCommand>
+public class UpdateUserTaskDetailCommandHandler : IRequestHandler<UpdateUserTaskDetailCommand>
 {
     private readonly IApplicationDbContext _context;
 
-    public UpdateuserTaskDetailCommandHandler(IApplicationDbContext context)
+    public UpdateUserTaskDetailCommandHandler(IApplicationDbContext context)
     {
         _context = context;
     }
 
-    public async Task Handle(UpdateuserTaskDetailCommand request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateUserTaskDetailCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.userTasks
+        var entity = await _context.UserTasks
             .FindAsync([request.Id], cancellationToken);
 
         Guard.Against.NotFound(request.Id, entity);
 
-        entity.ListId = request.ListId;
+        entity.ListID = request.ListID;
         entity.Priority = request.Priority;
-        entity.Note = request.Note;
+        entity.Description = request.Description;
 
         await _context.SaveChangesAsync(cancellationToken);
     }

@@ -10,7 +10,7 @@ namespace EFPractice.Application.FunctionalTests.Infrastructure;
 
 public static class TestApp
 {
-    private static string? _userId;
+    private static string? _TaskID;
     private static List<string>? _roles;
 
     public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
@@ -31,7 +31,7 @@ public static class TestApp
         await mediator.Send(request);
     }
 
-    public static string? GetUserId() => _userId;
+    public static string? GetTaskID() => _TaskID;
 
     public static List<string>? GetRoles() => _roles;
 
@@ -69,9 +69,9 @@ public static class TestApp
 
         if (result.Succeeded)
         {
-            _userId = user.Id;
+            _TaskID = user.Id;
             _roles = [..roles];
-            return _userId;
+            return _TaskID;
         }
 
         var errors = string.Join(Environment.NewLine, result.ToApplicationResult().Errors);
@@ -86,7 +86,7 @@ public static class TestApp
             await FunctionalTestSetup.DbResetter.ResetAsync();
         }
 
-        _userId = null;
+        _TaskID = null;
         _roles = null;
     }
 
