@@ -1,0 +1,16 @@
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\bin\Application\debug\EFPractice.Application.deps.json
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\bin\Application\debug\EFPractice.Application.dll
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\bin\Application\debug\EFPractice.Application.pdb
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\bin\Application\debug\EFPractice.Domain.dll
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\bin\Application\debug\EFPractice.Domain.pdb
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Application\debug\Application.csproj.AssemblyReference.cache
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Application\debug\Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Application\debug\Application.AssemblyInfoInputs.cache
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Application\debug\Application.AssemblyInfo.cs
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Application\debug\Application.csproj.CoreCompileInputs.cache
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Application\debug\Application.sourcelink.json
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Application\debug\Applicat.44B5EDA2.Up2Date
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Application\debug\EFPractice.Application.dll
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Application\debug\refint\EFPractice.Application.dll
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Application\debug\EFPractice.Application.pdb
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Application\debug\ref\EFPractice.Application.dll

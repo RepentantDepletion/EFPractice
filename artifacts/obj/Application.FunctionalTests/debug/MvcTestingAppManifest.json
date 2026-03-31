@@ -1,0 +1,9 @@
+{
+  "EFPractice.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\IsaacBella\\Documents\\EFPractice\\src\\Application",
+  "EFPractice.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\IsaacBella\\Documents\\EFPractice\\src\\Domain",
+  "EFPractice.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\IsaacBella\\Documents\\EFPractice\\src\\Infrastructure",
+  "EFPractice.ServiceDefaults, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\IsaacBella\\Documents\\EFPractice\\src\\ServiceDefaults",
+  "EFPractice.Shared, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\IsaacBella\\Documents\\EFPractice\\src\\Shared",
+  "EFPractice.TestAppHost, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\IsaacBella\\Documents\\EFPractice\\tests\\TestAppHost",
+  "EFPractice.Web, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "C:\\Users\\IsaacBella\\Documents\\EFPractice\\src\\Web"
+}

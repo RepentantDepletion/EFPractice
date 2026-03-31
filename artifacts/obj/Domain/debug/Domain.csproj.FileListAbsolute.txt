@@ -1,0 +1,13 @@
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\bin\Domain\debug\EFPractice.Domain.deps.json
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\bin\Domain\debug\EFPractice.Domain.dll
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\bin\Domain\debug\EFPractice.Domain.pdb
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Domain\debug\Domain.csproj.AssemblyReference.cache
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Domain\debug\Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Domain\debug\Domain.AssemblyInfoInputs.cache
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Domain\debug\Domain.AssemblyInfo.cs
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Domain\debug\Domain.csproj.CoreCompileInputs.cache
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Domain\debug\Domain.sourcelink.json
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Domain\debug\EFPractice.Domain.dll
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Domain\debug\refint\EFPractice.Domain.dll
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Domain\debug\EFPractice.Domain.pdb
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Domain\debug\ref\EFPractice.Domain.dll

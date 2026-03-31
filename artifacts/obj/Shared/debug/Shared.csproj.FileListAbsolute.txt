@@ -1,0 +1,12 @@
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\bin\Shared\debug\EFPractice.Shared.deps.json
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\bin\Shared\debug\EFPractice.Shared.dll
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\bin\Shared\debug\EFPractice.Shared.pdb
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Shared\debug\Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Shared\debug\Shared.AssemblyInfoInputs.cache
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Shared\debug\Shared.AssemblyInfo.cs
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Shared\debug\Shared.csproj.CoreCompileInputs.cache
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Shared\debug\Shared.sourcelink.json
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Shared\debug\EFPractice.Shared.dll
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Shared\debug\refint\EFPractice.Shared.dll
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Shared\debug\EFPractice.Shared.pdb
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\Shared\debug\ref\EFPractice.Shared.dll

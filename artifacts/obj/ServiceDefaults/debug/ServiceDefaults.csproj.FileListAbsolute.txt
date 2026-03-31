@@ -1,0 +1,13 @@
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\bin\ServiceDefaults\debug\EFPractice.ServiceDefaults.deps.json
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\bin\ServiceDefaults\debug\EFPractice.ServiceDefaults.dll
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\bin\ServiceDefaults\debug\EFPractice.ServiceDefaults.pdb
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\ServiceDefaults\debug\ServiceDefaults.csproj.AssemblyReference.cache
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\ServiceDefaults\debug\ServiceDefaults.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\ServiceDefaults\debug\ServiceDefaults.AssemblyInfoInputs.cache
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\ServiceDefaults\debug\ServiceDefaults.AssemblyInfo.cs
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\ServiceDefaults\debug\ServiceDefaults.csproj.CoreCompileInputs.cache
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\ServiceDefaults\debug\ServiceDefaults.sourcelink.json
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\ServiceDefaults\debug\EFPractice.ServiceDefaults.dll
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\ServiceDefaults\debug\refint\EFPractice.ServiceDefaults.dll
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\ServiceDefaults\debug\EFPractice.ServiceDefaults.pdb
+C:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\ServiceDefaults\debug\ref\EFPractice.ServiceDefaults.dll

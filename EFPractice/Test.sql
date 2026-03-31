@@ -1,1 +1,0 @@
-SELECT * FROM EFPractice.dbo.TaskLists;

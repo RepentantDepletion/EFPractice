@@ -1,0 +1,5 @@
+c:\Users\IsaacBella\Documents\EFPractice\artifacts\bin\EFPractice\debug\EFPractice.dacpac
+c:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\EFPractice\debug\Model.xml
+c:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\EFPractice\debug\refactor.xml
+c:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\EFPractice\debug\postdeploy.sql
+c:\Users\IsaacBella\Documents\EFPractice\artifacts\obj\EFPractice\debug\predeploy.sql

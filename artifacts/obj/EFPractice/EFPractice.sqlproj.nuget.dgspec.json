@@ -1,0 +1,107 @@
+{
+  "format": 1,
+  "restore": {
+    "c:\\Users\\IsaacBella\\Documents\\EFPractice\\EFPractice\\EFPractice.sqlproj": {}
+  },
+  "projects": {
+    "c:\\Users\\IsaacBella\\Documents\\EFPractice\\EFPractice\\EFPractice.sqlproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "c:\\Users\\IsaacBella\\Documents\\EFPractice\\EFPractice\\EFPractice.sqlproj",
+        "projectName": "EFPractice",
+        "projectPath": "c:\\Users\\IsaacBella\\Documents\\EFPractice\\EFPractice\\EFPractice.sqlproj",
+        "packagesPath": "C:\\Users\\IsaacBella\\.nuget\\packages\\",
+        "outputPath": "c:\\Users\\IsaacBella\\Documents\\EFPractice\\artifacts\\obj\\EFPractice\\",
+        "projectStyle": "PackageReference",
+        "centralPackageVersionsManagementEnabled": true,
+        "configFilePaths": [
+          "C:\\Users\\IsaacBella\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net10.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net10.0": {
+            "targetAlias": "net10.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "allWarningsAsErrors": true,
+          "noWarn": [
+            "NU5128"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "all"
+        },
+        "SdkAnalysisLevel": "10.0.200"
+      },
+      "frameworks": {
+        "net10.0": {
+          "targetAlias": "net10.0",
+          "centralPackageVersions": {
+            "Ardalis.GuardClauses": "5.0.0",
+            "Aspire.Hosting.AppHost": "13.2.0",
+            "Aspire.Hosting.Azure.AppContainers": "13.2.0",
+            "Aspire.Hosting.JavaScript": "13.2.0",
+            "Aspire.Hosting.Testing": "13.2.0",
+            "AutoMapper": "16.1.1",
+            "Azure.Extensions.AspNetCore.Configuration.Secrets": "1.5.0",
+            "Azure.Identity": "1.19.0",
+            "CommunityToolkit.Aspire.Hosting.SQLite": "13.1.1",
+            "coverlet.collector": "8.0.1",
+            "FluentValidation.DependencyInjectionExtensions": "12.1.1",
+            "MediatR": "14.1.0",
+            "MediatR.Contracts": "2.0.1",
+            "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": "10.0.5",
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": "10.0.5",
+            "Microsoft.AspNetCore.Mvc.Testing": "10.0.5",
+            "Microsoft.AspNetCore.OpenApi": "10.0.5",
+            "Microsoft.Build.Tasks.Core": "18.4.0",
+            "Microsoft.Build.Utilities.Core": "18.4.0",
+            "Microsoft.EntityFrameworkCore": "10.0.5",
+            "Microsoft.EntityFrameworkCore.Design": "10.0.5",
+            "Microsoft.EntityFrameworkCore.Sqlite": "10.0.5",
+            "Microsoft.Extensions.ApiDescription.Server": "10.0.5",
+            "Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore": "10.0.5",
+            "Microsoft.Extensions.Hosting": "10.0.5",
+            "Microsoft.Extensions.Http.Resilience": "10.4.0",
+            "Microsoft.Extensions.ServiceDiscovery": "10.4.0",
+            "Microsoft.NET.Test.Sdk": "18.3.0",
+            "Moq": "4.20.72",
+            "nunit": "4.5.1",
+            "NUnit.Analyzers": "4.12.0",
+            "NUnit3TestAdapter": "6.2.0",
+            "OpenTelemetry.Exporter.OpenTelemetryProtocol": "1.15.0",
+            "OpenTelemetry.Extensions.Hosting": "1.15.0",
+            "OpenTelemetry.Instrumentation.AspNetCore": "1.15.1",
+            "OpenTelemetry.Instrumentation.Http": "1.15.0",
+            "OpenTelemetry.Instrumentation.Runtime": "1.15.0",
+            "Respawn": "7.0.0",
+            "Scalar.AspNetCore": "2.13.13",
+            "Shouldly": "4.3.0",
+            "System.IdentityModel.Tokens.Jwt": "8.16.0"
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
