@@ -3,28 +3,32 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-public partial class SeedInitialTasksAndLists : Migration
+namespace EFPractice.Infrastructure.Migrations
 {
-    protected override void Up(MigrationBuilder migrationBuilder)
+    /// <inheritdoc />
+    public partial class Init : Migration
     {
-        // Seed TaskLists
-        migrationBuilder.InsertData(
-            table: "TaskLists",
-            columns: new[] { "ID", "TITLE" },
-            values: new object[,]
-            {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            // Seed TaskLists
+            migrationBuilder.InsertData(
+                table: "TaskLists",
+                columns: new[] { "Id", "Title" },
+                values: new object[,]
+                {
                 { 1, "Tasks" },
                 { 2, "Work" },
                 { 3, "Personal" },
                 { 4, "Shopping" },
                 { 5, "Fitness" }
-            });
+                });
 
-        // Seed UserTasks
-        migrationBuilder.InsertData(
-            table: "UserTasks",
-            columns: new[]
-            {
+            // Seed UserTasks
+            migrationBuilder.InsertData(
+                table: "UserTasks",
+                columns: new[]
+                {
                 "Id",
                 "Title",
                 "Description",
@@ -32,9 +36,9 @@ public partial class SeedInitialTasksAndLists : Migration
                 "ListID",
                 "Done",
                 "Priority"
-            },
-            values: new object[,]
-            {
+                },
+                values: new object[,]
+                {
                 {
                     1,
                     "Make a todo list 📃",
@@ -116,27 +120,29 @@ public partial class SeedInitialTasksAndLists : Migration
                     false,
                     "9"
                 }
-            });
-    }
-
-    protected override void Down(MigrationBuilder migrationBuilder)
-    {
-        // Remove UserTasks
-        for (int i = 1; i <= 9; i++)
-        {
-            migrationBuilder.DeleteData(
-                table: "UserTasks",
-                keyColumn: "Id",
-                keyValue: i);
+                });
         }
 
-        // Remove TaskLists
-        for (int i = 1; i <= 5; i++)
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DeleteData(
-                table: "TaskLists",
-                keyColumn: "ID",
-                keyValue: i);
+            // Remove UserTasks
+            for (int i = 1; i <= 9; i++)
+            {
+                migrationBuilder.DeleteData(
+                    table: "UserTasks",
+                    keyColumn: "Id",
+                    keyValue: i);
+            }
+
+            // Remove TaskLists
+            for (int i = 1; i <= 5; i++)
+            {
+                migrationBuilder.DeleteData(
+                    table: "TaskLists",
+                    keyColumn: "Id",
+                    keyValue: i);
+            }
         }
     }
 }

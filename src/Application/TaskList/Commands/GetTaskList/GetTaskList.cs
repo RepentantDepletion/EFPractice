@@ -27,7 +27,7 @@ public class GetTaskListCommandHandler : IRequestHandler<GetTaskListCommand, Tas
         
         var entity = await _context.TaskLists.FindAsync(new object[] { request.ListID }, cancellationToken);
 
-        if (entity == null || entity.ListID != request.ListID || request.ListID == null)
+        if (entity == null || entity.Id != request.ListID || request.ListID == null)
         {
             return null;
         }

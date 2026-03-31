@@ -28,7 +28,7 @@ public class CompleteTaskCommandHandler : IRequestHandler<CompleteTaskCommand, U
 
         var entity = await _context.UserTasks.FindAsync(new object[] { request.TaskId }, cancellationToken);
 
-        if (entity == null || entity.TaskID != request.TaskId)
+        if (entity == null || entity.Id != request.TaskId)
         {
             throw new InvalidOperationException($"Task with ID {request.TaskId} not found.");
         }

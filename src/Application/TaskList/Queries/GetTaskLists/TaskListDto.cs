@@ -14,8 +14,6 @@ public class TaskListDto
 
     public string? Title { get; init; }
 
-    public string? Colour { get; init; }
-
     public IReadOnlyCollection<UserTaskDto> Items { get; init; }
 
     private class Mapping : Profile

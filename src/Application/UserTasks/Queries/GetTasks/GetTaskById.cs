@@ -7,7 +7,7 @@ using EFPractice.Domain.ValueObjects;
 
 namespace EFPractice.Application.TaskLists.Queries.GetTodos;
 
-public record GetTaskByIDQuery :IRequest<UserTaskDto?>
+public record GetTaskByIDQuery : IRequest<UserTaskDto?>
 {
     public GetTaskByIDQuery(int id)
     {
@@ -28,15 +28,16 @@ public class GetTaskByIDQueryHandler : IRequestHandler<GetTaskByIDQuery, UserTas
         _mapper = mapper;
     }
 
-    public async Task<UserTaskDto?> Handle(GetTaskByIDQuery request, CancellationToken cancellationToken)
+    public async Task<UserTaskDto?> Handle(
+        GetTaskByIDQuery request,
+        CancellationToken cancellationToken)
     {
-        var entity = await _context.UserTasks.FindAsync(new object[] { request.ID }, cancellationToken);
+        var result = await _context.UserTasks
+            .AsNoTracking()
+            .Where(t => t.Id == request.ID)
+            .ProjectTo<UserTaskDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(cancellationToken);
 
-        if (entity == null)
-        {
-            return null;
-        }
-
-        return _mapper.Map<UserTaskDto>(entity);
+        return result;
     }
 }

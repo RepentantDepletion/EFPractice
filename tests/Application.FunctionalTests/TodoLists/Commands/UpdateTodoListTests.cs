@@ -61,8 +61,5 @@ public class UpdateTaskListTests : TestBase
 
         list.ShouldNotBeNull();
         list!.Title.ShouldBe(command.Title);
-        list.LastModifiedBy.ShouldNotBeNull();
-        list.LastModifiedBy.ShouldBe(TaskID);
-        list.LastModified.ShouldBe(DateTime.Now, TimeSpan.FromMilliseconds(10000));
     }
 }

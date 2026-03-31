@@ -16,11 +16,11 @@ public class UserTasks : IEndpointGroup
     {
 
         groupBuilder.MapPost(CreateUserTask);
-        groupBuilder.MapPut(UpdateUserTask, "{id}");
-        groupBuilder.MapPatch(UpdateUserTaskDetail, "UpdateDetail/{id}");
-        groupBuilder.MapDelete(DeleteUserTask, "{id}");
-        groupBuilder.MapPatch(MarkTaskAsCompleted, "Complete/{id}");
-        groupBuilder.MapGet(GetUserTask, "{id}");
+        groupBuilder.MapPut(UpdateUserTask, "{id:int}");
+        groupBuilder.MapPatch(UpdateUserTaskDetail, "UpdateDetail/{id:int}");
+        groupBuilder.MapDelete(DeleteUserTask, "{id:int}");
+        groupBuilder.MapPatch(MarkTaskAsCompleted, "Complete/{id:int}");
+        groupBuilder.MapGet(GetUserTask, "{id:int}");
     }
 
     [EndpointSummary("Create a new task")]
@@ -75,9 +75,9 @@ public class UserTasks : IEndpointGroup
     }
     [EndpointSummary("Get a task by ID")]
     [EndpointDescription("Retrieves the task with the specified ID.")]
-    public static async Task<Ok<UserTask>> GetUserTask(ISender sender, int id)
+    public static async Task<Ok<UserTaskDto>> GetUserTask(ISender sender, int id)
     {
-        var task = await sender.Send(new GetUserTaskCommand(id));
+        var task = await sender.Send(new GetTaskByIDQuery(id));
         return TypedResults.Ok(task);
     }
 }

@@ -1,14 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 
 namespace EFPractice.Domain.Entities;
 
-public class UserTask : BaseAuditableEntity
+public class UserTask : BaseEntity
 {
-    [Key]
-
-    public required int TaskID { get; set; }
 
     public string? Title { get; set; }
 

@@ -26,7 +26,6 @@ public class CreateUserTaskCommandHandler : IRequestHandler<CreateUserTaskComman
     {
         var entity = new UserTask
         {
-            TaskID = request.TaskID,
             Title = request.Title,
             Description = request.Description,
             Deadline = request.Deadline,

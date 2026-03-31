@@ -14,7 +14,7 @@ public class TaskLists : IEndpointGroup
     public static void Map(RouteGroupBuilder groupBuilder)
     {
 
-        groupBuilder.MapGet(GetTaskLists);
+        groupBuilder.MapGet(GetAllTaskLists);
         groupBuilder.MapPost(CreateTaskList);
         groupBuilder.MapPut(UpdateTaskList, "{id}");
         groupBuilder.MapDelete(DeleteTaskList, "{id}");
@@ -23,7 +23,7 @@ public class TaskLists : IEndpointGroup
 
     [EndpointSummary("Get all Task Lists")]
     [EndpointDescription("Retrieves all task lists along with their items.")]
-    public static async Task<Ok<TasksVm>> GetTaskLists(ISender sender)
+    public static async Task<Ok<TasksVm>> GetAllTaskLists(ISender sender)
     {
         var vm = await sender.Send(new GetTasksQuery());
 

@@ -25,21 +25,6 @@ public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, TasksVm>
     {
         return new TasksVm
         {
-            PriorityLevels = Enum.GetValues(typeof(PriorityLevel))
-                .Cast<PriorityLevel>()
-                .Select(p => new LookupDto { Id = (int)p, Title = p.ToString() })
-                .ToList(),
-
-            Colours =
-            [
-                new ColourDto { Code = Colour.Grey, Name = nameof(Colour.Grey) },
-                new ColourDto { Code = Colour.Purple, Name = nameof(Colour.Purple) },
-                new ColourDto { Code = Colour.Blue, Name = nameof(Colour.Blue) },
-                new ColourDto { Code = Colour.Teal, Name = nameof(Colour.Teal) },
-                new ColourDto { Code = Colour.Green, Name = nameof(Colour.Green) },
-                new ColourDto { Code = Colour.Orange, Name = nameof(Colour.Orange) },
-                new ColourDto { Code = Colour.Red, Name = nameof(Colour.Red) },
-            ],
 
             Lists = await _context.TaskLists
                 .AsNoTracking()

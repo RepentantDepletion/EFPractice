@@ -16,12 +16,6 @@ public record GetUserTaskCommand : IRequest<UserTask?>
     public int TaskID { get; init; }
 
     public int ListId { get; init; }
-
-    public string? Title { get; init; }
-
-    public string ? Note { get; init; }
-
-    public PriorityLevel Priority { get; init; }
 }
 
 public class GetUserTaskCommandHandler : IRequestHandler<GetUserTaskCommand, UserTask?>

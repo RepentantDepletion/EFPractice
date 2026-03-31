@@ -1,1 +1,1 @@
-SELECT * FROM EFPractice.dbo.UserTasks;
+SELECT * FROM EFPractice.dbo.TaskLists;
