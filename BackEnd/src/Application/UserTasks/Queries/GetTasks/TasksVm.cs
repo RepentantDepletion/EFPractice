@@ -5,10 +5,6 @@ namespace EFPractice.Application.UserTasks.Queries.GetTasks;
 
 public class TasksVm
 {
-    public IReadOnlyCollection<LookupDto> PriorityLevels { get; init; } = [];
-
-    public IReadOnlyCollection<ColourDto> Colours { get; init; } = [];
-
     public IReadOnlyCollection<TaskListDto> Lists { get; init; } = [];
 }
 
