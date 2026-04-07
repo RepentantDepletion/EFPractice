@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask } from './api/Api.ts'
-import type { Task } from './types/Task'
-import TaskView from './components/TaskView'
-import TaskEditForm from './components/TaskEditForm'
+import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask } from '../api/Api.ts'
+import type { Task } from '../types/Task.ts'
+import TaskView from '../components/TaskView.ts'
+import TaskEditForm from '../components/TaskEditForm.ts'
 
 import './App.css'
 import './Dashboard.css'
