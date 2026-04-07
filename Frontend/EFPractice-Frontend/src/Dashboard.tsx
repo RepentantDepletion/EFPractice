@@ -1,18 +1,12 @@
-import { use, useEffect, useState } from 'react'
-import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from 'react-router-dom'
-import { fetchTasks, fetchTaskLists } from './Api.ts'
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask } from './api/Api.ts'
+import type { Task } from './types/Task'
+import TaskView from './components/TaskView'
+import TaskEditForm from './components/TaskEditForm'
 
 import './App.css'
 import './Dashboard.css'
-import './TaskPage.tsx'
-
-type task = {
-    id: number;
-    title: string;
-    description: string;
-    priority: number;
-    done: string;
-};
 
 type list = {
     id: number;
@@ -20,18 +14,26 @@ type list = {
 }
 
 function Dashboard() {
-
     const navigate = useNavigate();
-    const [tasks, setTasks] = useState<task[]>([]);
+    const [tasks, setTasks] = useState<Task[]>([]);
     const [lists, setLists] = useState<list[]>([]);
+    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+    const [formData, setFormData] = useState<Task | null>(null);
+    const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [selectedLoading, setSelectedLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    const normalizeTask = (task: any): Task => ({
+        ...task,
+        deadline: new Date(task.deadline),
+    });
 
     useEffect(() => {
         async function loadTasks() {
             try {
                 const data = await fetchTasks();
-                setTasks(data);
+                setTasks(data.map(normalizeTask));
             } catch {
                 setError('Failed to load tasks');
             } finally {
@@ -43,69 +45,154 @@ function Dashboard() {
     }, []);
 
     useEffect(() => {
-        async function loadLists(){
-            try{
+        async function loadLists() {
+            try {
                 const data = await fetchTaskLists();
-                setLists(data);
-            } catch{
+                setLists(data.lists);
+            } catch {
                 setError('Failed to load lists');
-            } finally {
-                setLoading(false);
             }
         }
 
         loadLists();
     }, []);
 
+    const handleSelectTask = async (id: number) => {
+        setSelectedLoading(true);
+        setError(null);
+
+        try {
+            const task = await fetchTaskById(id);
+            setSelectedTask(normalizeTask(task));
+            setFormData(null);
+            setIsEditing(false);
+        } catch {
+            setError('Failed to load task details');
+        } finally {
+            setSelectedLoading(false);
+        }
+    };
+
+    const handleEdit = async () => {
+        if (!selectedTask) return;
+
+        if (!isEditing) {
+            setFormData({ ...selectedTask });
+            setIsEditing(true);
+            return;
+        }
+
+        if (!formData) return;
+
+        try {
+            await updateTask(formData.id, formData);
+            setSelectedTask(formData);
+            setIsEditing(false);
+        } catch {
+            alert('Failed to save task');
+        }
+    };
+
     return (
-        <>
-            <div className="navigation-panel">
-                <h2>Navigation Panel</h2>
-                <ul>
-                    <button className='navigation-buttons' onClick={() => navigate('/')}>Home</button>
-                    <button className='navigation-buttons' onClick={() => navigate('/settings')}>Settings</button>
-                </ul>
-                <div className="task-container">
-                    <div className="task-list">
-                        <h3>Tasks</h3>
-                        {tasks.length === 0 ? (
-                            <p>No tasks available. Please add some tasks.</p>
-                        ) : (
-                            <ul className="task-list">
-                                console.log('lists:', lists, Array.isArray(lists));
-                                {tasks.map((task) => (
-                                    <li key={task.id}>
-                                        <button className='task-card' onClick={() => navigate(`/tasks/${task.id}`)}>
-                                            {task.title}
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
+        <div className="dashboard-layout">
+            <aside className="dashboard-sidebar">
+                <div className="dashboard-header">
+                    <h1>Task Manager</h1>
                 </div>
-                <div>
-                    <h3>Task Lists</h3>
-                    
-                    {lists.length == 0 ? (
-                        <p>No lists available. Please add some lists.</p>
-                    ) : (
-                        <ul>
-                            {lists.map((list) =>(
-                                <li key={list.id}>
-                                    <button onClick={() => navigate(`/lists/${list.id}`)}>
-                                        {list.title}
+
+                <main className="task-details-panel">
+                    {selectedLoading ? (
+                        <p>Loading task details…</p>
+                    ) : selectedTask ? (
+                        <>
+                            <div className="task-details-header">
+                                <button className="close-button" onClick={() => {
+                                    setSelectedTask(null);
+                                    setFormData(null);
+                                    setIsEditing(false);
+                                }}>
+                                    Close
+                                </button>
+                            </div>
+
+                            {isEditing && formData ? (
+                                <TaskEditForm formData={formData} setFormData={setFormData} />
+                            ) : (
+                                <TaskView task={selectedTask} lists={lists} />
+                            )}
+
+                            <div className="button-row">
+                                <button onClick={handleEdit}>
+                                    {isEditing ? 'Save' : 'Edit'}
+                                </button>
+                                {isEditing && (
+                                    <button onClick={() => setIsEditing(false)}>
+                                        Cancel
                                     </button>
-                                </li>
-                            ))}
-                        </ul>
+                                )}
+                            </div>
+                        </>
+                    ) : (
+                        <p>Select a task from the list to view its details here.</p>
                     )}
-                </div>
-            </div >
-            <div className="dashboard-header">
-                <h1>Task Manager</h1>
+
+                    {error && <p className="error-message">{error}</p>}
+                </main>
+            </aside>
+
+            <div className="dashboard-main">
+                <section className="navigation-panel">
+                    <h2>Navigation Panel</h2>
+                    <ul>
+                        <button className='navigation-buttons' onClick={() => navigate('/')}>Home</button>
+                        <button className='navigation-buttons' onClick={() => navigate('/settings')}>Settings</button>
+                    </ul>
+
+                    <div className="task-container">
+                        <div className="task-list">
+                            <h3>Tasks</h3>
+                            {loading ? (
+                                <p>Loading tasks…</p>
+                            ) : tasks.length === 0 ? (
+                                <p>No tasks available. Please add some tasks.</p>
+                            ) : (
+                                <ul className="task-list">
+                                    {tasks.map((task) => (
+                                        <li key={task.id}>
+                                            <button
+                                                className='task-card'
+                                                onClick={() => handleSelectTask(task.id)}
+                                            >
+                                                {task.title}
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className='list-container'>
+                        <div className='list-record'>
+                            <h3>Task Lists</h3>
+                            {lists.length === 0 ? (
+                                <p>No lists available. Please add some lists.</p>
+                            ) : (
+                                <ul className='list-record'>
+                                    {lists.map((list) => (
+                                        <li key={list.id}>
+                                            <button className="task-card" onClick={() => navigate(`/lists/${list.id}`)}>
+                                                {list.title}
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                        </div>
+                    </div>
+                </section>
             </div>
-        </>
+        </div>
     )
 }
 

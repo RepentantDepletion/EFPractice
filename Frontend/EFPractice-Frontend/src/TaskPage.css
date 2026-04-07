@@ -1,12 +1,73 @@
 #task-page {
     display: flex;
-    flex-wrap: nowrap;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
     padding: 20px;
-    
-  width: 100%;
-  min-height: 100vh;
+    width: 100%;
+    min-height: auto;
+    background: transparent;
+}
+
+.taskpage-header {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.taskpage-header h1 {
+    margin: 0;
+    font-size: 2rem;
+    color: var(--text-h);
+}
+
+#task-details {
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 12px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    width: 100%;
+    max-width: 900px;
+    box-sizing: border-box;
+    background: var(--surface);
+    border-radius: 24px;
+    box-shadow: 0 24px 48px rgba(15, 23, 42, 0.25);
+}
+
+.editable-input {
+    width: 100%;
+    text-align: left;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--surface-alt);
+    padding: 14px 16px;
+    margin: 12px 0;
+    font-size: inherit;
+    font-weight: inherit;
+    font-family: inherit;
+    color: var(--text);
+    border-radius: 12px;
+}
+
+.editable-input:focus {
+    outline: none;
+    border-bottom: 1px solid #ccc;
+}
+
+#description-input {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--surface-alt);
+    padding: 14px 16px;
+    margin: 12px 0;
+
+    font-size: inherit;
+    font-weight: inherit;
+    font-family: inherit;
+    color: var(--text);
+    border-radius: 12px;
 }
 
 .detail-container {
@@ -17,10 +78,18 @@
 }
 
 button {
-    padding: 6px 12px;
-    border-radius: 5px;
-    background-color: antiquewhite;
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
     border: 2px solid transparent;
+    color: white;
+    cursor: pointer;
+}
+
+.button-row {
+  display: flex;
+  gap: 10px;          /* space between buttons */
+  justify-content: center;
 }
 
 #header {
@@ -35,19 +104,20 @@ button {
     color: white;
 }
 
-#back-button {
+.back-button {
     margin-right: 20px;
-    background-color: tomato;
+    background: var(--accent-red);
     position: absolute;
     left: 13%;
     transform: translate(-100%);
+    color: white;
 }
 
-#task-details {
-    align-items: center;
-    margin-bottom: 20px;
-    gap: 12px;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
+label{
+font-size: 24px;
+    line-height: 118%;
+    letter-spacing: -0.24px;
+    margin: 0 0 8px;
+    font-weight: bold;
 }
+

@@ -18,7 +18,7 @@ public class UserTasks : IEndpointGroup
     {
 
         groupBuilder.MapPost(CreateUserTask);
-        groupBuilder.MapPatch(UpdateUserTaskDetail, "UpdateDetail/{id:int}");
+        groupBuilder.MapPut(UpdateUserTaskDetail, "UpdateDetail/{id:int}");
         groupBuilder.MapDelete(DeleteUserTask, "{id:int}");
         groupBuilder.MapPut(MarkTaskAsCompleted, "Complete/{id:int}");
         groupBuilder.MapGet(GetUserTask, "{id:int}");

@@ -4,7 +4,7 @@ namespace EFPractice.Application.TaskLists.Queries.GetTasks;
 
 public class UserTaskDto
 {
-
+    public int ID { get; init; }
     public int ListId { get; init; }
 
     public string? Title { get; init; }
