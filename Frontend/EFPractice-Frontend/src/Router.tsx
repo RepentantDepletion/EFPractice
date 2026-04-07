@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
-import Dashboard from './Dashboard';
-import ListPage from './ListPage';
+import Dashboard from './pages/Dashboard';
+import ListPage from './pages/ListPage';
 
 function Router() {
   return (

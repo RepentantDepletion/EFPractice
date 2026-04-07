@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchTaskListById, fetchTasks, updateTask } from './api/Api';
-import type { Task } from './types/Task';
-import TaskView from './components/TaskView';
-import TaskEditForm from './components/TaskEditForm';
-import './App.css';
-import './Dashboard.css';
-import './TaskPage.css';
-import './ListPage.css';
+import { fetchTaskListById, fetchTasks, updateTask } from '../api/Api';
+import type { Task } from '../types/Task';
+import TaskView from '../components/TaskView';
+import TaskEditForm from '../components/TaskEditForm';
+import '../styles/App.css';
+import '../styles/Dashboard.css';
+import '../styles/TaskPage.css';
+import '../styles/ListPage.css';
 
 function ListPage() {
     const { id } = useParams<{ id: string }>();

@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask } from '../api/Api.ts'
 import type { Task } from '../types/Task.ts'
-import TaskView from '../components/TaskView.ts'
-import TaskEditForm from '../components/TaskEditForm.ts'
+import TaskView from '../components/TaskView.tsx'
+import TaskEditForm from '../components/TaskEditForm.tsx'
 
-import './App.css'
-import './Dashboard.css'
+import '../styles/App.css'
+import '../styles/Dashboard.css'
 
 type list = {
     id: number;
