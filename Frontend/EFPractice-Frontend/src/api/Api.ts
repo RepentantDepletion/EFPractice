@@ -112,13 +112,29 @@ export async function createTaskList(name: string) {
     return response.json();
 }
 
-export async function updateTaskList(id: number, name: string) {
+export async function updateTaskList(
+    id: number,
+    name?: string,
+    items?: Array<{
+        ID: number;
+        Title?: string;
+        Description?: string;
+        Priority?: number;
+        Done?: boolean;
+        Deadline?: string | null;
+        ListID?: number;
+    }>
+) {
     const response = await fetch(`${BASE_URL}/TaskLists/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({
+            id,
+            ...(name && { title: name }),
+            ...(items && { items }),
+        }),
     });
     return response.json();
 }

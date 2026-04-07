@@ -15,7 +15,16 @@ public class UpdateTaskListCommandValidator : AbstractValidator<UpdateTaskListCo
             .MaximumLength(200)
             .MustAsync(BeUniqueTitle)
                 .WithMessage("'{PropertyName}' must be unique.")
-                .WithErrorCode("Unique");
+                .WithErrorCode("Unique")
+            .When(v => v.Title is not null);
+
+        RuleForEach(v => v.Items)
+            .ChildRules(item =>
+            {
+                item.RuleFor(i => i.Title)
+                    .NotEmpty()
+                    .When(i => i.ID == 0);
+            });
     }
 
     public async Task<bool> BeUniqueTitle(UpdateTaskListCommand model, string title, CancellationToken cancellationToken)
