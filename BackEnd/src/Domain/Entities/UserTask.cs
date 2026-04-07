@@ -28,5 +28,8 @@ public class UserTask : BaseEntity
     }
 
     public int ListID { get; set; }
+
+    public TaskList? TaskList { get; set; }
+
     public DateTime? Deadline { get; set; }
 }

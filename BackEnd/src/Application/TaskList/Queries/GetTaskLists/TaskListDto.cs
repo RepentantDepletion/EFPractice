@@ -20,7 +20,8 @@ public class TaskListDto
     {
         public Mapping()
         {
-            CreateMap<TaskList, TaskListDto>();
+            CreateMap<TaskList, TaskListDto>()
+                .ForMember(d => d.Items, opt => opt.MapFrom(s => s.Items));
         }
     }
 }

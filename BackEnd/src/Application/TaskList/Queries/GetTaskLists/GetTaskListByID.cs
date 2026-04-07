@@ -1,6 +1,7 @@
 using EFPractice.Application.Common.Interfaces;
 using EFPractice.Application.TaskLists.Queries.GetTasks;
 using EFPractice.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace EFPractice.Application.TaskLists.Queries.GetTasks;
 
@@ -32,6 +33,7 @@ public async Task<TaskListDto> Handle(
     {
         var result = await _context.TaskLists
             .AsNoTracking()
+            .Include(tl => tl.Items)
             .Where(tl => tl.Id == request.Id)
             .ProjectTo<TaskListDto>(_mapper.ConfigurationProvider)
             .FirstOrDefaultAsync(cancellationToken);

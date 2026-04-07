@@ -11,5 +11,10 @@ public class TaskListConfiguration : IEntityTypeConfiguration<TaskList>
         builder.Property(t => t.Title)
             .HasMaxLength(200)
             .IsRequired();
+
+        builder.HasMany(tl => tl.Items)
+            .WithOne(t => t.TaskList)
+            .HasForeignKey(t => t.ListID)
+            .IsRequired();
     }
 }

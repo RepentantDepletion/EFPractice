@@ -4,6 +4,7 @@ using EFPractice.Application.Common.Security;
 using EFPractice.Application.TaskLists.Queries.GetTasks;
 using EFPractice.Domain.Enums;
 using EFPractice.Domain.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 
 namespace EFPractice.Application.UserTasks.Queries.GetTasks;
 
