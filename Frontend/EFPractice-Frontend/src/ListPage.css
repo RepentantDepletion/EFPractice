@@ -34,11 +34,12 @@
 .list-task-details {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 24px;
+  gap: 60px;
   width: 100%;
   max-width: 1240px;
   justify-items: center;
-  align-items: stretch;
+  align-items: start;
+  padding: 24px 0;
 }
 
 .task-detail-card {
