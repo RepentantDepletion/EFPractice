@@ -17,7 +17,8 @@ type ServerTask = {
   priority?: number;
   Done?: boolean;
   done?: boolean;
-  Deadline?: string | null;
+  Deadline?: Date | null;
+  deadline?: Date | null;
 };
 
 type task = {
@@ -37,7 +38,7 @@ const normalizeTask = (task: ServerTask): task => ({
   description: task.Description ?? task.description ?? '',
   priority: task.Priority ?? task.priority ?? 0,
   done: task.Done ?? task.done ?? false,
-  deadline: task.Deadline ? new Date(task.Deadline) : new Date(),
+  deadline: new Date(task.Deadline ?? task.deadline ?? 0),
 });
 
 export async function fetchTasks(): Promise<task[]> {
@@ -121,7 +122,7 @@ export async function updateTaskList(
         Description?: string;
         Priority?: number;
         Done?: boolean;
-        Deadline?: string | null;
+        Deadline?: Date | null;
         ListID?: number;
     }>
 ) {

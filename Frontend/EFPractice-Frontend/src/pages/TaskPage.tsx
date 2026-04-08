@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchTaskById, updateTask } from "./api/Api";
-import type { Task } from "./types/Task";
-import TaskView from "./components/TaskView";
-import TaskEditForm from "./components/TaskEditForm";
+import { fetchTaskById, updateTask } from "../api/Api";
+import type { Task } from "../types/Task";
+import TaskView from "../components/TaskView";
+import TaskEditForm from "../components/TaskEditForm";
 import { useNavigate } from "react-router-dom";
 import './TaskPage.css';  // Add this import
 
