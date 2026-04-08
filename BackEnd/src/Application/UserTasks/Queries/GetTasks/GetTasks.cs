@@ -27,6 +27,13 @@ public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, TasksVm>
         return new TasksVm
         {
 
+            Tasks = await _context.UserTasks
+            .AsNoTracking()
+            .ProjectTo<UserTaskDto>(_mapper.ConfigurationProvider)
+            .OrderBy(t => t.Title)
+            .ToListAsync(cancellationToken),
+
+
             Lists = await _context.TaskLists
                 .AsNoTracking()
                 .ProjectTo<TaskListDto>(_mapper.ConfigurationProvider)

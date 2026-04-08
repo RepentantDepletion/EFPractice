@@ -27,7 +27,7 @@ public class UserTask : BaseEntity
         }
     }
 
-    public int ListID { get; set; }
+    public int? ListID { get; set; }
 
     public TaskList? TaskList { get; set; }
 

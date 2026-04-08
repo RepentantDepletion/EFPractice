@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask } from '../api/Api.ts'
+import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask } from '../api/Api.ts'
 import type { Task } from '../types/Task.ts'
 import TaskView from '../components/TaskView.tsx'
 import TaskEditForm from '../components/TaskEditForm.tsx'
+import deleteIcon from '../assets/delete-icon.jpg'
 
 import '../styles/App.css'
 import '../styles/Dashboard.css'
+import { fr } from 'date-fns/locale'
 
 type list = {
     id: number;
@@ -121,7 +123,23 @@ function Dashboard() {
                                 <TaskView task={selectedTask} lists={lists} />
                             )}
 
+
                             <div className="button-row">
+                                <button className="delete-button" onClick={async () => {
+                                    if (!selectedTask) return;
+                                    if (window.confirm('Are you sure you want to delete this task?')) {
+                                        try {
+                                            await deleteTask(selectedTask.id);
+                                            setSelectedTask(null);
+                                            setFormData(null);
+                                            setIsEditing(false);
+                                        } catch {
+                                            alert('Failed to delete task');
+                                        }
+                                    }
+                                }}>
+                                    <img src={deleteIcon} alt="Delete" />
+                                </button>
                                 <button onClick={handleEdit}>
                                     {isEditing ? 'Save' : 'Edit'}
                                 </button>

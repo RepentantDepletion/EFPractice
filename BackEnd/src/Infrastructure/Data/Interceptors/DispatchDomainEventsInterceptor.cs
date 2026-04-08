@@ -26,6 +26,16 @@ public class DispatchDomainEventsInterceptor : SaveChangesInterceptor
     {
         await DispatchDomainEvents(eventData.Context);
 
+                if (eventData.Context != null)
+        {
+            foreach (var entry in eventData.Context.ChangeTracker.Entries())
+            {
+                Console.WriteLine(
+                    $"{entry.Entity.GetType().Name} → {entry.State}"
+                );
+            }
+        }
+
         return await base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 

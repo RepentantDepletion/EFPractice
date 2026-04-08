@@ -31,6 +31,30 @@
   background: linear-gradient(135deg, #1d4ed8, #0ea5e9);
 }
 
+#list-page .add-task-button{
+  padding: 10px 18px;
+  margin: 10px 0;
+  border: 10px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  cursor: pointer;
+}
+
+#list-page .delete-card-button {
+    background: var(--accent-red);
+    color: white;
+}
+
+#list-page .remove-from-list-card-button {
+    background: var(--accent-red);
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
 .list-task-details {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchTaskById, updateTask } from "../api/Api";
+import { deleteTask, fetchTaskById, updateTask } from "../api/Api";
 import type { Task } from "../types/Task";
 import TaskView from "../components/TaskView";
 import TaskEditForm from "../components/TaskEditForm";
@@ -60,6 +60,19 @@ const TaskPage = () => {
     if (error) return <p>{error}</p>;
     if (!task) return <p>No task found</p>;
 
+    const handleDelete = async () => {
+        if (!task) return;
+
+        if (window.confirm("Are you sure you want to delete this task?")) {
+            try {
+                await deleteTask(task.id);
+                navigate('/');
+            } catch {
+                alert("Failed to delete task");
+            }
+        }
+    };
+
     return (
         <div id="task-page">
             <header className="taskpage-header">
@@ -80,6 +93,9 @@ const TaskPage = () => {
                 )}
             </div>
 
+            <button className="delete-button" onClick={handleDelete}>
+                Delete
+            </button>
 
             <div className="button-row">  {/* Add this wrapper for button row styles */}
                 <button className="button-row" onClick={handleEdit}>

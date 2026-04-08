@@ -15,10 +15,10 @@ const parseDate = (value: unknown): Date => {
 const normalizeTask = (rawTask: RawTaskResponse): Task => ({
   id: Number(rawTask['id']),
   title: String(rawTask['title']),
-  list: String(rawTask['listId']),
+  list: (rawTask['listID'] ?? rawTask['listId'] ?? null) as number | null,
   description: String(rawTask['description']),
-  priority: Number(rawTask['priority'] ?? 0),
-  done: Boolean(rawTask['Done']),
+  priority: Number(rawTask['priority']),
+  done: Boolean(rawTask['done'] ?? false),
   deadline: parseDate(rawTask['deadline']),
 });
 
@@ -52,21 +52,21 @@ export async function createTask(taskData: CreateTaskRequest): Promise<Task> {
     return normalizeTask(data);
 }
 
-export async function updateTask(id: number, task: Task) {
-  const response = await fetch(`${BASE_URL}/UserTasks/UpdateDetail/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      Title: task.title,
-      Description: task.description,
-      Priority: task.priority,
-      Done: task.done,
-      Deadline: task.deadline,
-      ListId: Number(task.list),
-    }),
-  });
+export async function updateTask(id: number, task: Task): Promise<Response> {
+    const response = await fetch(`${BASE_URL}/UserTasks/UpdateDetail/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            Title: task.title,
+            Description: task.description,
+            Priority: task.priority,
+            Done: task.done,
+            Deadline: task.deadline,
+            ListId: Number(task.list) || null,
+        }),
+    });
 
     if (!response.ok) {
         const text = await response.text();

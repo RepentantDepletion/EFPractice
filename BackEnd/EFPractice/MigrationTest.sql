@@ -1,1 +1,1 @@
-SELECT * FROM _EFMigrationsHistory;
+SELECT * FROM [dbo].[_EFMigrationsHistory];

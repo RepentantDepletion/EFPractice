@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchTaskListById, fetchTasks, updateTask, createTask } from '../api/Api';
+import { fetchTaskListById, fetchTasks, updateTask, createTask, deleteTask } from '../api/Api';
 import type { Task } from '../types/Task';
 import TaskView from '../components/TaskView';
 import TaskEditForm from '../components/TaskEditForm';
@@ -8,6 +8,7 @@ import '../styles/App.css';
 import '../styles/Dashboard.css';
 import '../styles/TaskPage.css';
 import '../styles/ListPage.css';
+import deleteIcon from '../assets/delete-icon.jpg';
 
 function ListPage() {
     const { id } = useParams<{ id: string }>();
@@ -75,7 +76,7 @@ function ListPage() {
         const newTask: Task = {
             id: 0,
             title: '',
-            list: id || '',
+            list: id ? Number(id) : null,
             description: '',
             priority: 0,
             done: false,
@@ -150,6 +151,41 @@ function ListPage() {
                                         <button className='edit-card-button' onClick={() => handleEditClick(task)}>
                                             Edit
                                         </button>
+                                        <button className='delete-card-button' onClick={async () => {
+                                            if (window.confirm('Are you sure you want to delete this task?')) {
+                                                try {
+                                                    await deleteTask(task.id);
+                                                    setTasks((current) => current.filter((t) => t.id !== task.id));
+                                                } catch {
+                                                    alert('Failed to delete task');
+                                                }
+                                            }
+                                        }}>
+                                            Delete
+                                        </button>
+                                        <button
+                                            className="remove-from-list-card-button"
+                                            onClick={async () => {
+                                                if (window.confirm('Are you sure you want to remove this task from the list?')) {
+                                                    try {
+                                                        await updateTask(task.id, { ...task, list: null });
+
+                                                        setTasks((current) =>
+                                                            current.map((t) =>
+                                                                t.id === task.id
+                                                                    ? { ...t, list: null }
+                                                                    : t
+                                                            )
+                                                        );
+                                                    } catch {
+                                                        alert('Failed to remove task from list');
+                                                    }
+                                                }
+                                            }}
+                                        >
+                                            Remove from List
+                                        </button>
+
                                     </div>
                                 </>
                             )}
