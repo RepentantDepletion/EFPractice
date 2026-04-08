@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchTaskListById, fetchTasks, updateTask } from '../api/Api';
+import { fetchTaskListById, fetchTasks, updateTask, createTask } from '../api/Api';
 import type { Task } from '../types/Task';
 import TaskView from '../components/TaskView';
 import TaskEditForm from '../components/TaskEditForm';
@@ -18,6 +18,8 @@ function ListPage() {
     const [error, setError] = useState<string | null>(null);
     const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
     const [formData, setFormData] = useState<Task | null>(null);
+    const [isCreatingTask, setIsCreatingTask] = useState(false);
+    const [newTaskData, setNewTaskData] = useState<Task | null>(null);
 
     useEffect(() => {
         async function loadList() {
@@ -69,6 +71,39 @@ function ListPage() {
         }
     };
 
+    const handleAddTaskClick = () => {
+        const newTask: Task = {
+            id: 0,
+            title: '',
+            list: id || '',
+            description: '',
+            priority: 0,
+            done: false,
+            deadline: new Date(),
+        };
+        setIsCreatingTask(true);
+        setNewTaskData(newTask);
+    };
+
+    const handleCancelAddTask = () => {
+        setIsCreatingTask(false);
+        setNewTaskData(null);
+    };
+
+    const handleSaveNewTask = async () => {
+        if (!newTaskData) return;
+
+        try {
+            const { id, ...payload } = newTaskData;
+            const createdTask = await createTask(payload);
+            setTasks((current) => [...current, createdTask]);
+            setIsCreatingTask(false);
+            setNewTaskData(null);
+        } catch {
+            setError('Failed to create task');
+        }
+    };
+
     if (loading) {
         return <div id="list-page"><p>Loading list tasks…</p></div>;
     }
@@ -81,6 +116,18 @@ function ListPage() {
         <div id='list-page'>
             <button className='back-button' onClick={() => navigate('/')}>Back to Dashboard</button>
             <h1>{listTitle || `List ${id}`}</h1>
+            <button className='add-task-button' onClick={handleAddTaskClick}>Add Task</button>
+
+            {isCreatingTask && newTaskData && (
+                <section className='task-detail-card'>
+                    <h2>Create New Task</h2>
+                    <TaskEditForm formData={newTaskData} setFormData={setNewTaskData} />
+                    <div className='list-card-button-row'>
+                        <button onClick={handleSaveNewTask}>Create</button>
+                        <button className='cancel-button' onClick={handleCancelAddTask}>Cancel</button>
+                    </div>
+                </section>
+            )}
 
             {tasks.length === 0 ? (
                 <p>No tasks found in this list.</p>

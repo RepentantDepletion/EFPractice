@@ -31,6 +31,8 @@ type task = {
   deadline: Date;
 };
 
+type CreateTaskRequest = Omit<task, 'id'>;
+
 const normalizeTask = (task: ServerTask): task => ({
   id: task.ID ?? task.Id ?? task.id ?? 0,
   title: task.Title ?? task.title ?? '',
@@ -46,15 +48,29 @@ export async function fetchTasks(): Promise<task[]> {
     const data = await response.json();
     return data.map(normalizeTask);
 }
-export async function createTask(task: task) {
+export async function createTask(task: CreateTaskRequest): Promise<task> {
     const response = await fetch(`${BASE_URL}/UserTasks`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(task),
+        body: JSON.stringify({
+            Title: task.title,
+            Description: task.description,
+            Priority: task.priority,
+            Done: task.done,
+            Deadline: task.deadline,
+            ListId: Number(task.list),
+        }),
     });
-    return response.json();
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(`Create failed ${response.status}: ${text}`);
+    }
+
+    const data = await response.json();
+    return normalizeTask(data);
 }
 
 export async function updateTask(id: number, task: task) {
