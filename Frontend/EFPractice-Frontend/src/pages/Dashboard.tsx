@@ -13,6 +13,8 @@ type list = {
     title: string;
 }
 
+type TaskSortMode = 'default' | 'title' | 'priority' | 'deadline';
+
 function Dashboard() {
     const navigate = useNavigate();
     const [tasks, setTasks] = useState<Task[]>([]);
@@ -30,6 +32,7 @@ function Dashboard() {
     const [isCreatingList, setIsCreatingList] = useState(false);
     const [newListTitle, setNewListTitle] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [sortMode, setSortMode] = useState<TaskSortMode>('default');
 
     const normalizeTask = (task: any): Task => ({
         ...task,
@@ -251,6 +254,15 @@ function Dashboard() {
         }
     };
 
+    const handleSortTasksClick = () => {
+        setSortMode((currentMode) => {
+            if (currentMode === 'default') return 'title';
+            if (currentMode === 'title') return 'priority';
+            if (currentMode === 'priority') return 'deadline';
+            return 'default';
+        });
+    };
+
     const normalizedQuery = searchQuery.trim().toLowerCase();
     const filteredTasks = normalizedQuery.length === 0
         ? tasks
@@ -271,7 +283,23 @@ function Dashboard() {
         ? lists
         : lists.filter((list) => list.title.toLowerCase().includes(normalizedQuery));
 
-    const visibleTasks = filteredTasks.slice(0, 9);
+    const sortedTasks = [...filteredTasks].sort((firstTask, secondTask) => {
+        if (sortMode === 'title') {
+            return firstTask.title.localeCompare(secondTask.title);
+        }
+
+        if (sortMode === 'priority') {
+            return secondTask.priority - firstTask.priority;
+        }
+
+        if (sortMode === 'deadline') {
+            return new Date(firstTask.deadline).getTime() - new Date(secondTask.deadline).getTime();
+        }
+
+        return 0;
+    });
+
+    const visibleTasks = sortedTasks.slice(0, 9);
 
     return (
         <div className="dashboard-layout">
@@ -362,7 +390,12 @@ function Dashboard() {
                         <div className="task-list">
                             <div className="task-list-header-row">
                                 <h3>Tasks</h3>
-                                <button className='add-task-button' onClick={handleAddTaskClick}>Add Task</button>
+                                <div className='task-list-actions'>
+                                    <button className='sort-task-button' onClick={handleSortTasksClick}>
+                                        Sort: {sortMode}
+                                    </button>
+                                    <button className='add-task-button' onClick={handleAddTaskClick}>Add Task</button>
+                                </div>
                             </div>
                             {loading ? (
                                 <p>Loading tasks…</p>

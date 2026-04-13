@@ -78,6 +78,12 @@ p{
     gap: 12px;
 }
 
+.task-list-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
 .task-list-header-row h3 {
     margin: 0;
 }
@@ -95,6 +101,13 @@ p{
 
 .task-list .add-task-button {
     background: rgb(20, 243, 0);
+    color: white;
+    border: none;
+    margin: 0;
+}
+
+.task-list .sort-task-button {
+    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
     color: white;
     border: none;
     margin: 0;
