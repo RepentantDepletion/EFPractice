@@ -1,0 +1,74 @@
+#settings-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: radial-gradient(circle at top, var(--surface-alt) 0%, var(--surface) 52%, var(--bg) 100%);
+}
+
+.settings-card {
+  width: min(680px, 96%);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  text-align: left;
+  border-radius: 20px;
+  padding: 28px;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(17, 24, 39, 0.95));
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.28);
+}
+
+.settings-card h1 {
+  margin: 8px 0;
+}
+
+.settings-card p {
+  margin: 0 0 6px;
+}
+
+.settings-card label {
+  font-size: 1rem;
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+.settings-card select,
+.settings-card input[type='range'] {
+  width: 100%;
+}
+
+.settings-preview {
+  margin-top: 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  background: var(--surface-alt);
+}
+
+.settings-preview h2 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+}
+
+.preview-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.preview-chip {
+  background: var(--accent-bg);
+  border: 1px solid var(--accent-border);
+  color: var(--text-h);
+  border-radius: 999px;
+  padding: 6px 12px;
+}
+
+.reset-button {
+  margin-top: 12px;
+  background: var(--accent-red);
+}
