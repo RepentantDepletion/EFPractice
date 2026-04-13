@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask, createTask, createTaskList } from '../api/Api.ts'
 import type { Task } from '../types/Task.ts'
@@ -13,7 +13,7 @@ type list = {
     title: string;
 }
 
-type TaskSortMode = 'default' | 'title' | 'priority' | 'deadline';
+type TaskSortMode = 'Default' | 'Title' | 'Priority' | 'Deadline';
 
 function Dashboard() {
     const navigate = useNavigate();
@@ -32,7 +32,15 @@ function Dashboard() {
     const [isCreatingList, setIsCreatingList] = useState(false);
     const [newListTitle, setNewListTitle] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
-    const [sortMode, setSortMode] = useState<TaskSortMode>('default');
+    const [sortMode, setSortMode] = useState<TaskSortMode>('Default');
+    const dragPreviewRef = useRef<HTMLElement | null>(null);
+
+    const cleanupDragPreview = () => {
+        if (dragPreviewRef.current) {
+            dragPreviewRef.current.remove();
+            dragPreviewRef.current = null;
+        }
+    };
 
     const normalizeTask = (task: any): Task => ({
         ...task,
@@ -121,9 +129,14 @@ function Dashboard() {
         event.dataTransfer.setData('text/plain', String(taskId));
         event.dataTransfer.effectAllowed = 'move';
 
+        cleanupDragPreview();
+
         const clone = event.currentTarget.cloneNode(true) as HTMLElement;
-        clone.className += ' drag-preview';
+        clone.classList.add('drag-preview');
+        clone.style.width = `${event.currentTarget.offsetWidth}px`;
         document.body.appendChild(clone);
+
+        dragPreviewRef.current = clone;
 
         event.dataTransfer.setDragImage(clone, clone.offsetWidth / 2, clone.offsetHeight / 2);
         setDraggedTaskId(taskId);
@@ -132,6 +145,7 @@ function Dashboard() {
     const handleTaskDragEnd = () => {
         setDraggedTaskId(null);
         setDropTargetListId(null);
+        cleanupDragPreview();
     };
 
     const handleListDragOver = (event: React.DragEvent<HTMLButtonElement>, listId: number) => {
@@ -187,8 +201,15 @@ function Dashboard() {
         } finally {
             setDropTargetListId(null);
             setDraggedTaskId(null);
+            cleanupDragPreview();
         }
     };
+
+    useEffect(() => {
+        return () => {
+            cleanupDragPreview();
+        };
+    }, []);
 
     const handleAddTaskClick = () => {
         const newTask: Task = {
@@ -256,10 +277,10 @@ function Dashboard() {
 
     const handleSortTasksClick = () => {
         setSortMode((currentMode) => {
-            if (currentMode === 'default') return 'title';
-            if (currentMode === 'title') return 'priority';
-            if (currentMode === 'priority') return 'deadline';
-            return 'default';
+            if (currentMode === 'Default') return 'Title';
+            if (currentMode === 'Title') return 'Priority';
+            if (currentMode === 'Priority') return 'Deadline';
+            return 'Default';
         });
     };
 
@@ -284,15 +305,15 @@ function Dashboard() {
         : lists.filter((list) => list.title.toLowerCase().includes(normalizedQuery));
 
     const sortedTasks = [...filteredTasks].sort((firstTask, secondTask) => {
-        if (sortMode === 'title') {
+        if (sortMode === 'Title') {
             return firstTask.title.localeCompare(secondTask.title);
         }
 
-        if (sortMode === 'priority') {
+        if (sortMode === 'Priority') {
             return secondTask.priority - firstTask.priority;
         }
 
-        if (sortMode === 'deadline') {
+        if (sortMode === 'Deadline') {
             return new Date(firstTask.deadline).getTime() - new Date(secondTask.deadline).getTime();
         }
 
@@ -430,7 +451,7 @@ function Dashboard() {
 
                     <div className='list-container'>
                         <div className='list-header-row'>
-                            <h3>Task Lists</h3>
+                            <h3>Lists</h3>
                             <button className='add-list-button' onClick={handleAddListClick}>New List</button>
                         </div>
 

@@ -141,13 +141,14 @@ p{
 }
 
 .drag-preview {
-    background: var(--surface-alt);
-    background: transparent;
-    position: absolute;
+    position: fixed;
+    top: -1000px;
+    left: -1000px;
     pointer-events: none;
-    opacity: 0.8;
-    transform: translate(-100%, -50%);
+    opacity: 1;
+    transform: none;
     z-index: 1000;
+    margin: 0;
 }
 
 .list-container{

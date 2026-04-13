@@ -9,7 +9,7 @@ import '../styles/Dashboard.css';
 import '../styles/TaskPage.css';
 import '../styles/ListPage.css';
 
-type TaskSortMode = 'default' | 'title' | 'priority' | 'deadline';
+type TaskSortMode = 'Default' | 'Title' | 'Priority' | 'Deadline';
 
 function ListPage() {
     const { id } = useParams<{ id: string }>();
@@ -23,7 +23,7 @@ function ListPage() {
     const [isCreatingTask, setIsCreatingTask] = useState(false);
     const [newTaskData, setNewTaskData] = useState<Task | null>(null);
     const [lists, setLists] = useState<Array<{ id: number; title: string }>>([]);
-    const [sortMode, setSortMode] = useState<TaskSortMode>('default');
+    const [sortMode, setSortMode] = useState<TaskSortMode>('Default');
 
     const loadList = async () => {
         if (!id) return;
@@ -141,23 +141,23 @@ function ListPage() {
 
     const handleSortTasksClick = () => {
         setSortMode((currentMode) => {
-            if (currentMode === 'default') return 'title';
-            if (currentMode === 'title') return 'priority';
-            if (currentMode === 'priority') return 'deadline';
-            return 'default';
+            if (currentMode === 'Default') return 'Title';
+            if (currentMode === 'Title') return 'Priority';
+            if (currentMode === 'Priority') return 'Deadline';
+            return 'Default';
         });
     };
 
     const sortedTasks = [...tasks].sort((firstTask, secondTask) => {
-        if (sortMode === 'title') {
+        if (sortMode === 'Title') {
             return firstTask.title.localeCompare(secondTask.title);
         }
 
-        if (sortMode === 'priority') {
+        if (sortMode === 'Priority') {
             return secondTask.priority - firstTask.priority;
         }
 
-        if (sortMode === 'deadline') {
+        if (sortMode === 'Deadline') {
             return new Date(firstTask.deadline).getTime() - new Date(secondTask.deadline).getTime();
         }
 
