@@ -3,9 +3,10 @@ import type { Task } from "../types/Task";
 type Props = {
     task: Task;
     lists: { id: number; title: string }[];
+    onDelete?: () => void;
 };
 
-const TaskView = ({ task, lists }: Props) => {
+const TaskView = ({ task, lists, onDelete }: Props) => {
     const listName = lists.find(list => list.id === parseInt(task.list))?.title || task.list;
 
     return (
@@ -17,6 +18,13 @@ const TaskView = ({ task, lists }: Props) => {
             <h2>Deadline: {new Date(task.deadline).toLocaleDateString()}</h2>
             <h2>Status</h2>
             <p>{task.done ? "Completed" : "Not completed"}</p>
+            {onDelete && (
+                <div className="button-row">
+                    <button className="delete-button" onClick={onDelete}>
+                        Delete
+                    </button>
+                </div>
+            )}
         </>
     );
 };

@@ -95,6 +95,11 @@
   background: #16a34a;
 }
 
+.delete-card-button {
+  background: var(--accent-red);
+  color: white;
+}
+
 .cancel-button {
   background: rgba(255, 255, 255, 0.08);
   color: #e2e8f0;

@@ -249,3 +249,12 @@ p{
     text-align: center;
     padding: 0 30px 20px;
 }
+
+.delete-button {
+    background: var(--accent-red);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+}

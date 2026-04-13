@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchTaskById, updateTask } from "../api/Api";
+import { fetchTaskById, updateTask, deleteTask } from "../api/Api";
 import type { Task } from "../types/Task";
 import TaskView from "../components/TaskView";
 import TaskEditForm from "../components/TaskEditForm";
@@ -56,6 +56,17 @@ const TaskPage = () => {
         }
     };
 
+    const handleDelete = async () => {
+        if (!task) return;
+
+        try {
+            await deleteTask(task.id);
+            navigate('/');
+        } catch {
+            alert("Failed to delete task");
+        }
+    };
+
     if (loading) return <p>Loading…</p>;
     if (error) return <p>{error}</p>;
     if (!task) return <p>No task found</p>;
@@ -76,7 +87,7 @@ const TaskPage = () => {
                         setFormData={setFormData}
                     />
                 ) : (
-                    <TaskView task={task} lists={[]} />
+                    <TaskView task={task} lists={[]} onDelete={handleDelete} />
                 )}
             </div>
 

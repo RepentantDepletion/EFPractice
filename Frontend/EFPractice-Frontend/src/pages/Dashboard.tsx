@@ -144,9 +144,11 @@ function Dashboard() {
                                         Cancel
                                     </button>
                                 )}
-                                <button className="cancel-button" onClick={() => void handleDeleteSelectedTask()}>
-                                    Delete
-                                </button>
+                                {!isEditing && (
+                                    <button className="delete-button" onClick={() => void handleDeleteSelectedTask()}>
+                                        Delete
+                                    </button>
+                                )}
                             </div>
                         </>
                     ) : (

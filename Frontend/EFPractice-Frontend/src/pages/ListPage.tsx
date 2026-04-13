@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchTaskListById, fetchTasks, updateTask, createTask } from '../api/Api';
+import { fetchTaskListById, fetchTasks, updateTask, createTask, deleteTask } from '../api/Api';
 import type { Task } from '../types/Task';
 import TaskView from '../components/TaskView';
 import TaskEditForm from '../components/TaskEditForm';
@@ -102,6 +102,15 @@ function ListPage() {
         }
     };
 
+    const handleDeleteTask = async (taskId: number) => {
+        try {
+            await deleteTask(taskId);
+            await loadList();
+        } catch {
+            setError('Failed to delete task');
+        }
+    };
+
     if (loading) {
         return <div id="list-page"><p>Loading list tasks…</p></div>;
     }
@@ -143,10 +152,16 @@ function ListPage() {
                                 </>
                             ) : (
                                 <>
-                                    <TaskView task={task} lists={[{ id: Number(id), title: listTitle || `List ${id}` }]} />
+                                    <TaskView
+                                        task={task}
+                                        lists={[{ id: Number(id), title: listTitle || `List ${id}` }]}
+                                    />
                                     <div className='list-card-button-row'>
                                         <button className='edit-card-button' onClick={() => handleEditClick(task)}>
                                             Edit
+                                        </button>
+                                        <button className='delete-card-button' onClick={() => void handleDeleteTask(task.id)}>
+                                            Delete
                                         </button>
                                     </div>
                                 </>
