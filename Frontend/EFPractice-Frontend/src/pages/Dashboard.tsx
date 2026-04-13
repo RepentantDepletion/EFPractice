@@ -271,6 +271,8 @@ function Dashboard() {
         ? lists
         : lists.filter((list) => list.title.toLowerCase().includes(normalizedQuery));
 
+    const visibleTasks = filteredTasks.slice(0, 9);
+
     return (
         <div className="dashboard-layout">
             <aside className="dashboard-sidebar">
@@ -368,7 +370,7 @@ function Dashboard() {
                                 <p>No tasks available. Please add some tasks.</p>
                             ) : (
                                 <ul className="task-list">
-                                    {filteredTasks.map((task) => {
+                                    {visibleTasks.map((task) => {
                                         const taskListId = task.list;
                                         const listName = taskListId === null
                                             ? 'No List'
