@@ -213,7 +213,7 @@ p{
 }
 
 .dashboard-sidebar {
-    flex: 3;
+    flex: 2;
     min-width: 320px;
     max-width: 75%;
     background: var(--surface);
