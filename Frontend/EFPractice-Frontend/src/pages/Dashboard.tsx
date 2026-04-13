@@ -315,7 +315,7 @@ function Dashboard() {
 
     return (
         <div className="dashboard-layout">
-            <aside className="dashboard-sidebar @md:flex-row">
+            <aside className="dashboard-sidebar">
                 <div className="dashboard-header">
                     <h1>Task Manager</h1>
                     <input
@@ -396,6 +396,7 @@ function Dashboard() {
                     <ul>
                         <button className='navigation-buttons' onClick={() => navigate('/')}>Home</button>
                         <button className='navigation-buttons' onClick={() => navigate('/settings')}>Settings</button>
+                        <button className='navigation-buttons' onClick={() => navigate('/analytics')}>Analytics</button>
                     </ul>
 
                     <div className="task-container">
