@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 using EFPractice.Application.Common.Interfaces;
 using EFPractice.Domain.Entities;
+using EFPractice.Domain.Enums;
 
 namespace EFPractice.Application.UserTasks.Commands.CreateUserTask;
 
@@ -31,7 +32,8 @@ public class CreateUserTaskCommandHandler : IRequestHandler<CreateUserTaskComman
             Description = request.Description,
             Deadline = request.Deadline,
             ListID = request.ListID,
-            Done = false
+            Done = false,
+            Priority = (PriorityLevel)request.Priority
         };
 
         _context.UserTasks.Add(entity);
