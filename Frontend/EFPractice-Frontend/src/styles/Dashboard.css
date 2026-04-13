@@ -214,6 +214,7 @@ p{
 
 .dashboard-sidebar {
     flex: 2;
+    flex-shrink: 0;
     min-width: 320px;
     max-width: 75%;
     background: var(--surface);
@@ -284,6 +285,7 @@ p{
 
 .dashboard-main {
     flex: 1;
+    flex-shrink: 1;
     min-width: 0;
     display: flex;
     flex-direction: column;

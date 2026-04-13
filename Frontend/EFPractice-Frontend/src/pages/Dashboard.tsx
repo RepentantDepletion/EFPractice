@@ -315,7 +315,7 @@ function Dashboard() {
 
     return (
         <div className="dashboard-layout">
-            <aside className="dashboard-sidebar">
+            <aside className="dashboard-sidebar @md:flex-row">
                 <div className="dashboard-header">
                     <h1>Task Manager</h1>
                     <input
@@ -474,19 +474,23 @@ function Dashboard() {
                                 <p>No lists available. Please add some lists.</p>
                             ) : (
                                 <ul className='list-record'>
-                                    {filteredLists.map((list) => (
-                                        <li key={list.id}>
-                                            <button
-                                                className={`task-card ${dropTargetListId === list.id ? 'drop-target' : ''}`}
-                                                onClick={() => navigate(`/lists/${list.id}`)}
-                                                onDragOver={(event) => handleListDragOver(event, list.id)}
-                                                onDragLeave={handleListDragLeave}
-                                                onDrop={(event) => void handleTaskDropOnList(event, list.id)}
-                                            >
-                                                {list.title}
-                                            </button>
-                                        </li>
-                                    ))}
+                                    {filteredLists.map((list) => {
+                                        const taskCount = tasks.filter((task) => task.list === String(list.id)).length;
+                                        return (
+                                            <li key={list.id}>
+                                                <button
+                                                    className={`task-card ${dropTargetListId === list.id ? 'drop-target' : ''}`}
+                                                    onClick={() => navigate(`/lists/${list.id}`)}
+                                                    onDragOver={(event) => handleListDragOver(event, list.id)}
+                                                    onDragLeave={handleListDragLeave}
+                                                    onDrop={(event) => void handleTaskDropOnList(event, list.id)}
+                                                >
+                                                    <div>{list.title}</div>
+                                                    <div style={{ fontSize: '0.85em', opacity: 0.7 }}>{taskCount} {taskCount === 1 ? 'task' : 'tasks'}</div>
+                                                </button>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
                             )}
                         </div>
