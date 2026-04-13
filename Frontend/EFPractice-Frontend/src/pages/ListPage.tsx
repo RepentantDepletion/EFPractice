@@ -164,6 +164,10 @@ function ListPage() {
         return 0;
     });
 
+    const totalTasks = tasks.length;
+    const completedTasks = tasks.filter((task) => task.done).length;
+    const completionPercentage = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
+
     if (loading) {
         return <div id="list-page"><p>Loading list tasks…</p></div>;
     }
@@ -180,6 +184,16 @@ function ListPage() {
                 <button className='sort-task-button' onClick={handleSortTasksClick}>Sort: {sortMode}</button>
                 <button className='add-task-button' onClick={handleAddTaskClick}>Add Task</button>
             </div>
+
+            <section className='list-progress-section'>
+                <div className='list-progress-header'>
+                    <span>Progress</span>
+                    <span>{completionPercentage}% ({completedTasks}/{totalTasks})</span>
+                </div>
+                <div className='list-progress-track' role='progressbar' aria-valuenow={completionPercentage} aria-valuemin={0} aria-valuemax={100}>
+                    <div className='list-progress-fill' style={{ width: `${completionPercentage}%` }} />
+                </div>
+            </section>
 
             {isCreatingTask && newTaskData && (
                 <section className='task-detail-card'>
