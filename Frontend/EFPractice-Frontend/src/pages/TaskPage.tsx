@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchTaskById, updateTask, deleteTask } from "../api/Api";
+import { fetchTaskById, updateTask, deleteTask, fetchTaskLists } from "../api/Api";
 import type { Task } from "../types/Task";
 import TaskView from "../components/TaskView";
 import TaskEditForm from "../components/TaskEditForm";
@@ -16,6 +16,7 @@ const TaskPage = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [lists, setLists] = useState<Array<{ id: number; title: string }>>([]);
 
     useEffect(() => {
         async function loadTask() {
@@ -33,6 +34,19 @@ const TaskPage = () => {
 
         loadTask();
     }, [id]);
+
+    useEffect(() => {
+        async function loadLists() {
+            try {
+                const data = await fetchTaskLists();
+                setLists(data.lists ?? []);
+            } catch {
+                setError("Failed to load lists");
+            }
+        }
+
+        loadLists();
+    }, []);
 
     const handleEdit = async () => {
         if (!task) return;
@@ -85,9 +99,10 @@ const TaskPage = () => {
                     <TaskEditForm
                         formData={formData}
                         setFormData={setFormData}
+                        listOptions={lists}
                     />
                 ) : (
-                    <TaskView task={task} lists={[]} onDelete={handleDelete} />
+                    <TaskView task={task} lists={lists} onDelete={handleDelete} />
                 )}
             </div>
 

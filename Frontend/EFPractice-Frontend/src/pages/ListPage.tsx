@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchTaskListById, fetchTasks, updateTask, createTask, deleteTask } from '../api/Api';
+import { fetchTaskListById, fetchTasks, updateTask, createTask, deleteTask, fetchTaskLists } from '../api/Api';
 import type { Task } from '../types/Task';
 import TaskView from '../components/TaskView';
 import TaskEditForm from '../components/TaskEditForm';
@@ -20,6 +20,7 @@ function ListPage() {
     const [formData, setFormData] = useState<Task | null>(null);
     const [isCreatingTask, setIsCreatingTask] = useState(false);
     const [newTaskData, setNewTaskData] = useState<Task | null>(null);
+    const [lists, setLists] = useState<Array<{ id: number; title: string }>>([]);
 
     const loadList = async () => {
         if (!id) return;
@@ -44,6 +45,19 @@ function ListPage() {
     useEffect(() => {
         loadList();
     }, [id]);
+
+    useEffect(() => {
+        async function loadLists() {
+            try {
+                const data = await fetchTaskLists();
+                setLists(data.lists ?? []);
+            } catch {
+                setError('Failed to load lists');
+            }
+        }
+
+        loadLists();
+    }, []);
 
     const handleEditClick = (task: Task) => {
         setEditingTaskId(task.id);
@@ -139,7 +153,7 @@ function ListPage() {
             {isCreatingTask && newTaskData && (
                 <section className='task-detail-card'>
                     <h2>Create New Task</h2>
-                    <TaskEditForm formData={newTaskData} setFormData={setNewTaskData} />
+                    <TaskEditForm formData={newTaskData} setFormData={setNewTaskData} listOptions={lists} />
                     <div className='list-card-button-row'>
                         <button onClick={handleSaveNewTask}>Create</button>
                         <button className='cancel-button' onClick={handleCancelAddTask}>Cancel</button>
@@ -155,7 +169,7 @@ function ListPage() {
                         <section key={task.id} className='task-detail-card'>
                             {editingTaskId === task.id && formData ? (
                                 <>
-                                    <TaskEditForm formData={formData} setFormData={setFormData} />
+                                    <TaskEditForm formData={formData} setFormData={setFormData} listOptions={lists} />
                                     <div className='list-card-button-row'>
                                         <button onClick={handleSaveEdit}>Save</button>
                                         <button className='cancel-button' onClick={handleCancelEdit}>Cancel</button>

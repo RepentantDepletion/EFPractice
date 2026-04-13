@@ -71,6 +71,17 @@ p{
     gap: 24px;
 }
 
+.task-list-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.task-list-header-row h3 {
+    margin: 0;
+}
+
 .task-list ul {
 
     list-style: none;
@@ -80,6 +91,13 @@ p{
     background: linear-gradient(135deg, var(--accent), var(--accent-strong));
     color: white;
     border: none;
+}
+
+.task-list .add-task-button {
+    background: rgb(20, 243, 0);
+    color: white;
+    border: none;
+    margin: 0;
 }
 
 .task-card {
@@ -115,7 +133,7 @@ p{
     position: absolute;
     pointer-events: none;
     opacity: 0.8;
-    transform: translate(-50%, -50%);
+    transform: translate(-100%, -50%);
     z-index: 1000;
 }
 

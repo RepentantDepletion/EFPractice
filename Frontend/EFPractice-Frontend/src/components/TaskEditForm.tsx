@@ -4,9 +4,10 @@ import { format } from "date-fns";
 type Props = {
   formData: Task;
   setFormData: React.Dispatch<React.SetStateAction<Task | null>>;
+  listOptions: Array<{ id: number; title: string }>;
 };
 
-const TaskEditForm = ({ formData, setFormData }: Props) => {
+const TaskEditForm = ({ formData, setFormData, listOptions }: Props) => {
   return (
     <>
       <input
@@ -20,6 +21,25 @@ const TaskEditForm = ({ formData, setFormData }: Props) => {
           }))
         }
       />
+
+      <select
+        className="editable-input"
+        value={formData.list ?? ""}
+        onChange={(e) =>
+          setFormData((prev) => ({
+            ...(prev as Task),
+            list: e.target.value === '' ? null : e.target.value,
+          }))
+        }
+      >
+        <option value="">No List</option>
+        {listOptions.map((list) => (
+          <option key={list.id} value={String(list.id)}>
+            {list.title}
+          </option>
+        ))}
+      </select>
+
 
       <textarea
         id="description-input"

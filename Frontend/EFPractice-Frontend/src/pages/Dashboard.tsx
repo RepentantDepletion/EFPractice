@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask } from '../api/Api.ts'
+import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask, createTask } from '../api/Api.ts'
 import type { Task } from '../types/Task.ts'
 import TaskView from '../components/TaskView.tsx'
 import TaskEditForm from '../components/TaskEditForm.tsx'
@@ -25,6 +25,8 @@ function Dashboard() {
     const [error, setError] = useState<string | null>(null);
     const [draggedTaskId, setDraggedTaskId] = useState<number | null>(null);
     const [dropTargetListId, setDropTargetListId] = useState<number | null>(null);
+    const [isCreatingTask, setIsCreatingTask] = useState(false);
+    const [newTaskData, setNewTaskData] = useState<Task | null>(null);
 
     const normalizeTask = (task: any): Task => ({
         ...task,
@@ -182,6 +184,43 @@ function Dashboard() {
         }
     };
 
+    const handleAddTaskClick = () => {
+        const newTask: Task = {
+            id: 0,
+            title: '',
+            list: null,
+            description: '',
+            priority: 0,
+            done: false,
+            deadline: new Date(),
+        };
+        setSelectedTask(null);
+        setFormData(null);
+        setIsEditing(false);
+        setIsCreatingTask(true);
+        setNewTaskData(newTask);
+    };
+
+    const handleCancelAddTask = () => {
+        setIsCreatingTask(false);
+        setNewTaskData(null);
+    };
+
+    const handleSaveNewTask = async () => {
+        if (!newTaskData) return;
+
+        try {
+            const { id, ...payload } = newTaskData;
+            await createTask(payload);
+            const refreshedTasks = await fetchTasks();
+            setTasks(refreshedTasks.map(normalizeTask));
+            setIsCreatingTask(false);
+            setNewTaskData(null);
+        } catch {
+            setError('Failed to create task');
+        }
+    };
+
     return (
         <div className="dashboard-layout">
             <aside className="dashboard-sidebar">
@@ -192,6 +231,24 @@ function Dashboard() {
                 <main className="task-details-panel">
                     {selectedLoading ? (
                         <p>Loading task details…</p>
+                    ) : isCreatingTask && newTaskData ? (
+                        <>
+                            <div className="task-details-header">
+                                <button className="close-button" onClick={handleCancelAddTask}>
+                                    Close
+                                </button>
+                            </div>
+
+                            <h2>Create New Task</h2>
+                            <TaskEditForm formData={newTaskData} setFormData={setNewTaskData} listOptions={lists} />
+
+                            <div className="button-row">
+                                <button onClick={handleSaveNewTask}>Create</button>
+                                <button className="cancel-button" onClick={handleCancelAddTask}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </>
                     ) : selectedTask ? (
                         <>
                             <div className="task-details-header">
@@ -205,7 +262,7 @@ function Dashboard() {
                             </div>
 
                             {isEditing && formData ? (
-                                <TaskEditForm formData={formData} setFormData={setFormData} />
+                                <TaskEditForm formData={formData} setFormData={setFormData} listOptions={lists} />
                             ) : (
                                 <TaskView task={selectedTask} lists={lists} />
                             )}
@@ -244,7 +301,10 @@ function Dashboard() {
 
                     <div className="task-container">
                         <div className="task-list">
-                            <h3>Tasks</h3>
+                            <div className="task-list-header-row">
+                                <h3>Tasks</h3>
+                                <button className='add-task-button' onClick={handleAddTaskClick}>Add Task</button>
+                            </div>
                             {loading ? (
                                 <p>Loading tasks…</p>
                             ) : tasks.length === 0 ? (
