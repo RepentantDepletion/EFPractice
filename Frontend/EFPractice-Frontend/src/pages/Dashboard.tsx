@@ -29,6 +29,7 @@ function Dashboard() {
     const [newTaskData, setNewTaskData] = useState<Task | null>(null);
     const [isCreatingList, setIsCreatingList] = useState(false);
     const [newListTitle, setNewListTitle] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
 
     const normalizeTask = (task: any): Task => ({
         ...task,
@@ -250,11 +251,38 @@ function Dashboard() {
         }
     };
 
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+    const filteredTasks = normalizedQuery.length === 0
+        ? tasks
+        : tasks.filter((task) => {
+            const taskListId = task.list;
+            const listName = taskListId === null
+                ? 'no list'
+                : lists.find((list) => list.id === parseInt(taskListId, 10))?.title?.toLowerCase() ?? 'unknown list';
+
+            return (
+                task.title.toLowerCase().includes(normalizedQuery) ||
+                task.description.toLowerCase().includes(normalizedQuery) ||
+                listName.includes(normalizedQuery)
+            );
+        });
+
+    const filteredLists = normalizedQuery.length === 0
+        ? lists
+        : lists.filter((list) => list.title.toLowerCase().includes(normalizedQuery));
+
     return (
         <div className="dashboard-layout">
             <aside className="dashboard-sidebar">
                 <div className="dashboard-header">
                     <h1>Task Manager</h1>
+                    <input
+                        className="sidebar-search"
+                        type="text"
+                        placeholder="Search tasks and lists"
+                        value={searchQuery}
+                        onChange={(event) => setSearchQuery(event.target.value)}
+                    />
                 </div>
 
                 <main className="task-details-panel">
@@ -336,11 +364,11 @@ function Dashboard() {
                             </div>
                             {loading ? (
                                 <p>Loading tasks…</p>
-                            ) : tasks.length === 0 ? (
+                            ) : filteredTasks.length === 0 ? (
                                 <p>No tasks available. Please add some tasks.</p>
                             ) : (
                                 <ul className="task-list">
-                                    {tasks.map((task) => {
+                                    {filteredTasks.map((task) => {
                                         const taskListId = task.list;
                                         const listName = taskListId === null
                                             ? 'No List'
@@ -386,11 +414,11 @@ function Dashboard() {
                         )}
 
                         <div className='list-record'>
-                            {lists.length === 0 ? (
+                            {filteredLists.length === 0 ? (
                                 <p>No lists available. Please add some lists.</p>
                             ) : (
                                 <ul className='list-record'>
-                                    {lists.map((list) => (
+                                    {filteredLists.map((list) => (
                                         <li key={list.id}>
                                             <button
                                                 className={`task-card ${dropTargetListId === list.id ? 'drop-target' : ''}`}
