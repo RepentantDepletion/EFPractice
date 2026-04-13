@@ -21,27 +21,27 @@ function ListPage() {
     const [isCreatingTask, setIsCreatingTask] = useState(false);
     const [newTaskData, setNewTaskData] = useState<Task | null>(null);
 
-    useEffect(() => {
-        async function loadList() {
-            if (!id) return;
-            setLoading(true);
-            setError(null);
+    const loadList = async () => {
+        if (!id) return;
+        setLoading(true);
+        setError(null);
 
-            try {
-                const [allTasks, listData] = await Promise.all([
-                    fetchTasks(),
-                    fetchTaskListById(Number(id)),
-                ]);
+        try {
+            const [allTasks, listData] = await Promise.all([
+                fetchTasks(),
+                fetchTaskListById(Number(id)),
+            ]);
 
-                setTasks(allTasks.filter((task: Task) => Number(task.list) === Number(id)));
-                setListTitle(listData?.name ?? listData?.title ?? `List ${id}`);
-            } catch {
-                setError('Failed to load list details or tasks');
-            } finally {
-                setLoading(false);
-            }
+            setTasks(allTasks.filter((task: Task) => Number(task.list) === Number(id)));
+            setListTitle(listData?.name ?? listData?.title ?? `List ${id}`);
+        } catch {
+            setError('Failed to load list details or tasks');
+        } finally {
+            setLoading(false);
         }
+    };
 
+    useEffect(() => {
         loadList();
     }, [id]);
 
@@ -61,11 +61,9 @@ function ListPage() {
 
         try {
             await updateTask(formData.id, formData);
-            setTasks((current) =>
-                current.map((task) => (task.id === formData.id ? { ...formData } : task))
-            );
             setEditingTaskId(null);
             setFormData(null);
+            await loadList();
         } catch {
             setError('Failed to save task');
         }
@@ -95,10 +93,10 @@ function ListPage() {
 
         try {
             const { id, ...payload } = newTaskData;
-            const createdTask = await createTask(payload);
-            setTasks((current) => [...current, createdTask]);
+            await createTask(payload);
             setIsCreatingTask(false);
             setNewTaskData(null);
+            await loadList();
         } catch {
             setError('Failed to create task');
         }
