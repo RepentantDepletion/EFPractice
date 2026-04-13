@@ -1,5 +1,5 @@
 ﻿using EFPractice.Application.Common.Interfaces;
-using EFPractice.Domain.Enums;
+using EFPractice.Domain.Entities;
 
 namespace EFPractice.Application.UserTasks.Commands.UpdateUserTaskDetail;
 
@@ -8,7 +8,7 @@ public record UpdateUserTaskDetailCommand(int ID) : IRequest
     public string Title { get; init; } = string.Empty;
     public int ListID { get; init; }
 
-    public PriorityLevel Priority { get; init; }
+    public int Priority { get; init; }
 
     public string? Description { get; init; }
     public DateTime Deadline { get; init; }

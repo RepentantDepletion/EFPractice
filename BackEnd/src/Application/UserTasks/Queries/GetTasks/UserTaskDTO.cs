@@ -20,8 +20,7 @@ public class UserTaskDto
     {
         public Mapping()
         {
-            CreateMap<UserTask, UserTaskDto>().ForMember(d => d.Priority, 
-                opt => opt.MapFrom(s => (int)s.Priority));
+            CreateMap<UserTask, UserTaskDto>();
         }
     }
 }

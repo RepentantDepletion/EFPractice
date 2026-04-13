@@ -1,6 +1,5 @@
 using EFPractice.Application.Common.Interfaces;
 using EFPractice.Domain.Entities;
-using EFPractice.Domain.Enums;
 using EFPractice.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
@@ -67,7 +66,7 @@ public class UpdateTaskListCommandHandler : IRequestHandler<UpdateTaskListComman
                     {
                         Title = item.Title,
                         Description = item.Description,
-                        Priority = item.Priority.HasValue ? (PriorityLevel)item.Priority.Value : PriorityLevel.Low,
+                        Priority = item.Priority.HasValue ? item.Priority.Value : 0,
                         Done = item.Done ?? false,
                         Deadline = item.Deadline,
                         ListID = item.ListID ?? entity.Id
@@ -92,7 +91,7 @@ public class UpdateTaskListCommandHandler : IRequestHandler<UpdateTaskListComman
 
                 if (item.Priority.HasValue)
                 {
-                    task.Priority = (PriorityLevel)item.Priority.Value;
+                    task.Priority = item.Priority.Value;
                 }
 
                 if (item.Done.HasValue)

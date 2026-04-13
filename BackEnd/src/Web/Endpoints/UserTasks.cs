@@ -8,7 +8,6 @@ using EFPractice.Domain.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
 using EFPractice.Application.TaskLists.Queries.GetTasks;
 using EFPractice.Application.UserTasks.Queries.PatchTasks;
-using EFPractice.Domain.Enums;
 
 namespace EFPractice.Web.Endpoints;
 
@@ -48,7 +47,7 @@ public class UserTasks : IEndpointGroup
             ID = id,
             Title = body.Title,
             ListID = body.ListId,
-            Priority = (PriorityLevel)body.Priority,
+            Priority = body.Priority,
             Description = body.Description,
             Deadline = body.Deadline,
             Done = body.Done

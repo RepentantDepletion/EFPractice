@@ -10,7 +10,7 @@ public class UserTask : BaseEntity
 
     public string? Description { get; set; }
 
-    public PriorityLevel Priority { get; set; }
+    public int Priority { get; set; }
 
     private bool _done;
     public bool Done
