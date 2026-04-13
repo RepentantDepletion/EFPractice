@@ -17,6 +17,7 @@ type AppearancePreset = {
   accentBg: string;
   accentBorder: string;
   border: string;
+  deadlineOverdue: string;
 };
 
 const STORAGE_KEY = 'efpractice-appearance-settings';
@@ -34,6 +35,7 @@ export const presets: Record<AppearancePresetKey, AppearancePreset> = {
     accentBg: 'rgba(56, 189, 248, 0.15)',
     accentBorder: 'rgba(56, 189, 248, 0.35)',
     border: 'rgba(96, 165, 250, 0.18)',
+    deadlineOverdue: '#fb7185',
   },
   mint: {
     text: '#d1fae5',
@@ -47,6 +49,7 @@ export const presets: Record<AppearancePresetKey, AppearancePreset> = {
     accentBg: 'rgba(52, 211, 153, 0.16)',
     accentBorder: 'rgba(52, 211, 153, 0.38)',
     border: 'rgba(52, 211, 153, 0.22)',
+    deadlineOverdue: '#f97316',
   },
   sunset: {
     text: '#fde7dd',
@@ -60,6 +63,7 @@ export const presets: Record<AppearancePresetKey, AppearancePreset> = {
     accentBg: 'rgba(251, 146, 60, 0.16)',
     accentBorder: 'rgba(251, 146, 60, 0.4)',
     border: 'rgba(251, 146, 60, 0.24)',
+    deadlineOverdue: '#fde047',
   },
 };
 
@@ -105,5 +109,6 @@ export function applyAppearanceSettings(settings: AppearanceSettings): void {
   root.style.setProperty('--accent-bg', selected.accentBg);
   root.style.setProperty('--accent-border', selected.accentBorder);
   root.style.setProperty('--border', selected.border);
+  root.style.setProperty('--deadline-overdue', selected.deadlineOverdue);
   root.style.setProperty('--font-scale', String(settings.fontScale));
 }

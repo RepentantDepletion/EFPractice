@@ -10,6 +10,13 @@ const TaskView = ({ task, lists, onDelete }: Props) => {
     const listName = task.list === null
         ? 'No List'
         : lists.find(list => list.id === parseInt(task.list, 10))?.title || task.list;
+    const deadlineDate = new Date(task.deadline);
+    const isOverdue = !task.done && !Number.isNaN(deadlineDate.getTime()) && deadlineDate.getTime() < Date.now();
+    const deadlineStyle = task.done
+        ? { color: 'var(--accent-green, #22c55e)' }
+        : isOverdue
+            ? { color: 'var(--deadline-overdue, var(--accent-red))' }
+            : undefined;
 
     return (
         <>
@@ -17,7 +24,9 @@ const TaskView = ({ task, lists, onDelete }: Props) => {
             <h2>{listName}</h2>
             <p>{task.description}</p>
             <h2>Priority: {task.priority}</h2>
-            <h2>Deadline: {new Date(task.deadline).toLocaleDateString()}</h2>
+            <h2 style={deadlineStyle}>
+                Deadline: {deadlineDate.toLocaleDateString()}
+            </h2>
             <h2>Status</h2>
             <p>{task.done ? "Completed" : "Not completed"}</p>
             {onDelete && (
