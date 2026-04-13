@@ -15,6 +15,6 @@ public class TaskListConfiguration : IEntityTypeConfiguration<TaskList>
         builder.HasMany(tl => tl.Items)
             .WithOne(t => t.TaskList)
             .HasForeignKey(t => t.ListID)
-            .IsRequired();
+            .IsRequired(false);
     }
 }

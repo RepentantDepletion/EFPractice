@@ -7,7 +7,9 @@ type Props = {
 };
 
 const TaskView = ({ task, lists, onDelete }: Props) => {
-    const listName = lists.find(list => list.id === parseInt(task.list))?.title || task.list;
+    const listName = task.list === null
+        ? 'No List'
+        : lists.find(list => list.id === parseInt(task.list, 10))?.title || task.list;
 
     return (
         <>

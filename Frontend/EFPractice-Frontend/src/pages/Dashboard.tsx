@@ -177,7 +177,10 @@ function Dashboard() {
                             ) : (
                                 <ul className="task-list">
                                     {tasks.map((task) => {
-                                        const listName = lists.find(list => list.id === parseInt(task.list))?.title || 'Unknown List';
+                                        const taskListId = task.list;
+                                        const listName = taskListId === null
+                                            ? 'No List'
+                                            : lists.find(list => list.id === parseInt(taskListId, 10))?.title || 'Unknown List';
                                         return (
                                             <li key={task.id}>
                                                 <button

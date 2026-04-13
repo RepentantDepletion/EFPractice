@@ -32,7 +32,7 @@ function ListPage() {
                 fetchTaskListById(Number(id)),
             ]);
 
-            setTasks(allTasks.filter((task: Task) => Number(task.list) === Number(id)));
+            setTasks(allTasks.filter((task: Task) => task.list !== null && Number(task.list) === Number(id)));
             setListTitle(listData?.name ?? listData?.title ?? `List ${id}`);
         } catch {
             setError('Failed to load list details or tasks');
@@ -111,6 +111,17 @@ function ListPage() {
         }
     };
 
+    const handleDeleteFromList = async (taskId: number) => {
+        try {
+            const taskToUpdate = tasks.find((task) => task.id === taskId);
+            if (!taskToUpdate) throw new Error('Task not found');
+            await updateTask(taskId, { ...taskToUpdate, list: '' });
+            await loadList();
+        } catch {
+            setError('Failed to remove task from list');
+        }
+    };
+
     if (loading) {
         return <div id="list-page"><p>Loading list tasks…</p></div>;
     }
@@ -162,6 +173,9 @@ function ListPage() {
                                         </button>
                                         <button className='delete-card-button' onClick={() => void handleDeleteTask(task.id)}>
                                             Delete
+                                        </button>
+                                        <button className='delete-from-list-button' onClick={() => void handleDeleteFromList(task.id)}>
+                                            Delete from List
                                         </button>
                                     </div>
                                 </>

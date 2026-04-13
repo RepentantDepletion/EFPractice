@@ -1,7 +1,7 @@
 export type Task = {
   id: number;
   title: string;
-  list: string;
+  list: string | null;
   description: string;
   done: boolean;
   priority: number;

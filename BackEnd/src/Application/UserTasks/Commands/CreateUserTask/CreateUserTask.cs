@@ -9,7 +9,7 @@ public record CreateUserTaskCommand : IRequest<int>
     public string? Title { get; init; }
     public string? Description { get; init; }
     public DateTime? Deadline { get; init; }
-    public int ListID { get; init; }
+    public int? ListID { get; init; }
     public bool Done { get; init; }
     public int Priority { get; init; }
 }

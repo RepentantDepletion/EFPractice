@@ -12,10 +12,15 @@ const parseDate = (value: unknown): Date => {
   return new Date('');
 };
 
+const parseList = (value: unknown): string | null => {
+  if (value === null || value === undefined) return null;
+  return String(value);
+};
+
 const normalizeTask = (rawTask: RawTaskResponse): Task => ({
   id: Number(rawTask['id']),
   title: String(rawTask['title']),
-  list: String(rawTask['ListId'] ?? rawTask['listID'] ?? rawTask['listId']),
+  list: parseList(rawTask['ListId'] ?? rawTask['listID'] ?? rawTask['listId']),
   description: String(rawTask['description']),
   priority: Number(rawTask['priority'] ?? 0),
   done: Boolean(rawTask['done']),
@@ -39,7 +44,7 @@ export async function createTask(taskData: CreateTaskRequest): Promise<Task> {
       Priority: taskData.priority,
       Done: taskData.done,
       Deadline: taskData.deadline,
-      ListId: Number(taskData.list),
+      ListId: taskData.list === null || taskData.list === '' ? null : Number(taskData.list),
     }),
   });
 
@@ -64,7 +69,7 @@ export async function updateTask(id: number, task: Task) {
       Priority: task.priority,
       Done: task.done,
       Deadline: task.deadline,
-      ListId: Number(task.list),
+      ListId: task.list === null || task.list === '' ? null : Number(task.list),
     }),
   });
 

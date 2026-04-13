@@ -6,7 +6,7 @@ namespace EFPractice.Application.UserTasks.Commands.UpdateUserTaskDetail;
 public record UpdateUserTaskDetailCommand(int ID) : IRequest
 {
     public string Title { get; init; } = string.Empty;
-    public int ListID { get; init; }
+    public int? ListID { get; init; }
 
     public int Priority { get; init; }
 

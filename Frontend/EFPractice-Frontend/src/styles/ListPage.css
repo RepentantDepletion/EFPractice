@@ -100,6 +100,20 @@
   color: white;
 }
 
+.delete-card-button:hover {
+  background: #f43f5e;
+}
+
+.delete-from-list-button {
+  background: rgb(238, 3, 3);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+}
+
+.delete-from-list-button:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
 .cancel-button {
   background: rgba(255, 255, 255, 0.08);
   color: #e2e8f0;
