@@ -112,6 +112,12 @@ function Dashboard() {
     const handleTaskDragStart = (event: React.DragEvent<HTMLButtonElement>, taskId: number) => {
         event.dataTransfer.setData('text/plain', String(taskId));
         event.dataTransfer.effectAllowed = 'move';
+
+        const clone = event.currentTarget.cloneNode(true) as HTMLElement;
+        clone.className += ' drag-preview';
+        document.body.appendChild(clone);
+
+        event.dataTransfer.setDragImage(clone, clone.offsetWidth / 2, clone.offsetHeight / 2);
         setDraggedTaskId(taskId);
     };
 

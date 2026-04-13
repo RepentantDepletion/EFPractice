@@ -123,3 +123,10 @@
 .cancel-button:hover {
   background: rgba(255, 255, 255, 0.14);
 }
+
+#list-page .add-task-button {
+  margin: 20px 10px;
+  background: rgba(4, 255, 58, 0.986);
+  color: var(--text-h);
+  border: 1px solid var(--accent-border);
+}
