@@ -108,8 +108,14 @@ export async function createTaskList(name: string) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name }),
+    body: JSON.stringify({ Title: name }),
     });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Create list failed ${response.status}: ${text}`);
+  }
+
     return response.json();
 }
 

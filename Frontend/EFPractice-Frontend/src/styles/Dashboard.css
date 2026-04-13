@@ -143,6 +143,36 @@ p{
     display: inline-block;
 }
 
+.list-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.list-header-row h3 {
+    margin: 0;
+}
+
+.list-container .add-list-button {
+    background: rgb(20, 243, 0);
+    color: white;
+    border: none;
+}
+
+.list-create-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.list-create-row .editable-input {
+    min-width: 220px;
+}
+
 .list-record{
     display: grid;
     grid-template-columns: repeat(2, 1fr);

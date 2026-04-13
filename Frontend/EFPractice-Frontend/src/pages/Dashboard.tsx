@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask, createTask } from '../api/Api.ts'
+import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask, createTask, createTaskList } from '../api/Api.ts'
 import type { Task } from '../types/Task.ts'
 import TaskView from '../components/TaskView.tsx'
 import TaskEditForm from '../components/TaskEditForm.tsx'
@@ -27,6 +27,8 @@ function Dashboard() {
     const [dropTargetListId, setDropTargetListId] = useState<number | null>(null);
     const [isCreatingTask, setIsCreatingTask] = useState(false);
     const [newTaskData, setNewTaskData] = useState<Task | null>(null);
+    const [isCreatingList, setIsCreatingList] = useState(false);
+    const [newListTitle, setNewListTitle] = useState('');
 
     const normalizeTask = (task: any): Task => ({
         ...task,
@@ -221,6 +223,33 @@ function Dashboard() {
         }
     };
 
+    const handleAddListClick = () => {
+        setIsCreatingList(true);
+        setNewListTitle('');
+    };
+
+    const handleCancelAddList = () => {
+        setIsCreatingList(false);
+        setNewListTitle('');
+    };
+
+    const handleSaveNewList = async () => {
+        if (!newListTitle.trim()) {
+            setError('List name cannot be empty');
+            return;
+        }
+
+        try {
+            await createTaskList(newListTitle.trim());
+            const refreshedLists = await fetchTaskLists();
+            setLists(refreshedLists.lists ?? []);
+            setIsCreatingList(false);
+            setNewListTitle('');
+        } catch {
+            setError('Failed to create list');
+        }
+    };
+
     return (
         <div className="dashboard-layout">
             <aside className="dashboard-sidebar">
@@ -337,8 +366,26 @@ function Dashboard() {
                     </div>
 
                     <div className='list-container'>
-                        <div className='list-record'>
+                        <div className='list-header-row'>
                             <h3>Task Lists</h3>
+                            <button className='add-list-button' onClick={handleAddListClick}>New List</button>
+                        </div>
+
+                        {isCreatingList && (
+                            <div className='list-create-row'>
+                                <input
+                                    className='editable-input'
+                                    type='text'
+                                    placeholder='List name'
+                                    value={newListTitle}
+                                    onChange={(event) => setNewListTitle(event.target.value)}
+                                />
+                                <button onClick={handleSaveNewList}>Create</button>
+                                <button className='cancel-button' onClick={handleCancelAddList}>Cancel</button>
+                            </div>
+                        )}
+
+                        <div className='list-record'>
                             {lists.length === 0 ? (
                                 <p>No lists available. Please add some lists.</p>
                             ) : (
