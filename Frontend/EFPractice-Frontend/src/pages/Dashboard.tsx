@@ -157,16 +157,20 @@ function Dashboard() {
                                 <p>No tasks available. Please add some tasks.</p>
                             ) : (
                                 <ul className="task-list">
-                                    {tasks.map((task) => (
-                                        <li key={task.id}>
-                                            <button
-                                                className='task-card'
-                                                onClick={() => handleSelectTask(task.id)}
-                                            >
-                                                {task.title}
-                                            </button>
-                                        </li>
-                                    ))}
+                                    {tasks.map((task) => {
+                                        const listName = lists.find(list => list.id === parseInt(task.list))?.title || 'Unknown List';
+                                        return (
+                                            <li key={task.id}>
+                                                <button
+                                                    className='task-card'
+                                                    onClick={() => handleSelectTask(task.id)}
+                                                >
+                                                    <div>{task.title}</div>
+                                                    <div style={{ fontSize: '0.85em', opacity: 0.7 }}>{listName}</div>
+                                                </button>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
                             )}
                         </div>

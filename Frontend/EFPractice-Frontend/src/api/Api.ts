@@ -15,7 +15,7 @@ const parseDate = (value: unknown): Date => {
 const normalizeTask = (rawTask: RawTaskResponse): Task => ({
   id: Number(rawTask['id']),
   title: String(rawTask['title']),
-  list: String(rawTask['ListId'] ?? rawTask['listID']),
+  list: String(rawTask['ListId'] ?? rawTask['listID'] ?? rawTask['listId']),
   description: String(rawTask['description']),
   priority: Number(rawTask['priority'] ?? 0),
   done: Boolean(rawTask['done']),
