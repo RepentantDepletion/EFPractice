@@ -23,6 +23,8 @@ function Dashboard() {
     const [loading, setLoading] = useState(true);
     const [selectedLoading, setSelectedLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [draggedTaskId, setDraggedTaskId] = useState<number | null>(null);
+    const [dropTargetListId, setDropTargetListId] = useState<number | null>(null);
 
     const normalizeTask = (task: any): Task => ({
         ...task,
@@ -107,6 +109,73 @@ function Dashboard() {
         }
     };
 
+    const handleTaskDragStart = (event: React.DragEvent<HTMLButtonElement>, taskId: number) => {
+        event.dataTransfer.setData('text/plain', String(taskId));
+        event.dataTransfer.effectAllowed = 'move';
+        setDraggedTaskId(taskId);
+    };
+
+    const handleTaskDragEnd = () => {
+        setDraggedTaskId(null);
+        setDropTargetListId(null);
+    };
+
+    const handleListDragOver = (event: React.DragEvent<HTMLButtonElement>, listId: number) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'move';
+
+        if (draggedTaskId !== null) {
+            setDropTargetListId(listId);
+        }
+    };
+
+    const handleListDragLeave = () => {
+        setDropTargetListId(null);
+    };
+
+    const handleTaskDropOnList = async (event: React.DragEvent<HTMLButtonElement>, listId: number) => {
+        event.preventDefault();
+
+        const droppedTaskId = Number(event.dataTransfer.getData('text/plain') || draggedTaskId);
+        if (!Number.isFinite(droppedTaskId)) {
+            setDropTargetListId(null);
+            return;
+        }
+
+        const taskToMove = tasks.find((task) => task.id === droppedTaskId);
+        if (!taskToMove) {
+            setDropTargetListId(null);
+            return;
+        }
+
+        if (taskToMove.list === String(listId)) {
+            setDropTargetListId(null);
+            return;
+        }
+
+        const updatedTask: Task = {
+            ...taskToMove,
+            list: String(listId),
+        };
+
+        try {
+            await updateTask(taskToMove.id, updatedTask);
+            setTasks((current) => current.map((task) => (task.id === updatedTask.id ? updatedTask : task)));
+
+            if (selectedTask?.id === updatedTask.id) {
+                setSelectedTask(updatedTask);
+                if (formData?.id === updatedTask.id) {
+                    setFormData(updatedTask);
+                }
+            }
+        } catch {
+            setError('Failed to move task to list');
+        } finally {
+            setDropTargetListId(null);
+            setDraggedTaskId(null);
+        }
+    };
+
     return (
         <div className="dashboard-layout">
             <aside className="dashboard-sidebar">
@@ -186,6 +255,9 @@ function Dashboard() {
                                                 <button
                                                     className='task-card'
                                                     onClick={() => handleSelectTask(task.id)}
+                                                    draggable
+                                                    onDragStart={(event) => handleTaskDragStart(event, task.id)}
+                                                    onDragEnd={handleTaskDragEnd}
                                                 >
                                                     <div>{task.title}</div>
                                                     <div style={{ fontSize: '0.85em', opacity: 0.7 }}>{listName}</div>
@@ -207,7 +279,13 @@ function Dashboard() {
                                 <ul className='list-record'>
                                     {lists.map((list) => (
                                         <li key={list.id}>
-                                            <button className="task-card" onClick={() => navigate(`/lists/${list.id}`)}>
+                                            <button
+                                                className={`task-card ${dropTargetListId === list.id ? 'drop-target' : ''}`}
+                                                onClick={() => navigate(`/lists/${list.id}`)}
+                                                onDragOver={(event) => handleListDragOver(event, list.id)}
+                                                onDragLeave={handleListDragLeave}
+                                                onDrop={(event) => void handleTaskDropOnList(event, list.id)}
+                                            >
                                                 {list.title}
                                             </button>
                                         </li>

@@ -102,6 +102,15 @@ p{
     box-shadow: 0 20px 44px rgba(15, 23, 42, 0.45);
 }
 
+.task-card:active {
+    cursor: grabbing;
+}
+
+.task-card.drop-target {
+    border-color: var(--accent-strong);
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.28);
+}
+
 .list-container{
     padding: 10px;
     color: var(--text);
