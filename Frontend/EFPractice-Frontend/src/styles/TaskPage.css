@@ -104,12 +104,11 @@ button {
     color: white;
 }
 
-.back-button {
+#task-page .back-button {
+    align-self: flex-start;
     margin-right: 20px;
     background: var(--accent-red);
-    position: absolute;
-    left: 13%;
-    transform: translate(-100%);
+    left: 10%;
     color: white;
 }
 

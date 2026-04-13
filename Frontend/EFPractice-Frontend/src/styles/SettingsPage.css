@@ -8,6 +8,13 @@
   background: radial-gradient(circle at top, var(--surface-alt) 0%, var(--surface) 52%, var(--bg) 100%);
 }
 
+#settings-page .back-button {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
+}
+
 .settings-card {
   width: min(680px, 96%);
   display: flex;
@@ -26,7 +33,7 @@
 }
 
 .settings-card p {
-  margin: 0 0 6px;
+  margin-top: 3%;
 }
 
 .settings-card label {
@@ -37,7 +44,6 @@
 
 .settings-card select,
 .settings-card input[type='range'] {
-  width: 100%;
   background-color: var(--select-bg);
   color: var(--text-h);
   border: 1px solid var(--accent-border);
