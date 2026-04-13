@@ -130,3 +130,17 @@
   color: var(--text-h);
   border: 1px solid var(--accent-border);
 }
+
+.list-page-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 10px;
+}
+
+#list-page .sort-task-button {
+  margin: 20px 10px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: white;
+  border: 1px solid var(--accent-border);
+}

@@ -9,6 +9,8 @@ import '../styles/Dashboard.css';
 import '../styles/TaskPage.css';
 import '../styles/ListPage.css';
 
+type TaskSortMode = 'default' | 'title' | 'priority' | 'deadline';
+
 function ListPage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
@@ -21,6 +23,7 @@ function ListPage() {
     const [isCreatingTask, setIsCreatingTask] = useState(false);
     const [newTaskData, setNewTaskData] = useState<Task | null>(null);
     const [lists, setLists] = useState<Array<{ id: number; title: string }>>([]);
+    const [sortMode, setSortMode] = useState<TaskSortMode>('default');
 
     const loadList = async () => {
         if (!id) return;
@@ -136,6 +139,31 @@ function ListPage() {
         }
     };
 
+    const handleSortTasksClick = () => {
+        setSortMode((currentMode) => {
+            if (currentMode === 'default') return 'title';
+            if (currentMode === 'title') return 'priority';
+            if (currentMode === 'priority') return 'deadline';
+            return 'default';
+        });
+    };
+
+    const sortedTasks = [...tasks].sort((firstTask, secondTask) => {
+        if (sortMode === 'title') {
+            return firstTask.title.localeCompare(secondTask.title);
+        }
+
+        if (sortMode === 'priority') {
+            return secondTask.priority - firstTask.priority;
+        }
+
+        if (sortMode === 'deadline') {
+            return new Date(firstTask.deadline).getTime() - new Date(secondTask.deadline).getTime();
+        }
+
+        return 0;
+    });
+
     if (loading) {
         return <div id="list-page"><p>Loading list tasks…</p></div>;
     }
@@ -148,7 +176,10 @@ function ListPage() {
         <div id='list-page'>
             <button className='back-button' onClick={() => navigate('/')}>Back to Dashboard</button>
             <h1>{listTitle || `List ${id}`}</h1>
-            <button className='add-task-button' onClick={handleAddTaskClick}>Add Task</button>
+            <div className='list-page-actions'>
+                <button className='sort-task-button' onClick={handleSortTasksClick}>Sort: {sortMode}</button>
+                <button className='add-task-button' onClick={handleAddTaskClick}>Add Task</button>
+            </div>
 
             {isCreatingTask && newTaskData && (
                 <section className='task-detail-card'>
@@ -165,7 +196,7 @@ function ListPage() {
                 <p>No tasks found in this list.</p>
             ) : (
                 <div className='list-task-details'>
-                    {tasks.map((task) => (
+                    {sortedTasks.map((task) => (
                         <section key={task.id} className='task-detail-card'>
                             {editingTaskId === task.id && formData ? (
                                 <>
