@@ -275,15 +275,6 @@ function Dashboard() {
         }
     };
 
-    const handleSortTasksClick = () => {
-        setSortMode((currentMode) => {
-            if (currentMode === 'Default') return 'Title';
-            if (currentMode === 'Title') return 'Priority';
-            if (currentMode === 'Priority') return 'Deadline';
-            return 'Default';
-        });
-    };
-
     const normalizedQuery = searchQuery.trim().toLowerCase();
     const filteredTasks = normalizedQuery.length === 0
         ? tasks
@@ -412,9 +403,18 @@ function Dashboard() {
                             <div className="task-list-header-row">
                                 <h3>Tasks</h3>
                                 <div className='task-list-actions'>
-                                    <button className='sort-task-button' onClick={handleSortTasksClick}>
-                                        Sort: {sortMode}
-                                    </button>
+                                    <label htmlFor='dashboard-sort-task-select' className='sort-task-label'>Sort:</label>
+                                    <select
+                                        id='dashboard-sort-task-select'
+                                        className='sort-task-select'
+                                        value={sortMode}
+                                        onChange={(event) => setSortMode(event.target.value as TaskSortMode)}
+                                    >
+                                        <option value='Default'>Default</option>
+                                        <option value='Title'>Title</option>
+                                        <option value='Priority'>Priority</option>
+                                        <option value='Deadline'>Deadline</option>
+                                    </select>
                                     <button className='add-task-button' onClick={handleAddTaskClick}>Add Task</button>
                                 </div>
                             </div>

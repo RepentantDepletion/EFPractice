@@ -9,7 +9,7 @@ import '../styles/Dashboard.css';
 import '../styles/TaskPage.css';
 import '../styles/ListPage.css';
 
-type TaskSortMode = 'Default' | 'Title' | 'Priority' | 'Deadline';
+type TaskSortMode = 'Default' | 'Title' | 'Priority' | 'Deadline' | 'Overdue' | 'Completed';
 
 function ListPage() {
     const { id } = useParams<{ id: string }>();
@@ -139,16 +139,11 @@ function ListPage() {
         }
     };
 
-    const handleSortTasksClick = () => {
-        setSortMode((currentMode) => {
-            if (currentMode === 'Default') return 'Title';
-            if (currentMode === 'Title') return 'Priority';
-            if (currentMode === 'Priority') return 'Deadline';
-            return 'Default';
-        });
-    };
-
     const sortedTasks = [...tasks].sort((firstTask, secondTask) => {
+        const firstDeadline = new Date(firstTask.deadline).getTime();
+        const secondDeadline = new Date(secondTask.deadline).getTime();
+        const now = Date.now();
+
         if (sortMode === 'Title') {
             return firstTask.title.localeCompare(secondTask.title);
         }
@@ -158,7 +153,26 @@ function ListPage() {
         }
 
         if (sortMode === 'Deadline') {
-            return new Date(firstTask.deadline).getTime() - new Date(secondTask.deadline).getTime();
+            return firstDeadline - secondDeadline;
+        }
+
+        if (sortMode === 'Overdue') {
+            const firstOverdue = !firstTask.done && firstDeadline < now;
+            const secondOverdue = !secondTask.done && secondDeadline < now;
+
+            if (firstOverdue !== secondOverdue) {
+                return firstOverdue ? -1 : 1;
+            }
+
+            return firstDeadline - secondDeadline;
+        }
+
+        if (sortMode === 'Completed') {
+            if (firstTask.done !== secondTask.done) {
+                return firstTask.done ? -1 : 1;
+            }
+
+            return firstDeadline - secondDeadline;
         }
 
         return 0;
@@ -181,7 +195,20 @@ function ListPage() {
             <button className='back-button' onClick={() => navigate('/')}>Back to Dashboard</button>
             <h1>{listTitle || `List ${id}`}</h1>
             <div className='list-page-actions'>
-                <button className='sort-task-button' onClick={handleSortTasksClick}>Sort: {sortMode}</button>
+                <label htmlFor='sort-task-select' className='sort-task-label'>Sort:</label>
+                <select
+                    id='sort-task-select'
+                    className='sort-task-select'
+                    value={sortMode}
+                    onChange={(event) => setSortMode(event.target.value as TaskSortMode)}
+                >
+                    <option value='Default'>Default</option>
+                    <option value='Title'>Title</option>
+                    <option value='Priority'>Priority</option>
+                    <option value='Deadline'>Deadline</option>
+                    <option value='Overdue'>Overdue</option>
+                    <option value='Completed'>Completed</option>
+                </select>
                 <button className='add-task-button' onClick={handleAddTaskClick}>Add Task</button>
             </div>
 

@@ -106,10 +106,12 @@ p{
     margin: 0;
 }
 
-.task-list .sort-task-button {
-    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-    color: white;
-    border: none;
+.task-list .sort-task-select {
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--accent-border);
+    background: var(--surface-alt);
+    color: #e2e8f0;
     margin: 0;
 }
 
