@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask } from '../api/Api.ts'
+import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask } from '../api/Api.ts'
 import type { Task } from '../types/Task.ts'
 import TaskView from '../components/TaskView.tsx'
 import TaskEditForm from '../components/TaskEditForm.tsx'
@@ -93,6 +93,20 @@ function Dashboard() {
         }
     };
 
+    const handleDeleteSelectedTask = async () => {
+        if (!selectedTask) return;
+
+        try {
+            await deleteTask(selectedTask.id);
+            setTasks((current) => current.filter((task) => task.id !== selectedTask.id));
+            setSelectedTask(null);
+            setFormData(null);
+            setIsEditing(false);
+        } catch {
+            setError('Failed to delete task');
+        }
+    };
+
     return (
         <div className="dashboard-layout">
             <aside className="dashboard-sidebar">
@@ -130,6 +144,9 @@ function Dashboard() {
                                         Cancel
                                     </button>
                                 )}
+                                <button className="cancel-button" onClick={() => void handleDeleteSelectedTask()}>
+                                    Delete
+                                </button>
                             </div>
                         </>
                     ) : (
