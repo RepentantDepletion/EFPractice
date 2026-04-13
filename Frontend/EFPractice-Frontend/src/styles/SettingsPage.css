@@ -38,6 +38,11 @@
 .settings-card select,
 .settings-card input[type='range'] {
   width: 100%;
+  background-color: var(--select-bg);
+  color: var(--text-h);
+  border: 1px solid var(--accent-border);
+  border-radius: 10px;
+  padding: 10px 12px;
 }
 
 .settings-preview {

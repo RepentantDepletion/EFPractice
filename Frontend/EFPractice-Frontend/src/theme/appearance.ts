@@ -12,6 +12,7 @@ type AppearancePreset = {
   surface: string;
   surfaceAlt: string;
   surfaceStrong: string;
+  selectBg: string;
   accent: string;
   accentStrong: string;
   accentBg: string;
@@ -30,6 +31,7 @@ export const presets: Record<AppearancePresetKey, AppearancePreset> = {
     surface: '#111827',
     surfaceAlt: '#0f172a',
     surfaceStrong: '#161b2f',
+    selectBg: '#1f2937',
     accent: '#60a5fa',
     accentStrong: '#38bdf8',
     accentBg: 'rgba(56, 189, 248, 0.15)',
@@ -44,6 +46,7 @@ export const presets: Record<AppearancePresetKey, AppearancePreset> = {
     surface: '#0f1f1a',
     surfaceAlt: '#10261f',
     surfaceStrong: '#133128',
+    selectBg: '#18372d',
     accent: '#34d399',
     accentStrong: '#10b981',
     accentBg: 'rgba(52, 211, 153, 0.16)',
@@ -58,6 +61,7 @@ export const presets: Record<AppearancePresetKey, AppearancePreset> = {
     surface: '#2a1210',
     surfaceAlt: '#331815',
     surfaceStrong: '#3d1c18',
+    selectBg: '#4a231e',
     accent: '#fb923c',
     accentStrong: '#f97316',
     accentBg: 'rgba(251, 146, 60, 0.16)',
@@ -104,6 +108,7 @@ export function applyAppearanceSettings(settings: AppearanceSettings): void {
   root.style.setProperty('--surface', selected.surface);
   root.style.setProperty('--surface-alt', selected.surfaceAlt);
   root.style.setProperty('--surface-strong', selected.surfaceStrong);
+  root.style.setProperty('--select-bg', selected.selectBg);
   root.style.setProperty('--accent', selected.accent);
   root.style.setProperty('--accent-strong', selected.accentStrong);
   root.style.setProperty('--accent-bg', selected.accentBg);
