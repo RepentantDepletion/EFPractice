@@ -11,6 +11,7 @@ const TaskEditForm = ({ formData, setFormData, listOptions }: Props) => {
   return (
     <>
       <input
+      placeholder="Input title here"
         className="editable-input"
         type="text"
         value={formData.title}
@@ -42,6 +43,7 @@ const TaskEditForm = ({ formData, setFormData, listOptions }: Props) => {
 
 
       <textarea
+      placeholder="Input Description here"
         id="description-input"
         value={formData.description}
         onChange={(e) =>
