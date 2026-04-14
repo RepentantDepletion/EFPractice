@@ -134,6 +134,7 @@ p{
 
 .task-card {
     box-sizing: border-box;
+    font: inherit;
     display: block;
     width: 100%;
     min-height: 104px;
@@ -478,6 +479,8 @@ p{
 
     .task-list-header-row,
     .list-header-row {
+        display: flex;
+        justify-content: space-between;
         gap: 8px;
     }
 

@@ -1,4 +1,10 @@
-export type AppearancePresetKey = 'midnight' | 'mint' | 'sunset';
+export type AppearancePresetKey =
+  | 'midnight'
+  | 'mint'
+  | 'sunset'
+  | 'aurora'
+  | 'graphite'
+  | 'sandstone';
 
 export type AppearanceSettings = {
   preset: AppearancePresetKey;
@@ -68,6 +74,51 @@ export const presets: Record<AppearancePresetKey, AppearancePreset> = {
     accentBorder: 'rgba(251, 146, 60, 0.4)',
     border: 'rgba(251, 146, 60, 0.24)',
     deadlineOverdue: '#fde047',
+  },
+  aurora: {
+    text: '#d6eef4',
+    textH: '#f3fdff',
+    bg: '#061319',
+    surface: '#0b2028',
+    surfaceAlt: '#102933',
+    surfaceStrong: '#143543',
+    selectBg: '#1b4454',
+    accent: '#22d3ee',
+    accentStrong: '#0ea5e9',
+    accentBg: 'rgba(34, 211, 238, 0.17)',
+    accentBorder: 'rgba(34, 211, 238, 0.36)',
+    border: 'rgba(14, 165, 233, 0.22)',
+    deadlineOverdue: '#f43f5e',
+  },
+  graphite: {
+    text: '#e5e7eb',
+    textH: '#f9fafb',
+    bg: '#0b0c0f',
+    surface: '#151821',
+    surfaceAlt: '#1a202b',
+    surfaceStrong: '#202837',
+    selectBg: '#2a3448',
+    accent: '#9ca3af',
+    accentStrong: '#6b7280',
+    accentBg: 'rgba(156, 163, 175, 0.16)',
+    accentBorder: 'rgba(156, 163, 175, 0.34)',
+    border: 'rgba(156, 163, 175, 0.2)',
+    deadlineOverdue: '#f59e0b',
+  },
+  sandstone: {
+    text: '#3a2b1e',
+    textH: '#2a1f16',
+    bg: '#f3e8d7',
+    surface: '#efe0cb',
+    surfaceAlt: '#e6d2b8',
+    surfaceStrong: '#dcc1a0',
+    selectBg: '#cfad84',
+    accent: '#b45309',
+    accentStrong: '#92400e',
+    accentBg: 'rgba(180, 83, 9, 0.16)',
+    accentBorder: 'rgba(146, 64, 14, 0.34)',
+    border: 'rgba(120, 53, 15, 0.24)',
+    deadlineOverdue: '#b91c1c',
   },
 };
 

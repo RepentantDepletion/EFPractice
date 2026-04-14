@@ -116,7 +116,7 @@ button {
 }
 
 label{
-font-size: 24px;
+font-size: calc(24px * var(--font-scale));
     line-height: 118%;
     letter-spacing: -0.24px;
     margin: 0 0 8px;

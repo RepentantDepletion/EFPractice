@@ -4,7 +4,6 @@ import {
   applyAppearanceSettings,
   defaultAppearanceSettings,
   loadAppearanceSettings,
-  presets,
   saveAppearanceSettings,
   type AppearancePresetKey,
   type AppearanceSettings,
@@ -51,6 +50,9 @@ function SettingsPage() {
           <option value="midnight">Midnight Blue</option>
           <option value="mint">Emerald Mint</option>
           <option value="sunset">Sunset Orange</option>
+          <option value="aurora">Aurora Cyan</option>
+          <option value="graphite">Graphite Gray</option>
+          <option value="sandstone">Sandstone Light</option>
         </select>
 
         <label htmlFor="font-scale">

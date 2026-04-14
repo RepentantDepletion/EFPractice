@@ -139,9 +139,9 @@
 
 .sort-task-label {
   color: #e2e8f0;
-  font-size: 18px; 
+  font-size: calc(18px * var(--font-scale)); 
   font-weight: normal;
-  margin: auto;
+  margin: 0px 1vh;
   font-family: Arial, Helvetica, sans-serif;
 }
 
