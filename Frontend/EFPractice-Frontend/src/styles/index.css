@@ -40,6 +40,12 @@
   }
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --text: #cbd5e1;
@@ -67,6 +73,8 @@
 
 #root {
   max-width: 100%;
+  width: 100%;
+  height: 100%;
   margin: 0 auto;
   text-align: center;
   border-inline: 1px solid rgba(255, 255, 255, 0.05);
@@ -75,12 +83,14 @@
   flex-direction: row;
   box-sizing: border-box;
   background: var(--bg);
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
+  overflow-x: hidden;
 }
 
 h1,
