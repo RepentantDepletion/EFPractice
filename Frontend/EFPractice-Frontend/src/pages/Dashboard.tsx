@@ -428,6 +428,16 @@ function Dashboard() {
         }
     };
 
+    const handleCompleteList = async (listId: number) => {
+        const tasksInList = tasks.filter((task) => task.list === String(listId) && !task.done);
+
+        try {
+            await Promise.all(tasksInList.map((task) => completeTask(task.id)));
+            await refreshTasks();
+        } catch {
+            setError('Failed to complete list');
+        }
+    };
 
     return (
         <div className="dashboard-layout">

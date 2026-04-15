@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchTaskListById, fetchTasks, updateTask, createTask, deleteTask, fetchTaskLists } from '../api/Api';
+import { fetchTaskListById, fetchTasks, updateTask, createTask, deleteTask, fetchTaskLists, deleteTaskList } from '../api/Api';
 import type { Task } from '../types/Task';
 import TaskView from '../components/TaskView';
 import TaskEditForm from '../components/TaskEditForm';
@@ -148,6 +148,15 @@ function ListPage() {
         }
     };
 
+    const handleDeleteListClick = async () => {
+        try {
+            await deleteTaskList(Number(id));
+            navigate('/');
+        } catch {
+            setError('Failed to delete list');
+        }
+    };
+
     const sortedTasks = [...tasks].sort((firstTask, secondTask) => {
         const firstDeadline = new Date(firstTask.deadline).getTime();
         const secondDeadline = new Date(secondTask.deadline).getTime();
@@ -219,6 +228,7 @@ function ListPage() {
                     <option value='Completed'>Completed</option>
                 </select>
                 <button className='add-task-button' onClick={handleAddTaskClick}>Add Task</button>
+                <button className='delete-list-button' onClick={handleDeleteListClick}>Delete List</button>
             </div>
 
             <section className='list-progress-section'>

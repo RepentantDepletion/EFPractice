@@ -187,3 +187,13 @@
   background: linear-gradient(90deg, #22c55e, #16a34a);
   transition: width 0.25s ease;
 }
+
+.delete-list-button {
+  background: rgb(238, 3, 3);
+  color: #e2e8f0;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+}
+
+.delete-list-button:hover {
+  background: rgba(255, 255, 255, 0.14);
+}

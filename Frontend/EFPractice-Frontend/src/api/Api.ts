@@ -175,3 +175,10 @@ export async function fetchTaskListById(id: number) {
     const response = await fetch(`${BASE_URL}/TaskLists/${id}`);
     return response.json();
 }
+
+export async function completeTaskList(id: number) {
+    const response = await fetch(`${BASE_URL}/TaskLists/${id}/complete`, {
+        method: 'POST',
+    });
+    return response.json();
+}
