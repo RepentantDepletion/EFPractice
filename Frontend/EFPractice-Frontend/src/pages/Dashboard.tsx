@@ -561,7 +561,7 @@ function Dashboard() {
                 <section className="navigation-panel">
                     <h2>Navigation Panel</h2>
                     <ul>
-                        <button className='navigation-buttons' onClick={() => navigate('/')}>Home</button>
+                        <button className='navigation-buttons' onClick={() => navigate('/home')}>Home</button>
                         <button className='navigation-buttons' onClick={() => navigate('/settings')}>Settings</button>
                         <button className='navigation-buttons' onClick={() => navigate('/analytics')}>Analytics</button>
                     </ul>

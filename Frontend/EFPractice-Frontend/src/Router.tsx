@@ -3,11 +3,13 @@ import Dashboard from './pages/Dashboard';
 import ListPage from './pages/ListPage';
 import SettingsPage from './pages/SettingsPage';
 import AnalyticsPage from './pages/Analytics';
+import Login from './pages/Login';
 
 function Router() {
   return (
     <Routes>
-      <Route path="/" element={<Dashboard />} />
+      <Route path="/" element={<Login />} />
+      <Route path="/home" element={<Dashboard />} />
       <Route path="/lists/:id" element={<ListPage />} />
       <Route path="/settings" element={<SettingsPage />} />
       <Route path="/analytics" element={<AnalyticsPage />} />

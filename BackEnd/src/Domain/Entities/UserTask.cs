@@ -5,6 +5,7 @@ namespace EFPractice.Domain.Entities;
 
 public class UserTask : BaseEntity
 {
+    public int UserID { get; set; }
 
     public string? Title { get; set; }
 

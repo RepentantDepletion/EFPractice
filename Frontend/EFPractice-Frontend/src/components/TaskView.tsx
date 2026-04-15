@@ -30,7 +30,7 @@ const TaskView = ({ task, lists, onDelete }: Props) => {
             </h2>
             <h2>Status</h2>
             <p>{task.done ? "Completed" : "Not completed"}</p>
-            <p>Recurrence: {getRecurrenceLabel(task.recurrence)}</p>
+            <p>Repeat: {getRecurrenceLabel(task.recurrence)}</p>
             {onDelete && (
                 <div className="button-row">
                     <button className="delete-button" onClick={onDelete}>

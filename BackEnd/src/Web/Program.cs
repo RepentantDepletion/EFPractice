@@ -38,6 +38,9 @@ app.UseCors(static builder =>
 
 app.UseFileServer();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapOpenApi();
 app.MapScalarApiReference();
 

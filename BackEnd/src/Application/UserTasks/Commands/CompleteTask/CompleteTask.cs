@@ -1,9 +1,12 @@
 using System.Security.Cryptography.X509Certificates;
 using EFPractice.Application.Common.Interfaces;
+using EFPractice.Application.Common.Security;
 using EFPractice.Domain.Entities;
 using EFPractice.Domain.Enums;
 
 namespace EFPractice.Application.UserTasks.Commands.GetUserTask;
+
+[Authorize]
 
 public record CompleteTaskCommand(int ID) : IRequest<UserTask>;
 
