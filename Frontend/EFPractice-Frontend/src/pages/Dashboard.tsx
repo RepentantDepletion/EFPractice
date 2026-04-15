@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask, createTask, createTaskList, completeTask, fetchTaskListById } from '../api/Api.ts'
+import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask, createTask, createTaskList, completeTask } from '../api/Api.ts'
 import type { Task } from '../types/Task.ts'
 import TaskView from '../components/TaskView.tsx'
 import TaskEditForm from '../components/TaskEditForm.tsx'
@@ -419,20 +419,10 @@ function Dashboard() {
         }
     };
 
-
-    const refreshList = async (listId: number) => {
-        try {
-            const refreshedLists = await fetchTaskListById(listId);
-            setLists((current) => current.map((list) => (list.id === listId ? refreshedLists : list)));
-        } catch {
-            setError('Failed to refresh lists');
-        }
-    };
-
     const refreshLists = async () => {
         try {
             const refreshedLists = await fetchTaskLists();
-            setLists(refreshedLists);
+            setLists(refreshedLists.lists);
         } catch {
             setError('Failed to refresh lists');
         }

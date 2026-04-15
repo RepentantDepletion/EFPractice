@@ -24,6 +24,14 @@ function ListPage() {
     const [newTaskData, setNewTaskData] = useState<Task | null>(null);
     const [lists, setLists] = useState<Array<{ id: number; title: string }>>([]);
     const [sortMode, setSortMode] = useState<TaskSortMode>('Default');
+    const [recurrenceType] = useState([
+        { value: 0, label: 'None' },
+        { value: 1, label: 'Daily' },
+        { value: 2, label: 'Weekly' },
+        { value: 3, label: 'Monthly' },
+        { value: 4, label: 'Yearly' },
+        { value: 5, label: 'Custom' }
+    ]);
 
     const loadList = async () => {
         if (!id) return;
@@ -95,6 +103,7 @@ function ListPage() {
             priority: 0,
             done: false,
             deadline: new Date(),
+            recurrence: 0,
         };
         setIsCreatingTask(true);
         setNewTaskData(newTask);
@@ -225,7 +234,7 @@ function ListPage() {
             {isCreatingTask && newTaskData && (
                 <section className='task-detail-card'>
                     <h2>Create New Task</h2>
-                    <TaskEditForm formData={newTaskData} setFormData={setNewTaskData} listOptions={lists} />
+                    <TaskEditForm formData={newTaskData} setFormData={setNewTaskData} listOptions={lists} recurrenceOptions={recurrenceType} />
                     <div className='list-card-button-row'>
                         <button onClick={handleSaveNewTask}>Create</button>
                         <button className='cancel-button' onClick={handleCancelAddTask}>Cancel</button>
@@ -241,7 +250,7 @@ function ListPage() {
                         <section key={task.id} className='task-detail-card'>
                             {editingTaskId === task.id && formData ? (
                                 <>
-                                    <TaskEditForm formData={formData} setFormData={setFormData} listOptions={lists} />
+                                    <TaskEditForm formData={formData} setFormData={setFormData} listOptions={lists} recurrenceOptions={recurrenceType} />
                                     <div className='list-card-button-row'>
                                         <button onClick={handleSaveEdit}>Save</button>
                                         <button className='cancel-button' onClick={handleCancelEdit}>Cancel</button>
