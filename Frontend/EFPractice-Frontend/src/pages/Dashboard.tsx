@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask, createTask, createTaskList, completeTask } from '../api/Api.ts'
+import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask, createTask, createTaskList, completeTask, completeTaskList } from '../api/Api.ts'
 import type { Task } from '../types/Task.ts'
 import TaskView from '../components/TaskView.tsx'
 import TaskEditForm from '../components/TaskEditForm.tsx'
@@ -15,6 +15,7 @@ type list = {
 
 type TaskSortMode = 'Default' | 'Title' | 'Priority' | 'Deadline';
 const TASK_CARD_CLICK_DELAY_MS = 240;
+const LIST_CARD_CLICK_DELAY_MS = 240;
 
 function Dashboard() {
     const navigate = useNavigate();
@@ -48,6 +49,7 @@ function Dashboard() {
     });
     const dragPreviewRef = useRef<HTMLElement | null>(null);
     const taskClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const listClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const shownTasksCount = (width: number, height: number) => {
         const widthCapacity = width < 600 ? 2 : width < 1024 ? 4 : 8;
         const heightMultiplier = height < 700 ? 1 : height < 900 ? 2 : 3;
@@ -67,6 +69,13 @@ function Dashboard() {
         if (taskClickTimeoutRef.current !== null) {
             clearTimeout(taskClickTimeoutRef.current);
             taskClickTimeoutRef.current = null;
+        }
+    };
+
+    const clearListClickTimeout = () => {
+        if (listClickTimeoutRef.current !== null) {
+            clearTimeout(listClickTimeoutRef.current);
+            listClickTimeoutRef.current = null;
         }
     };
 
@@ -238,6 +247,7 @@ function Dashboard() {
         return () => {
             cleanupDragPreview();
             clearTaskClickTimeout();
+            clearListClickTimeout();
         };
     }, []);
 
@@ -429,15 +439,46 @@ function Dashboard() {
     };
 
     const handleCompleteList = async (listId: number) => {
-        const tasksInList = tasks.filter((task) => task.list === String(listId) && !task.done);
-
         try {
-            await Promise.all(tasksInList.map((task) => completeTask(task.id)));
+            const tasksInList = tasks.filter((task) => task.list === String(listId));
+
+            if (tasksInList.length === 0) {
+                return;
+            }
+
+            const allCompleted = tasksInList.every((task) => task.done);
+
+            if (allCompleted) {
+                await Promise.all(
+                    tasksInList.map((task) =>
+                        updateTask(task.id, {
+                            ...task,
+                            done: false,
+                        })
+                    )
+                );
+            } else {
+                await completeTaskList(listId);
+            }
+
             await refreshTasks();
         } catch {
             setError('Failed to complete list');
         }
     };
+
+    const handleListCardClick = (listId: number) => {
+        clearListClickTimeout();
+        listClickTimeoutRef.current = setTimeout(() => {
+            navigate(`/lists/${listId}`);
+            listClickTimeoutRef.current = null;
+        }, LIST_CARD_CLICK_DELAY_MS);
+    };
+
+    const handleListCardDoubleClick = (listId: number) => {
+        clearListClickTimeout();
+        void handleCompleteList(listId);
+    }
 
     return (
         <div className="dashboard-layout">
@@ -556,10 +597,16 @@ function Dashboard() {
                                         const listName = taskListId === null
                                             ? 'No List'
                                             : lists.find(list => list.id === parseInt(taskListId, 10))?.title || 'Unknown List';
+                                        const isTaskOverdue = !task.done && new Date(task.deadline).getTime() < Date.now();
+                                        const taskStateClassName = isTaskOverdue
+                                            ? 'task-card-overdue'
+                                            : task.done
+                                                ? 'task-card-completed'
+                                                : 'task-card-pending';
                                         return (
                                             <li key={task.id}>
                                                 <button
-                                                    className='task-card'
+                                                    className={`task-card ${taskStateClassName}`}
                                                     onDoubleClick={() => handleTaskCardDoubleClick(task.id)}
                                                     onClick={() => handleTaskCardClick(task.id)}
                                                     draggable
@@ -603,12 +650,23 @@ function Dashboard() {
                             ) : (
                                 <ul className='list-record'>
                                     {filteredLists.map((list) => {
-                                        const taskCount = tasks.filter((task) => task.list === String(list.id)).length;
+                                        const tasksInList = tasks.filter((task) => task.list === String(list.id));
+                                        const taskCount = tasksInList.length;
+                                        const allTasksCompleted = taskCount > 0 && tasksInList.every((task) => task.done);
+                                        const hasOverdueTask = tasksInList.some(
+                                            (task) => !task.done && new Date(task.deadline).getTime() < Date.now()
+                                        );
+                                        const listStateClassName = hasOverdueTask
+                                            ? 'list-card-overdue'
+                                            : allTasksCompleted
+                                                ? 'list-card-completed'
+                                                : 'list-card-pending';
                                         return (
                                             <li key={list.id}>
                                                 <button
-                                                    className={`task-card ${dropTargetListId === list.id ? 'drop-target' : ''}`}
-                                                    onClick={() => navigate(`/lists/${list.id}`)}
+                                                    className={`task-card ${listStateClassName} ${dropTargetListId === list.id ? 'drop-target' : ''}`}
+                                                    onDoubleClick={() => handleListCardDoubleClick(list.id)}
+                                                    onClick={() => handleListCardClick(list.id)}
                                                     onDragOver={(event) => handleListDragOver(event, list.id)}
                                                     onDragLeave={handleListDragLeave}
                                                     onDrop={(event) => void handleTaskDropOnList(event, list.id)}

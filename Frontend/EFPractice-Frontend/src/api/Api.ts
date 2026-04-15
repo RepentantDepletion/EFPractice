@@ -180,5 +180,11 @@ export async function completeTaskList(id: number) {
     const response = await fetch(`${BASE_URL}/TaskLists/${id}/complete`, {
         method: 'POST',
     });
-    return response.json();
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Complete list failed ${response.status}: ${text}`);
+  }
+
+  return;
 }
