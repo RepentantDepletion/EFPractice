@@ -9,6 +9,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "module": "NodeNext", // or "ESNext" depending on your target environment
-    "target": "ESNext"
+    "target": "ESNext",
+    "sourceMap": true
   }
 }

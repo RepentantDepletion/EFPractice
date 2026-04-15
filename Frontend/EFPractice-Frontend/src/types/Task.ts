@@ -1,3 +1,5 @@
+import type { RecurrencePattern } from "./RecurrencePattern";
+
 export type Task = {
   id: number;
   title: string;
@@ -6,4 +8,5 @@ export type Task = {
   done: boolean;
   priority: number;
   deadline: Date;
+  recurrence: RecurrencePattern;
 };

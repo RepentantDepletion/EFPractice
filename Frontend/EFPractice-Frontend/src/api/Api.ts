@@ -1,3 +1,4 @@
+import { getRecurrenceLabel, RecurrencePattern } from '../types/RecurrencePattern';
 import type { Task } from '../types/Task';
 
 const BASE_URL = 'http://localhost:5278/api';
@@ -5,6 +6,7 @@ const BASE_URL = 'http://localhost:5278/api';
 type RawTaskResponse = Record<string, unknown>;
 
 type CreateTaskRequest = Omit<Task, 'id'>;
+
 
 const parseDate = (value: unknown): Date => {
   if (value instanceof Date) return value;
@@ -25,6 +27,7 @@ const normalizeTask = (rawTask: RawTaskResponse): Task => ({
   priority: Number(rawTask['priority'] ?? 0),
   done: Boolean(rawTask['done']),
   deadline: parseDate(rawTask['deadline']),
+  recurrence: Number(rawTask['recurrence'] ?? RecurrencePattern.None) as RecurrencePattern,
 });
 
 export async function fetchTasks(): Promise<Task[]> {
@@ -45,6 +48,7 @@ export async function createTask(taskData: CreateTaskRequest): Promise<Task> {
       Done: taskData.done,
       Deadline: taskData.deadline,
       ListId: taskData.list === null || taskData.list === '' ? null : Number(taskData.list),
+      Recurrence: Number(taskData.recurrence),
     }),
   });
 
@@ -70,6 +74,7 @@ export async function updateTask(id: number, task: Task) {
       Done: task.done,
       Deadline: task.deadline,
       ListId: task.list === null || task.list === '' ? null : Number(task.list),
+      Recurrence: Number(task.recurrence),
     }),
   });
 

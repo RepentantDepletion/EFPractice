@@ -17,6 +17,14 @@ const TaskPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [lists, setLists] = useState<Array<{ id: number; title: string }>>([]);
+    const [recurrenceType] = useState([
+        { value: 0, label: 'None' },
+        { value: 1, label: 'Daily' },
+        { value: 2, label: 'Weekly' },
+        { value: 3, label: 'Monthly' },
+        { value: 4, label: 'Yearly' },
+        { value: 5, label: 'Custom' }
+    ]);
 
     useEffect(() => {
         async function loadTask() {
@@ -100,6 +108,7 @@ const TaskPage = () => {
                         formData={formData}
                         setFormData={setFormData}
                         listOptions={lists}
+                        recurrenceOptions={recurrenceType}
                     />
                 ) : (
                     <TaskView task={task} lists={lists} onDelete={handleDelete} />

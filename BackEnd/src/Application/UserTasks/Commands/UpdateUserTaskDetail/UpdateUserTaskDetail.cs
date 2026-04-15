@@ -1,5 +1,6 @@
 ﻿using EFPractice.Application.Common.Interfaces;
 using EFPractice.Domain.Entities;
+using EFPractice.Domain.Enums;
 
 namespace EFPractice.Application.UserTasks.Commands.UpdateUserTaskDetail;
 
@@ -13,6 +14,7 @@ public record UpdateUserTaskDetailCommand(int ID) : IRequest
     public string? Description { get; init; }
     public DateTime Deadline { get; init; }
     public bool Done { get; init; }
+    public RecurrencePattern Recurrence { get; init; }
 }
 
 public class UpdateUserTaskDetailCommandHandler : IRequestHandler<UpdateUserTaskDetailCommand>
@@ -37,6 +39,7 @@ public class UpdateUserTaskDetailCommandHandler : IRequestHandler<UpdateUserTask
         entity.Description = request.Description;
         entity.Deadline = request.Deadline;
         entity.Done = request.Done;
+        entity.Recurrence = request.Recurrence;
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

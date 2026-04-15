@@ -19,6 +19,14 @@ function Dashboard() {
     const navigate = useNavigate();
     const [tasks, setTasks] = useState<Task[]>([]);
     const [lists, setLists] = useState<list[]>([]);
+    const [recurrenceType] = useState([
+        { value: 0, label: 'None' },
+        { value: 1, label: 'Daily' },
+        { value: 2, label: 'Weekly' },
+        { value: 3, label: 'Monthly' },
+        { value: 4, label: 'Yearly' },
+        { value: 5, label: 'Custom' }
+    ]);
     const [selectedTask, setSelectedTask] = useState<Task | null>(null);
     const [formData, setFormData] = useState<Task | null>(null);
     const [isEditing, setIsEditing] = useState(false);
@@ -33,7 +41,18 @@ function Dashboard() {
     const [newListTitle, setNewListTitle] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [sortMode, setSortMode] = useState<TaskSortMode>('Default');
+    const [viewportSize, setViewportSize] = useState({
+        width: window.innerWidth,
+        height: window.innerHeight,
+    });
     const dragPreviewRef = useRef<HTMLElement | null>(null);
+    const shownTasksCount = (width: number, height: number) => {
+        const widthCapacity = width < 600 ? 2 : width < 1024 ? 4 : 8;
+        const heightMultiplier = height < 700 ? 1 : height < 900 ? 2 : 3;
+
+        return widthCapacity * heightMultiplier;
+    };
+
 
     const cleanupDragPreview = () => {
         if (dragPreviewRef.current) {
@@ -211,6 +230,21 @@ function Dashboard() {
         };
     }, []);
 
+    useEffect(() => {
+        const handleResize = () => {
+            setViewportSize({
+                width: window.innerWidth,
+                height: window.innerHeight,
+            });
+        };
+
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     const handleAddTaskClick = () => {
         const newTask: Task = {
             id: 0,
@@ -220,6 +254,7 @@ function Dashboard() {
             priority: 0,
             done: false,
             deadline: new Date(),
+            recurrence: 0,
         };
         setSelectedTask(null);
         setFormData(null);
@@ -311,7 +346,7 @@ function Dashboard() {
         return 0;
     });
 
-    const visibleTasks = sortedTasks.slice(0, 9);
+    const visibleTasks = sortedTasks.slice(0, shownTasksCount(viewportSize.width, viewportSize.height));
 
     return (
         <div className="dashboard-layout">
@@ -339,7 +374,7 @@ function Dashboard() {
                             </div>
 
                             <h2>Create New Task</h2>
-                            <TaskEditForm formData={newTaskData} setFormData={setNewTaskData} listOptions={lists} />
+                            <TaskEditForm formData={newTaskData} setFormData={setNewTaskData} listOptions={lists} recurrenceOptions={recurrenceType} />
 
                             <div className="button-row">
                                 <button onClick={handleSaveNewTask}>Create</button>
@@ -361,7 +396,7 @@ function Dashboard() {
                             </div>
 
                             {isEditing && formData ? (
-                                <TaskEditForm formData={formData} setFormData={setFormData} listOptions={lists} />
+                                <TaskEditForm formData={formData} setFormData={setFormData} listOptions={lists} recurrenceOptions={recurrenceType} />
                             ) : (
                                 <TaskView task={selectedTask} lists={lists} />
                             )}

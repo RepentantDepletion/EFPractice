@@ -1,3 +1,4 @@
+import { getRecurrenceLabel } from "../types/RecurrencePattern";
 import type { Task } from "../types/Task";
 
 type Props = {
@@ -9,7 +10,7 @@ type Props = {
 const TaskView = ({ task, lists, onDelete }: Props) => {
     const listName = task.list === null
         ? 'No List'
-        : lists.find(list => list.id === parseInt(task.list, 10))?.title || task.list;
+        : lists.find(list => list.id === parseInt(task.list as string, 10))?.title || task.list;
     const deadlineDate = new Date(task.deadline);
     const isOverdue = !task.done && !Number.isNaN(deadlineDate.getTime()) && deadlineDate.getTime() < Date.now();
     const deadlineStyle = task.done
@@ -29,6 +30,7 @@ const TaskView = ({ task, lists, onDelete }: Props) => {
             </h2>
             <h2>Status</h2>
             <p>{task.done ? "Completed" : "Not completed"}</p>
+            <p>Recurrence: {getRecurrenceLabel(task.recurrence)}</p>
             {onDelete && (
                 <div className="button-row">
                     <button className="delete-button" onClick={onDelete}>

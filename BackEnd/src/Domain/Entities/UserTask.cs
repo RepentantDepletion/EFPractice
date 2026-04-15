@@ -32,4 +32,6 @@ public class UserTask : BaseEntity
     public TaskList? TaskList { get; set; }
 
     public DateTime? Deadline { get; set; }
+
+    public RecurrencePattern Recurrence { get; set; }
 }

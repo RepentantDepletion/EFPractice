@@ -5,9 +5,10 @@ type Props = {
   formData: Task;
   setFormData: React.Dispatch<React.SetStateAction<Task | null>>;
   listOptions: Array<{ id: number; title: string }>;
+  recurrenceOptions: Array<{ value: number; label: string }>;
 };
 
-const TaskEditForm = ({ formData, setFormData, listOptions }: Props) => {
+const TaskEditForm = ({ formData, setFormData, listOptions, recurrenceOptions }: Props) => {
   return (
     <>
       <input
@@ -95,6 +96,30 @@ const TaskEditForm = ({ formData, setFormData, listOptions }: Props) => {
           }
         />
       </label>
+      <label>
+        Remind me:
+        <select
+          className="editable-input"
+          value={formData.recurrence}
+          onChange={(e) =>
+            setFormData((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    recurrence: Number(e.target.value) as Task['recurrence'],
+                  }
+                : prev
+            )
+          }
+        >
+          {recurrenceOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      </label>
+
     </>
   );
 };

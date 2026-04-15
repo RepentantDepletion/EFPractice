@@ -7,7 +7,6 @@ using EFPractice.Application.UserTasks.Commands.GetAllTasks;
 using EFPractice.Domain.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
 using EFPractice.Application.TaskLists.Queries.GetTasks;
-using EFPractice.Application.UserTasks.Queries.PatchTasks;
 
 namespace EFPractice.Web.Endpoints;
 
@@ -50,7 +49,8 @@ public class UserTasks : IEndpointGroup
             Priority = body.Priority,
             Description = body.Description,
             Deadline = body.Deadline,
-            Done = body.Done
+            Done = body.Done,
+            Recurrence = body.Recurrence
         };
 
         if (id != command.ID) return TypedResults.BadRequest();

@@ -1,4 +1,6 @@
 ﻿using EFPractice.Domain.Entities;
+using EFPractice.Domain.Enums;
+
 
 namespace EFPractice.Application.TaskLists.Queries.GetTasks;
 
@@ -15,6 +17,8 @@ public class UserTaskDto
 
     public string? Description { get; init; }
     public DateTime Deadline { get; init; }
+
+    public RecurrencePattern Recurrence { get; init; }
 
     private class Mapping : Profile
     {
