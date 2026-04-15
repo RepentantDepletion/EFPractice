@@ -1,5 +1,6 @@
 import { RecurrencePattern } from '../types/RecurrencePattern';
 import type { Task } from '../types/Task';
+import { format } from 'date-fns';
 
 const BASE_URL = 'http://localhost:5278/api';
 
@@ -72,7 +73,7 @@ export async function updateTask(id: number, task: Task) {
       Description: task.description,
       Priority: task.priority,
       Done: task.done,
-      Deadline: task.deadline,
+      Deadline: format(task.deadline, 'yyyy-MM-dd'),
       ListId: task.list === null || task.list === '' ? null : Number(task.list),
       Recurrence: Number(task.recurrence),
     }),

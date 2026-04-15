@@ -1,5 +1,5 @@
 import type { Task } from "../types/Task";
-import { format } from "date-fns";
+import { format, parse } from "date-fns";
 
 type Props = {
   formData: Task;
@@ -77,7 +77,7 @@ const TaskEditForm = ({ formData, setFormData, listOptions, recurrenceOptions }:
           onChange={(e) =>
             setFormData((prev) => ({
               ...(prev as Task),
-              deadline: new Date(e.target.value),
+              deadline: parse(e.target.value, "yyyy-MM-dd", new Date()),
             }))
           }
         />
