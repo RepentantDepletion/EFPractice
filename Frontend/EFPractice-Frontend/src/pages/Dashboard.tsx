@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask, createTask, createTaskList } from '../api/Api.ts'
+import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask, createTask, createTaskList, completeTask, fetchTaskListById } from '../api/Api.ts'
 import type { Task } from '../types/Task.ts'
 import TaskView from '../components/TaskView.tsx'
 import TaskEditForm from '../components/TaskEditForm.tsx'
@@ -14,6 +14,7 @@ type list = {
 }
 
 type TaskSortMode = 'Default' | 'Title' | 'Priority' | 'Deadline';
+const TASK_CARD_CLICK_DELAY_MS = 240;
 
 function Dashboard() {
     const navigate = useNavigate();
@@ -46,6 +47,7 @@ function Dashboard() {
         height: window.innerHeight,
     });
     const dragPreviewRef = useRef<HTMLElement | null>(null);
+    const taskClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const shownTasksCount = (width: number, height: number) => {
         const widthCapacity = width < 600 ? 2 : width < 1024 ? 4 : 8;
         const heightMultiplier = height < 700 ? 1 : height < 900 ? 2 : 3;
@@ -58,6 +60,13 @@ function Dashboard() {
         if (dragPreviewRef.current) {
             dragPreviewRef.current.remove();
             dragPreviewRef.current = null;
+        }
+    };
+
+    const clearTaskClickTimeout = () => {
+        if (taskClickTimeoutRef.current !== null) {
+            clearTimeout(taskClickTimeoutRef.current);
+            taskClickTimeoutRef.current = null;
         }
     };
 
@@ -125,6 +134,7 @@ function Dashboard() {
             await updateTask(formData.id, formData);
             setSelectedTask(formData);
             setIsEditing(false);
+            refreshTask(formData.id);
         } catch {
             alert('Failed to save task');
         }
@@ -135,7 +145,7 @@ function Dashboard() {
 
         try {
             await deleteTask(selectedTask.id);
-            setTasks((current) => current.filter((task) => task.id !== selectedTask.id));
+            refreshTasks();
             setSelectedTask(null);
             setFormData(null);
             setIsEditing(false);
@@ -207,7 +217,7 @@ function Dashboard() {
 
         try {
             await updateTask(taskToMove.id, updatedTask);
-            setTasks((current) => current.map((task) => (task.id === updatedTask.id ? updatedTask : task)));
+            refreshTask(taskToMove.id);
 
             if (selectedTask?.id === updatedTask.id) {
                 setSelectedTask(updatedTask);
@@ -227,6 +237,7 @@ function Dashboard() {
     useEffect(() => {
         return () => {
             cleanupDragPreview();
+            clearTaskClickTimeout();
         };
     }, []);
 
@@ -274,8 +285,7 @@ function Dashboard() {
         try {
             const { id, ...payload } = newTaskData;
             await createTask(payload);
-            const refreshedTasks = await fetchTasks();
-            setTasks(refreshedTasks.map(normalizeTask));
+            refreshTasks();
             setIsCreatingTask(false);
             setNewTaskData(null);
         } catch {
@@ -301,8 +311,7 @@ function Dashboard() {
 
         try {
             await createTaskList(newListTitle.trim());
-            const refreshedLists = await fetchTaskLists();
-            setLists(refreshedLists.lists ?? []);
+            refreshLists();
             setIsCreatingList(false);
             setNewListTitle('');
         } catch {
@@ -347,6 +356,88 @@ function Dashboard() {
     });
 
     const visibleTasks = sortedTasks.slice(0, shownTasksCount(viewportSize.width, viewportSize.height));
+
+    const handleCompleteTask = async (taskId: number) => {
+        const taskToComplete = tasks.find((task) => task.id === taskId);
+        if (!taskToComplete) {
+            setError('Task not found');
+            return;
+        }
+
+        if (taskToComplete.done) {
+            try {
+                await updateTask(taskId, { ...taskToComplete, done: false });
+                refreshTask(taskId);
+            } catch {
+                setError('Failed to update task');
+            }
+            return;
+        }
+
+        try {
+            await completeTask(taskId);
+            refreshTask(taskId);
+            if (selectedTask?.id === taskId) {
+                setSelectedTask(null);
+            }
+        } catch {
+            setError('Failed to complete task');
+        }
+    };
+
+    const handleTaskCardClick = (taskId: number) => {
+        clearTaskClickTimeout();
+        taskClickTimeoutRef.current = setTimeout(() => {
+            void handleSelectTask(taskId);
+            taskClickTimeoutRef.current = null;
+        }, TASK_CARD_CLICK_DELAY_MS);
+    };
+
+    const handleTaskCardDoubleClick = (taskId: number) => {
+        clearTaskClickTimeout();
+        void handleCompleteTask(taskId);
+    };
+
+    const refreshTasks = async () => {
+        try {
+            const refreshedTasks = await fetchTasks();
+            setTasks(refreshedTasks.map(normalizeTask));
+        } catch {
+            setError('Failed to refresh tasks');
+        }
+    };
+
+    const refreshTask = async (taskId: number) => {
+        try {
+            const refreshedTask = await fetchTaskById(taskId);
+            setTasks((current) => current.map((task) => (task.id === taskId ? refreshedTask : task)));
+            if (selectedTask?.id === taskId) {
+                setSelectedTask(refreshedTask);
+            }
+        } catch {
+            setError('Failed to refresh task');
+        }
+    };
+
+
+    const refreshList = async (listId: number) => {
+        try {
+            const refreshedLists = await fetchTaskListById(listId);
+            setLists((current) => current.map((list) => (list.id === listId ? refreshedLists : list)));
+        } catch {
+            setError('Failed to refresh lists');
+        }
+    };
+
+    const refreshLists = async () => {
+        try {
+            const refreshedLists = await fetchTaskLists();
+            setLists(refreshedLists);
+        } catch {
+            setError('Failed to refresh lists');
+        }
+    };
+
 
     return (
         <div className="dashboard-layout">
@@ -469,7 +560,8 @@ function Dashboard() {
                                             <li key={task.id}>
                                                 <button
                                                     className='task-card'
-                                                    onClick={() => handleSelectTask(task.id)}
+                                                    onDoubleClick={() => handleTaskCardDoubleClick(task.id)}
+                                                    onClick={() => handleTaskCardClick(task.id)}
                                                     draggable
                                                     onDragStart={(event) => handleTaskDragStart(event, task.id)}
                                                     onDragEnd={handleTaskDragEnd}

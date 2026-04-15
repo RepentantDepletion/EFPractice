@@ -1,4 +1,4 @@
-import { getRecurrenceLabel, RecurrencePattern } from '../types/RecurrencePattern';
+import { RecurrencePattern } from '../types/RecurrencePattern';
 import type { Task } from '../types/Task';
 
 const BASE_URL = 'http://localhost:5278/api';
@@ -101,6 +101,20 @@ export async function fetchTaskById(id: number) {
     const data = await response.json();
     return normalizeTask(data);
 }
+
+export async function completeTask(id: number) {
+    const response = await fetch(`${BASE_URL}/UserTasks/Complete/${id}`, {
+        method: 'PUT',
+    });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Complete failed ${response.status}: ${text}`);
+  }
+
+  return;
+}
+
 
 export async function fetchTaskLists() {
     const response = await fetch(`${BASE_URL}/TaskLists`);

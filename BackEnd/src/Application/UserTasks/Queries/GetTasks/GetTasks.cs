@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EFPractice.Application.UserTasks.Queries.GetTasks;
 
-[Authorize]
 public record GetTasksQuery : IRequest<TasksVm>;
 
 public class GetTasksQueryHandler : IRequestHandler<GetTasksQuery, TasksVm>
