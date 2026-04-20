@@ -8,6 +8,12 @@ public class UserTaskConfiguration : IEntityTypeConfiguration<UserTask>
 {
     public void Configure(EntityTypeBuilder<UserTask> builder)
     {
+        builder.Property(t => t.UserID)
+            .HasMaxLength(450)
+            .IsRequired();
+
+        builder.HasIndex(t => t.UserID);
+
         builder.Property(t => t.Title)
             .HasMaxLength(200)
             .IsRequired();

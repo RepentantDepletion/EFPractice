@@ -17,16 +17,23 @@ public record CreateUserTaskCommand : IRequest<int>
 public class CreateUserTaskCommandHandler : IRequestHandler<CreateUserTaskCommand, int>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IUser _user;
 
-    public CreateUserTaskCommandHandler(IApplicationDbContext context)
+    public CreateUserTaskCommandHandler(IApplicationDbContext context, IUser user)
     {
         _context = context;
+        _user = user;
     }
 
     public async Task<int> Handle(CreateUserTaskCommand request, CancellationToken cancellationToken)
     {
+
+        if(string.IsNullOrEmpty(_user.Id))
+            throw new ArgumentException("User ID cannot be null or empty.");
+
         var entity = new UserTask
         {
+            UserID = _user.Id,
             Title = request.Title,
             Description = request.Description,
             Deadline = request.Deadline,

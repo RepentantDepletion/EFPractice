@@ -1,7 +1,9 @@
 ﻿using EFPractice.Application.Common.Interfaces;
 using EFPractice.Infrastructure.Data;
 using EFPractice.Infrastructure.Data.Interceptors;
+using EFPractice.Infrastructure.Authentication;
 using EFPractice.Infrastructure.Identity;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -30,7 +32,14 @@ public static class DependencyInjection
 
         builder.Services.AddScoped<ApplicationDbContextInitialiser>();
 
-        builder.Services.AddAuthentication()
+        builder.Services.AddHttpClient();
+
+        builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = "GoogleBearer";
+                options.DefaultChallengeScheme = "GoogleBearer";
+            })
+            .AddScheme<AuthenticationSchemeOptions, GoogleBearerAuthenticationHandler>("GoogleBearer", _ => { })
             .AddBearerToken(IdentityConstants.BearerScheme);
 
         builder.Services.AddAuthorizationBuilder();

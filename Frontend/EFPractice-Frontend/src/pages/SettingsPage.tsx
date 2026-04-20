@@ -29,7 +29,7 @@ function SettingsPage() {
   return (
     <div id="settings-page">
       <section className="settings-card">
-        <button className="back-button" onClick={() => navigate('/')}>
+        <button className="back-button" onClick={() => navigate('/home')}>
           Back to Dashboard
         </button>
 

@@ -3,10 +3,23 @@ import type { Task } from '../types/Task';
 import { format } from 'date-fns';
 
 const BASE_URL = 'http://localhost:5278/api';
+const GOOGLE_ACCESS_TOKEN_KEY = 'google_access_token';
 
 type RawTaskResponse = Record<string, unknown>;
 
 type CreateTaskRequest = Omit<Task, 'id'>;
+
+const authHeaders = (): HeadersInit => {
+  const accessToken = sessionStorage.getItem(GOOGLE_ACCESS_TOKEN_KEY);
+
+  if (!accessToken) {
+    return {};
+  }
+
+  return {
+    Authorization: `Bearer ${accessToken}`,
+  };
+};
 
 
 const parseDate = (value: unknown): Date => {
@@ -32,7 +45,9 @@ const normalizeTask = (rawTask: RawTaskResponse): Task => ({
 });
 
 export async function fetchTasks(): Promise<Task[]> {
-  const response = await fetch(`${BASE_URL}/UserTasks/GetAll`);
+  const response = await fetch(`${BASE_URL}/UserTasks/GetAll`, {
+    headers: authHeaders(),
+  });
   const responseData = await response.json();
   return responseData.map(normalizeTask);
 }
@@ -41,6 +56,7 @@ export async function createTask(taskData: CreateTaskRequest): Promise<Task> {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      ...authHeaders(),
     },
     body: JSON.stringify({
       Title: taskData.title,
@@ -67,6 +83,7 @@ export async function updateTask(id: number, task: Task) {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
+      ...authHeaders(),
     },
     body: JSON.stringify({
       Title: task.title,
@@ -90,12 +107,15 @@ export async function updateTask(id: number, task: Task) {
 export async function deleteTask(id: number) {
     await fetch(`${BASE_URL}/UserTasks/${id}`, {
         method: 'DELETE',
+    headers: authHeaders(),
     });
 }
 
 export async function fetchTaskById(id: number) {
     console.log(`Fetching task with ID: ${id}`);
-    const response = await fetch(`${BASE_URL}/UserTasks/${id}`);
+    const response = await fetch(`${BASE_URL}/UserTasks/${id}`, {
+      headers: authHeaders(),
+    });
     if (!response.ok) {
         throw new Error('Failed to fetch task');
     }
@@ -106,6 +126,7 @@ export async function fetchTaskById(id: number) {
 export async function completeTask(id: number) {
     const response = await fetch(`${BASE_URL}/UserTasks/Complete/${id}`, {
         method: 'PUT',
+      headers: authHeaders(),
     });
 
   if (!response.ok) {
@@ -118,7 +139,9 @@ export async function completeTask(id: number) {
 
 
 export async function fetchTaskLists() {
-    const response = await fetch(`${BASE_URL}/TaskLists`);
+    const response = await fetch(`${BASE_URL}/TaskLists`, {
+      headers: authHeaders(),
+    });
     return response.json();
 }
 
@@ -127,6 +150,7 @@ export async function createTaskList(name: string) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+        ...authHeaders(),
         },
     body: JSON.stringify({ Title: name }),
     });
@@ -156,6 +180,7 @@ export async function updateTaskList(
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
+        ...authHeaders(),
         },
         body: JSON.stringify({
             id,
@@ -169,17 +194,21 @@ export async function updateTaskList(
 export async function deleteTaskList(id: number) {
     await fetch(`${BASE_URL}/TaskLists/${id}`, {
         method: 'DELETE',
+      headers: authHeaders(),
     });
 }
 
 export async function fetchTaskListById(id: number) {
-    const response = await fetch(`${BASE_URL}/TaskLists/${id}`);
+    const response = await fetch(`${BASE_URL}/TaskLists/${id}`, {
+      headers: authHeaders(),
+    });
     return response.json();
 }
 
 export async function completeTaskList(id: number) {
     const response = await fetch(`${BASE_URL}/TaskLists/${id}/complete`, {
         method: 'POST',
+      headers: authHeaders(),
     });
 
   if (!response.ok) {

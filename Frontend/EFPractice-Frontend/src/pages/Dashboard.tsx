@@ -8,6 +8,12 @@ import TaskEditForm from '../components/TaskEditForm.tsx'
 import '../styles/App.css'
 import '../styles/Dashboard.css'
 
+const OAUTH_STORAGE_KEYS = {
+    state: 'google_oauth_state',
+    accessToken: 'google_access_token',
+    tokenExpiry: 'google_access_token_expiry',
+} as const;
+
 type list = {
     id: number;
     title: string;
@@ -308,6 +314,13 @@ function Dashboard() {
         setNewListTitle('');
     };
 
+    const handleLogout = () => {
+        sessionStorage.removeItem(OAUTH_STORAGE_KEYS.state);
+        sessionStorage.removeItem(OAUTH_STORAGE_KEYS.accessToken);
+        sessionStorage.removeItem(OAUTH_STORAGE_KEYS.tokenExpiry);
+        navigate('/', { replace: true });
+    };
+
     const handleCancelAddList = () => {
         setIsCreatingList(false);
         setNewListTitle('');
@@ -484,7 +497,12 @@ function Dashboard() {
         <div className="dashboard-layout">
             <aside className="dashboard-sidebar">
                 <div className="dashboard-header">
-                    <h1>Task Manager</h1>
+                    <div className="dashboard-header-row">
+                        <h1>Task Manager</h1>
+                        <button className="logout-button" onClick={handleLogout} type="button">
+                            Logout
+                        </button>
+                    </div>
                     <input
                         className="sidebar-search"
                         type="text"

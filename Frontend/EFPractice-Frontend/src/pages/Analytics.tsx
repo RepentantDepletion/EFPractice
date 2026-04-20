@@ -253,7 +253,7 @@ function Analytics() {
 
     return (
         <div id="analytics-page">
-            <button className='back-button' onClick={() => navigate('/')}>Back to Dashboard</button>
+            <button className='back-button' onClick={() => navigate('/home')}>Back to Dashboard</button>
             <h1 className='analytics-header'>Analytics</h1>
             <div className='analytics-panels-container'>
                 <div className='analytics-panel'>

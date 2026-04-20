@@ -151,7 +151,7 @@ function ListPage() {
     const handleDeleteListClick = async () => {
         try {
             await deleteTaskList(Number(id));
-            navigate('/');
+            navigate('/home');
         } catch {
             setError('Failed to delete list');
         }
@@ -210,7 +210,7 @@ function ListPage() {
 
     return (
         <div id='list-page'>
-            <button className='back-button' onClick={() => navigate('/')}>Back to Dashboard</button>
+            <button className='back-button' onClick={() => navigate('/home')}>Back to Dashboard</button>
             <h1>{listTitle || `List ${id}`}</h1>
             <div className='list-page-actions'>
                 <label htmlFor='sort-task-select' className='sort-task-label'>Sort:</label>

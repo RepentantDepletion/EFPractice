@@ -12,14 +12,33 @@ public record GetAllTasksCommand(
 public class GetAllTasksCommandHandler : IRequestHandler<GetAllTasksCommand, List<UserTask>>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IUser _user;
 
-    public GetAllTasksCommandHandler(IApplicationDbContext context)
+    public GetAllTasksCommandHandler(IApplicationDbContext context, IUser user)
     {
         _context = context;
+        _user = user;
     }
 
     public async Task<List<UserTask>> Handle(GetAllTasksCommand request, CancellationToken cancellationToken)
     {
-        return await _context.UserTasks.ToListAsync();
+        if(string.IsNullOrEmpty(_user.Id))
+            throw new ArgumentException("User ID cannot be null or empty.");
+
+        var query = _context.UserTasks
+            .Where(task => task.UserID == _user.Id)
+            .AsQueryable();
+
+        if (request.TaskID.HasValue)
+        {
+            query = query.Where(task => task.Id == request.TaskID.Value);
+        }
+
+        if (request.Priority.HasValue)
+        {
+            query = query.Where(task => task.Priority == (int)request.Priority.Value);
+        }
+
+        return await query.ToListAsync(cancellationToken);
     }
 }
