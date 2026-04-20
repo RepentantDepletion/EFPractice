@@ -4,6 +4,7 @@ import { fetchTaskListById, fetchTasks, updateTask, createTask, deleteTask, fetc
 import type { Task } from '../types/Task';
 import TaskView from '../components/TaskView';
 import TaskEditForm from '../components/TaskEditForm';
+import Notifications, { type NotificationItem, type NotificationVariant } from '../components/Notifications';
 import '../styles/App.css';
 import '../styles/Dashboard.css';
 import '../styles/TaskPage.css';
@@ -24,6 +25,7 @@ function ListPage() {
     const [newTaskData, setNewTaskData] = useState<Task | null>(null);
     const [lists, setLists] = useState<Array<{ id: number; title: string }>>([]);
     const [sortMode, setSortMode] = useState<TaskSortMode>('Default');
+    const [notifications, setNotifications] = useState<NotificationItem[]>([]);
     const [recurrenceType] = useState([
         { value: 0, label: 'None' },
         { value: 1, label: 'Daily' },
@@ -32,6 +34,15 @@ function ListPage() {
         { value: 4, label: 'Yearly' },
         { value: 5, label: 'Custom' }
     ]);
+
+    const showNotification = (message: string, variant: NotificationVariant, title?: string) => {
+        const notificationId = `notification-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        setNotifications((current) => [{ id: notificationId, message, variant, title }, ...current]);
+    };
+
+    const dismissNotification = (notificationId: string) => {
+        setNotifications((current) => current.filter((notification) => notification.id !== notificationId));
+    };
 
     const loadList = async () => {
         if (!id) return;
@@ -123,8 +134,9 @@ function ListPage() {
             setIsCreatingTask(false);
             setNewTaskData(null);
             await loadList();
+            showNotification('Task created.', 'success', 'Created');
         } catch {
-            setError('Failed to create task');
+            showNotification('Failed to create task.', 'error', 'Create failed');
         }
     };
 
@@ -132,8 +144,9 @@ function ListPage() {
         try {
             await deleteTask(taskId);
             await loadList();
+            showNotification('Task deleted.', 'success', 'Deleted');
         } catch {
-            setError('Failed to delete task');
+            showNotification('Failed to delete task.', 'error', 'Delete failed');
         }
     };
 
@@ -143,17 +156,19 @@ function ListPage() {
             if (!taskToUpdate) throw new Error('Task not found');
             await updateTask(taskId, { ...taskToUpdate, list: '' });
             await loadList();
+            showNotification('Task removed from list.', 'success', 'Updated');
         } catch {
-            setError('Failed to remove task from list');
+            showNotification('Failed to remove task from list.', 'error', 'Update failed');
         }
     };
 
     const handleDeleteListClick = async () => {
         try {
             await deleteTaskList(Number(id));
+            showNotification('List deleted.', 'success', 'Deleted');
             navigate('/home');
         } catch {
-            setError('Failed to delete list');
+            showNotification('Failed to delete list.', 'error', 'Delete failed');
         }
     };
 
@@ -210,6 +225,7 @@ function ListPage() {
 
     return (
         <div id='list-page'>
+            <Notifications notifications={notifications} onDismiss={dismissNotification} position='top-right' />
             <button className='back-button' onClick={() => navigate('/home')}>Back to Dashboard</button>
             <h1>{listTitle || `List ${id}`}</h1>
             <div className='list-page-actions'>

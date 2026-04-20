@@ -4,6 +4,7 @@ import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask, crea
 import type { Task } from '../types/Task.ts'
 import TaskView from '../components/TaskView.tsx'
 import TaskEditForm from '../components/TaskEditForm.tsx'
+import Notifications, { type NotificationItem, type NotificationVariant } from '../components/Notifications.tsx'
 
 import '../styles/App.css'
 import '../styles/Dashboard.css'
@@ -49,6 +50,7 @@ function Dashboard() {
     const [newListTitle, setNewListTitle] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [sortMode, setSortMode] = useState<TaskSortMode>('Default');
+    const [notifications, setNotifications] = useState<NotificationItem[]>([]);
     const [viewportSize, setViewportSize] = useState({
         width: window.innerWidth,
         height: window.innerHeight,
@@ -61,6 +63,15 @@ function Dashboard() {
         const heightMultiplier = height < 700 ? 1 : height < 900 ? 2 : 3;
 
         return widthCapacity * heightMultiplier;
+    };
+
+    const showNotification = (message: string, variant: NotificationVariant, title?: string) => {
+        const id = `notification-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        setNotifications((current) => [{ id, message, variant, title }, ...current]);
+    };
+
+    const dismissNotification = (id: string) => {
+        setNotifications((current) => current.filter((notification) => notification.id !== id));
     };
 
 
@@ -164,8 +175,9 @@ function Dashboard() {
             setSelectedTask(null);
             setFormData(null);
             setIsEditing(false);
+            showNotification('Task deleted.', 'success', 'Deleted');
         } catch {
-            setError('Failed to delete task');
+            showNotification('Failed to delete task.', 'error', 'Delete failed');
         }
     };
 
@@ -304,8 +316,9 @@ function Dashboard() {
             refreshTasks();
             setIsCreatingTask(false);
             setNewTaskData(null);
+            showNotification('Task created.', 'success', 'Created');
         } catch {
-            setError('Failed to create task');
+            showNotification('Failed to create task.', 'error', 'Create failed');
         }
     };
 
@@ -337,8 +350,9 @@ function Dashboard() {
             refreshLists();
             setIsCreatingList(false);
             setNewListTitle('');
+            showNotification('List created.', 'success', 'Created');
         } catch {
-            setError('Failed to create list');
+            showNotification('Failed to create list.', 'error', 'Create failed');
         }
     };
 
@@ -495,6 +509,7 @@ function Dashboard() {
 
     return (
         <div className="dashboard-layout">
+            <Notifications notifications={notifications} onDismiss={dismissNotification} position='top-right' />
             <aside className="dashboard-sidebar">
                 <div className="dashboard-header">
                     <div className="dashboard-header-row">

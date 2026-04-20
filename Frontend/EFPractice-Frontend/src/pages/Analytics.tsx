@@ -210,7 +210,7 @@ function Analytics() {
             {
                 label: metricData.datasetLabel,
                 data: metricData.values,
-                backgroundColor: ['#2e86c1', '#85c1e9', '#7fb3d5', '#d6eaf8'],
+                backgroundColor: ['#19fd19', '#ff0101', '#7fb3d5', '#d6eaf8'],
                 borderColor: '#ffffff',
                 borderWidth: 1,
             },
