@@ -11,6 +11,7 @@ import '../styles/Dashboard.css'
 
 const OAUTH_STORAGE_KEYS = {
     state: 'google_oauth_state',
+    codeVerifier: 'google_oauth_code_verifier',
     accessToken: 'google_access_token',
     tokenExpiry: 'google_access_token_expiry',
 } as const;
@@ -329,6 +330,7 @@ function Dashboard() {
 
     const handleLogout = () => {
         sessionStorage.removeItem(OAUTH_STORAGE_KEYS.state);
+        sessionStorage.removeItem(OAUTH_STORAGE_KEYS.codeVerifier);
         sessionStorage.removeItem(OAUTH_STORAGE_KEYS.accessToken);
         sessionStorage.removeItem(OAUTH_STORAGE_KEYS.tokenExpiry);
         navigate('/', { replace: true });

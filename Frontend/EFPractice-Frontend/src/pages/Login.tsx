@@ -5,10 +5,12 @@ import '../styles/Login.css';
 const GOOGLE_AUTH_ENDPOINT = 'https://accounts.google.com/o/oauth2/v2/auth';
 const CLIENT_ID = '1010846955790-cf7tg92ekd63susu7m5ief9pkn8g555a.apps.googleusercontent.com';
 const REDIRECT_URI = `${window.location.origin}/`;
+const API_BASE_URL = 'http://localhost:5278/api';
 const SCOPES = ['openid', 'email', 'profile'].join(' ');
 
 const OAUTH_STORAGE_KEYS = {
   state: 'google_oauth_state',
+  codeVerifier: 'google_oauth_code_verifier',
   accessToken: 'google_access_token',
   tokenExpiry: 'google_access_token_expiry',
 } as const;
@@ -20,17 +22,34 @@ const createRandomString = (length: number): string => {
   return Array.from(random, (byte) => chars[byte % chars.length]).join('');
 };
 
-const oauthSignIn = (): void => {
+const toBase64Url = (bytes: Uint8Array): string => {
+  const binary = Array.from(bytes, (byte) => String.fromCharCode(byte)).join('');
+  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+};
+
+const createCodeChallenge = async (codeVerifier: string): Promise<string> => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(codeVerifier);
+  const digest = await crypto.subtle.digest('SHA-256', data);
+  return toBase64Url(new Uint8Array(digest));
+};
+
+const oauthSignIn = async (): Promise<void> => {
   const state = createRandomString(64);
+  const codeVerifier = createRandomString(96);
+  const codeChallenge = await createCodeChallenge(codeVerifier);
 
   sessionStorage.setItem(OAUTH_STORAGE_KEYS.state, state);
+  sessionStorage.setItem(OAUTH_STORAGE_KEYS.codeVerifier, codeVerifier);
 
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
     redirect_uri: REDIRECT_URI,
-    response_type: 'token',
+    response_type: 'code',
     scope: SCOPES,
     include_granted_scopes: 'true',
+    code_challenge: codeChallenge,
+    code_challenge_method: 'S256',
     state,
   });
 
@@ -43,28 +62,29 @@ function Login() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const handleOAuthCallback = () => {
+    const handleOAuthCallback = async () => {
       const query = new URLSearchParams(window.location.search);
-      const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
 
-      const error = query.get('error') ?? hash.get('error');
-      const accessToken = hash.get('access_token');
-      const expiresIn = Number(hash.get('expires_in') ?? 3600);
-      const state = hash.get('state') ?? query.get('state');
+      const error = query.get('error');
+      const code = query.get('code');
+      const state = query.get('state');
 
       if (error) {
         setStatus(`Google sign-in failed: ${error}`);
         return;
       }
 
-      if (!accessToken) {
+      if (!code) {
         return;
       }
 
       const expectedState = sessionStorage.getItem(OAUTH_STORAGE_KEYS.state);
+      const codeVerifier = sessionStorage.getItem(OAUTH_STORAGE_KEYS.codeVerifier);
 
-      if (!expectedState || state !== expectedState) {
+      if (!expectedState || !codeVerifier || state !== expectedState) {
         setStatus('Invalid sign-in state. Please try again.');
+        sessionStorage.removeItem(OAUTH_STORAGE_KEYS.state);
+        sessionStorage.removeItem(OAUTH_STORAGE_KEYS.codeVerifier);
         return;
       }
 
@@ -72,13 +92,42 @@ function Login() {
       setStatus('Completing Google sign-in...');
 
       try {
+        const exchangeResponse = await fetch(`${API_BASE_URL}/Users/google/exchange`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            code,
+            codeVerifier,
+            redirectUri: REDIRECT_URI,
+            clientId: CLIENT_ID,
+          }),
+        });
+
+        if (!exchangeResponse.ok) {
+          const message = await exchangeResponse.text();
+          throw new Error(message || 'Could not exchange authorization code.');
+        }
+
+        const exchangeData = (await exchangeResponse.json()) as {
+          accessToken?: string;
+          expiresIn?: number;
+        };
+
+        if (!exchangeData.accessToken) {
+          throw new Error('No access token was returned by the server.');
+        }
+
+        const expiresIn = Number(exchangeData.expiresIn ?? 3600);
         const expiresInMs = (Number.isFinite(expiresIn) ? expiresIn : 3600) * 1000;
         const expiryTs = String(Date.now() + expiresInMs);
 
-        sessionStorage.setItem(OAUTH_STORAGE_KEYS.accessToken, accessToken);
+        sessionStorage.setItem(OAUTH_STORAGE_KEYS.accessToken, exchangeData.accessToken);
         sessionStorage.setItem(OAUTH_STORAGE_KEYS.tokenExpiry, expiryTs);
 
         sessionStorage.removeItem(OAUTH_STORAGE_KEYS.state);
+        sessionStorage.removeItem(OAUTH_STORAGE_KEYS.codeVerifier);
 
         window.history.replaceState({}, document.title, window.location.pathname);
         navigate('/home', { replace: true });
@@ -108,7 +157,15 @@ function Login() {
           <div className="login-content">
             <button 
               className="google-button" 
-              onClick={oauthSignIn} 
+              onClick={() => {
+                setIsLoading(true);
+                setStatus('Redirecting to Google...');
+                void oauthSignIn().catch((signInError: unknown) => {
+                  const message = signInError instanceof Error ? signInError.message : 'Unknown sign-in error';
+                  setStatus(`Could not start sign-in: ${message}`);
+                  setIsLoading(false);
+                });
+              }} 
               disabled={isLoading}
               aria-label={isLoading ? 'Signing in' : 'Sign in with Google'}
             >
