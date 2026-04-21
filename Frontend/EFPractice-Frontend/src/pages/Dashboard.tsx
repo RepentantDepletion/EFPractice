@@ -49,6 +49,8 @@ function Dashboard() {
         width: window.innerWidth,
         height: window.innerHeight,
     });
+    const [showTaskDetails, setShowTaskDetails] = useState(false);
+    const [detailsTransitionKey, setDetailsTransitionKey] = useState(0);
     const dragPreviewRef = useRef<HTMLElement | null>(null);
     const taskClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const listClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -98,6 +100,14 @@ function Dashboard() {
         }
     };
 
+    const showTaskDetailsWithTransition = () => {
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                setShowTaskDetails(true);
+            });
+        });
+    };
+
     const normalizeTask = (task: any): Task => ({
         ...task,
         deadline: new Date(task.deadline),
@@ -132,6 +142,7 @@ function Dashboard() {
     }, []);
 
     const handleSelectTask = async (id: number) => {
+        setShowTaskDetails(false);
         setSelectedLoading(true);
         setError(null);
 
@@ -140,10 +151,12 @@ function Dashboard() {
             setSelectedTask(normalizeTask(task));
             setFormData(null);
             setIsEditing(false);
+            setDetailsTransitionKey((current) => current + 1);
         } catch {
             setError('Failed to load task details');
         } finally {
             setSelectedLoading(false);
+            showTaskDetailsWithTransition();
         }
     };
 
@@ -302,6 +315,9 @@ function Dashboard() {
         setIsEditing(false);
         setIsCreatingTask(true);
         setNewTaskData(newTask);
+        setShowTaskDetails(false);
+        setDetailsTransitionKey((current) => current + 1);
+        showTaskDetailsWithTransition();
     };
 
     const handleCancelAddTask = () => {
@@ -508,7 +524,7 @@ function Dashboard() {
     const handleListCardDoubleClick = (listId: number) => {
         clearListClickTimeout();
         void handleCompleteList(listId);
-    }
+    };
 
     return (
         <div className="dashboard-layout">
@@ -530,7 +546,8 @@ function Dashboard() {
                     />
                 </div>
 
-                <main className="task-details-panel">
+                <main className={showTaskDetails ? "task-details-panel is-visible" : "task-details-panel is-hidden"}>
+                    <div key={detailsTransitionKey} className="task-details-content">
                     {selectedLoading ? (
                         <p>Loading task details…</p>
                     ) : isCreatingTask && newTaskData ? (
@@ -555,6 +572,7 @@ function Dashboard() {
                         <>
                             <div className="task-details-header">
                                 <button className="close-button" onClick={() => {
+                                    setShowTaskDetails(false);
                                     setSelectedTask(null);
                                     setFormData(null);
                                     setIsEditing(false);
@@ -590,6 +608,7 @@ function Dashboard() {
                     )}
 
                     {error && <p className="error-message">{error}</p>}
+                    </div>
                 </main>
             </aside>
 

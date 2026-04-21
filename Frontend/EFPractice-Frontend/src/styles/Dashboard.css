@@ -424,6 +424,9 @@ p{
 }
 
 .task-details-panel {
+    transition: opacity 2s ease, transform 2s ease;
+    opacity: 0;
+    transform: translateY(10px);
     align-items: center;
     display: flex;
     flex-direction: column;
@@ -442,6 +445,33 @@ p{
 .task-details-panel p {
     color: var(--text);
     line-height: 1.6;
+}
+
+.task-details-panel.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.task-details-panel.is-hidden {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.task-details-content {
+    width: 100%;
+    animation: details-content-in 1.5s ease;
+}
+
+@keyframes details-content-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .button-row {

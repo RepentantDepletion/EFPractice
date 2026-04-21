@@ -5,66 +5,114 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace EFPractice.Web.Endpoints;
 
 public class Users : IEndpointGroup
 {
+    private const string GoogleAuthorizationEndpoint = "https://accounts.google.com/o/oauth2/v2/auth";
     private const string GoogleTokenEndpoint = "https://oauth2.googleapis.com/token";
     private const string GoogleUserInfoEndpoint = "https://openidconnect.googleapis.com/v1/userinfo";
+    private const string GoogleScope = "openid email profile";
+    private const string OAuthStateCookieName = "google_oauth_state";
+    private const string OAuthCodeVerifierCookieName = "google_oauth_code_verifier";
 
     public static void Map(RouteGroupBuilder groupBuilder)
     {
         groupBuilder.MapIdentityApi<ApplicationUser>();
 
-        groupBuilder.MapPost(ExchangeGoogleCode, "google/exchange");
+        groupBuilder.MapGet(StartGoogleSignIn, "google/start");
+        groupBuilder.MapGet(HandleGoogleCallback, "google/callback");
         groupBuilder.MapPost(Logout, "logout").RequireAuthorization();
     }
 
-    [EndpointSummary("Exchange Google authorization code")]
-    [EndpointDescription("Exchanges a Google OAuth authorization code for an authenticated server-side session.")]
-    public static async Task<Results<NoContent, BadRequest<string>>> ExchangeGoogleCode(
-        [FromBody] GoogleCodeExchangeRequest request,
+    [EndpointSummary("Start Google OAuth sign-in")]
+    [EndpointDescription("Starts the Google OAuth flow from the backend and redirects to Google.")]
+    public static RedirectHttpResult StartGoogleSignIn(
+        HttpContext httpContext,
+        IConfiguration configuration)
+    {
+        var clientId = configuration["GoogleOAuth:ClientId"];
+        if (string.IsNullOrWhiteSpace(clientId))
+        {
+            return TypedResults.Redirect(BuildFailureRedirectUri(configuration, "oauth_not_configured"));
+        }
+
+        var callbackUri = GetBackendCallbackUri(httpContext, configuration);
+        var state = GenerateRandomToken(48);
+        var codeVerifier = GenerateRandomToken(64);
+        var codeChallenge = ComputeCodeChallenge(codeVerifier);
+
+        var cookieOptions = BuildOAuthCookieOptions(httpContext);
+        httpContext.Response.Cookies.Append(OAuthStateCookieName, state, cookieOptions);
+        httpContext.Response.Cookies.Append(OAuthCodeVerifierCookieName, codeVerifier, cookieOptions);
+
+        var parameters = new Dictionary<string, string>
+        {
+            ["client_id"] = clientId,
+            ["redirect_uri"] = callbackUri,
+            ["response_type"] = "code",
+            ["scope"] = GoogleScope,
+            ["include_granted_scopes"] = "true",
+            ["code_challenge"] = codeChallenge,
+            ["code_challenge_method"] = "S256",
+            ["state"] = state,
+        };
+
+        var authorizationUri = BuildUriWithQuery(GoogleAuthorizationEndpoint, parameters);
+        return TypedResults.Redirect(authorizationUri);
+    }
+
+    [EndpointSummary("Handle Google OAuth callback")]
+    [EndpointDescription("Completes Google OAuth callback, creates local user session, and redirects to frontend.")]
+    public static async Task<RedirectHttpResult> HandleGoogleCallback(
+        [FromQuery] string? code,
+        [FromQuery] string? state,
+        [FromQuery] string? error,
+        HttpContext httpContext,
         IConfiguration configuration,
         IHttpClientFactory httpClientFactory,
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
         CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(request.Code)
-            || string.IsNullOrWhiteSpace(request.CodeVerifier)
-            || string.IsNullOrWhiteSpace(request.RedirectUri))
+        if (!string.IsNullOrWhiteSpace(error))
         {
-            return TypedResults.BadRequest("Code, codeVerifier, and redirectUri are required.");
+            ClearOAuthCookies(httpContext);
+            return TypedResults.Redirect(BuildFailureRedirectUri(configuration, "google_denied"));
         }
 
-        if (!Uri.TryCreate(request.RedirectUri, UriKind.Absolute, out _))
+        var expectedState = httpContext.Request.Cookies[OAuthStateCookieName];
+        var codeVerifier = httpContext.Request.Cookies[OAuthCodeVerifierCookieName];
+        ClearOAuthCookies(httpContext);
+
+        if (string.IsNullOrWhiteSpace(code)
+            || string.IsNullOrWhiteSpace(state)
+            || string.IsNullOrWhiteSpace(expectedState)
+            || string.IsNullOrWhiteSpace(codeVerifier)
+            || !SecureEquals(state, expectedState))
         {
-            return TypedResults.BadRequest("redirectUri must be an absolute URI.");
+            return TypedResults.Redirect(BuildFailureRedirectUri(configuration, "invalid_oauth_state"));
         }
 
-        var configuredClientId = configuration["GoogleOAuth:ClientId"];
-        var clientId = configuredClientId;
+        var clientId = configuration["GoogleOAuth:ClientId"];
 
         if (string.IsNullOrWhiteSpace(clientId))
         {
-            return TypedResults.BadRequest("Google OAuth client ID is not configured.");
+            return TypedResults.Redirect(BuildFailureRedirectUri(configuration, "oauth_not_configured"));
         }
 
-        var allowedRedirectUris = configuration.GetSection("GoogleOAuth:AllowedRedirectUris").Get<string[]>() ?? [];
-        if (allowedRedirectUris.Length > 0
-            && !allowedRedirectUris.Contains(request.RedirectUri, StringComparer.Ordinal))
-        {
-            return TypedResults.BadRequest("redirectUri is not allowed.");
-        }
+        var callbackUri = GetBackendCallbackUri(httpContext, configuration);
 
         var formValues = new List<KeyValuePair<string, string>>
         {
             new("grant_type", "authorization_code"),
-            new("code", request.Code),
-            new("code_verifier", request.CodeVerifier),
+            new("code", code),
+            new("code_verifier", codeVerifier),
             new("client_id", clientId),
-            new("redirect_uri", request.RedirectUri),
+            new("redirect_uri", callbackUri),
         };
 
         var clientSecret = configuration["GoogleOAuth:ClientSecret"];
@@ -87,16 +135,7 @@ public class Users : IEndpointGroup
 
         if (!tokenResponse.IsSuccessStatusCode)
         {
-            if (document.RootElement.TryGetProperty("error", out var errorElement))
-            {
-                var description = document.RootElement.TryGetProperty("error_description", out var descriptionElement)
-                    ? descriptionElement.GetString()
-                    : null;
-                var error = errorElement.GetString();
-                return TypedResults.BadRequest(string.IsNullOrWhiteSpace(description) ? error ?? "Google token exchange failed." : $"{error}: {description}");
-            }
-
-            return TypedResults.BadRequest("Google token exchange failed.");
+            return TypedResults.Redirect(BuildFailureRedirectUri(configuration, "token_exchange_failed"));
         }
 
         var accessToken = document.RootElement.TryGetProperty("access_token", out var accessTokenElement)
@@ -105,24 +144,24 @@ public class Users : IEndpointGroup
 
         if (string.IsNullOrWhiteSpace(accessToken))
         {
-            return TypedResults.BadRequest("Google token exchange returned no access_token.");
+            return TypedResults.Redirect(BuildFailureRedirectUri(configuration, "missing_access_token"));
         }
 
         var googleUser = await GetGoogleUserAsync(httpClientFactory, accessToken, cancellationToken);
         if (googleUser is null)
         {
-            return TypedResults.BadRequest("Google userinfo request failed.");
+            return TypedResults.Redirect(BuildFailureRedirectUri(configuration, "google_userinfo_failed"));
         }
 
         var localUser = await GetOrCreateLocalUserAsync(userManager, googleUser);
         if (localUser is null)
         {
-            return TypedResults.BadRequest("Unable to create local user.");
+            return TypedResults.Redirect(BuildFailureRedirectUri(configuration, "local_user_failed"));
         }
 
         await signInManager.SignInAsync(localUser, isPersistent: false);
 
-        return TypedResults.NoContent();
+        return TypedResults.Redirect(GetFrontendSuccessRedirectUri(configuration));
     }
 
     [EndpointSummary("Log out")]
@@ -132,8 +171,6 @@ public class Users : IEndpointGroup
         await signInManager.SignOutAsync();
         return TypedResults.Ok();
     }
-
-    public sealed record GoogleCodeExchangeRequest(string Code, string CodeVerifier, string RedirectUri);
 
     private static async Task<GoogleUserInfo?> GetGoogleUserAsync(IHttpClientFactory httpClientFactory, string accessToken, CancellationToken cancellationToken)
     {
@@ -192,6 +229,99 @@ public class Users : IEndpointGroup
         }
 
         return await userManager.FindByEmailAsync(googleUser.Email);
+    }
+
+    private static CookieOptions BuildOAuthCookieOptions(HttpContext httpContext) => new()
+    {
+        HttpOnly = true,
+        IsEssential = true,
+        SameSite = SameSiteMode.Lax,
+        Secure = httpContext.Request.IsHttps,
+        Expires = DateTimeOffset.UtcNow.AddMinutes(10),
+        Path = "/",
+    };
+
+    private static void ClearOAuthCookies(HttpContext httpContext)
+    {
+        var options = new CookieOptions
+        {
+            HttpOnly = true,
+            IsEssential = true,
+            SameSite = SameSiteMode.Lax,
+            Secure = httpContext.Request.IsHttps,
+            Path = "/",
+        };
+
+        httpContext.Response.Cookies.Delete(OAuthStateCookieName, options);
+        httpContext.Response.Cookies.Delete(OAuthCodeVerifierCookieName, options);
+    }
+
+    private static string GenerateRandomToken(int byteLength)
+    {
+        var bytes = RandomNumberGenerator.GetBytes(byteLength);
+        return Convert.ToBase64String(bytes)
+            .Replace('+', '-')
+            .Replace('/', '_')
+            .TrimEnd('=');
+    }
+
+    private static string ComputeCodeChallenge(string codeVerifier)
+    {
+        var bytes = Encoding.UTF8.GetBytes(codeVerifier);
+        var hash = SHA256.HashData(bytes);
+        return Convert.ToBase64String(hash)
+            .Replace('+', '-')
+            .Replace('/', '_')
+            .TrimEnd('=');
+    }
+
+    private static bool SecureEquals(string left, string right)
+    {
+        var leftBytes = Encoding.UTF8.GetBytes(left);
+        var rightBytes = Encoding.UTF8.GetBytes(right);
+
+        return leftBytes.Length == rightBytes.Length
+               && CryptographicOperations.FixedTimeEquals(leftBytes, rightBytes);
+    }
+
+    private static string BuildUriWithQuery(string baseUri, IReadOnlyDictionary<string, string> parameters)
+    {
+        var query = string.Join("&", parameters.Select(pair =>
+            $"{Uri.EscapeDataString(pair.Key)}={Uri.EscapeDataString(pair.Value)}"));
+        return $"{baseUri}?{query}";
+    }
+
+    private static string GetBackendCallbackUri(HttpContext httpContext, IConfiguration configuration)
+    {
+        var configured = configuration["GoogleOAuth:BackendCallbackUri"];
+        if (!string.IsNullOrWhiteSpace(configured))
+        {
+            return configured;
+        }
+
+        return $"{httpContext.Request.Scheme}://{httpContext.Request.Host}/api/Users/google/callback";
+    }
+
+    private static string GetFrontendSuccessRedirectUri(IConfiguration configuration)
+    {
+        var configured = configuration["GoogleOAuth:FrontendSuccessRedirectUri"];
+        if (!string.IsNullOrWhiteSpace(configured))
+        {
+            return configured;
+        }
+
+        return "http://localhost:5173/home";
+    }
+
+    private static string BuildFailureRedirectUri(IConfiguration configuration, string errorCode)
+    {
+        var configured = configuration["GoogleOAuth:FrontendFailureRedirectUri"];
+        var baseUri = string.IsNullOrWhiteSpace(configured)
+            ? "http://localhost:5173/"
+            : configured;
+
+        var separator = baseUri.Contains('?', StringComparison.Ordinal) ? "&" : "?";
+        return $"{baseUri}{separator}authError={Uri.EscapeDataString(errorCode)}";
     }
 
     private sealed record GoogleUserInfo(string? Email, bool EmailVerified);

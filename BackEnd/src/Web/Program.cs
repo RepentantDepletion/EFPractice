@@ -4,6 +4,12 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var localSecrets =Environment.GetEnvironmentVariable("OAUTH_SECRETS_FILE_PATH");
+if (!string.IsNullOrEmpty(localSecrets))
+{
+    builder.Configuration.AddJsonFile(localSecrets, optional: true, reloadOnChange: true);
+}
+
 var allowedCorsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
     ?? new[] { "http://localhost:5173", "https://localhost:5173" };
 
