@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 
 namespace EFPractice.Web.Endpoints;
 
 public class Users : IEndpointGroup
 {
     private const string GoogleTokenEndpoint = "https://oauth2.googleapis.com/token";
+    private const string GoogleUserInfoEndpoint = "https://openidconnect.googleapis.com/v1/userinfo";
 
     public static void Map(RouteGroupBuilder groupBuilder)
     {
@@ -20,19 +22,20 @@ public class Users : IEndpointGroup
     }
 
     [EndpointSummary("Exchange Google authorization code")]
-    [EndpointDescription("Exchanges a Google OAuth authorization code for an access token using PKCE.")]
-    public static async Task<Results<Ok<GoogleCodeExchangeResponse>, BadRequest<string>>> ExchangeGoogleCode(
+    [EndpointDescription("Exchanges a Google OAuth authorization code for an authenticated server-side session.")]
+    public static async Task<Results<NoContent, BadRequest<string>>> ExchangeGoogleCode(
         [FromBody] GoogleCodeExchangeRequest request,
         IConfiguration configuration,
         IHttpClientFactory httpClientFactory,
+        UserManager<ApplicationUser> userManager,
+        SignInManager<ApplicationUser> signInManager,
         CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request.Code)
             || string.IsNullOrWhiteSpace(request.CodeVerifier)
-            || string.IsNullOrWhiteSpace(request.RedirectUri)
-            || string.IsNullOrWhiteSpace(request.ClientId))
+            || string.IsNullOrWhiteSpace(request.RedirectUri))
         {
-            return TypedResults.BadRequest("Code, codeVerifier, redirectUri, and clientId are required.");
+            return TypedResults.BadRequest("Code, codeVerifier, and redirectUri are required.");
         }
 
         if (!Uri.TryCreate(request.RedirectUri, UriKind.Absolute, out _))
@@ -41,13 +44,7 @@ public class Users : IEndpointGroup
         }
 
         var configuredClientId = configuration["GoogleOAuth:ClientId"];
-        var clientId = string.IsNullOrWhiteSpace(configuredClientId) ? request.ClientId : configuredClientId;
-
-        if (!string.IsNullOrWhiteSpace(configuredClientId)
-            && !string.Equals(configuredClientId, request.ClientId, StringComparison.Ordinal))
-        {
-            return TypedResults.BadRequest("Client ID does not match server configuration.");
-        }
+        var clientId = configuredClientId;
 
         if (string.IsNullOrWhiteSpace(clientId))
         {
@@ -111,28 +108,91 @@ public class Users : IEndpointGroup
             return TypedResults.BadRequest("Google token exchange returned no access_token.");
         }
 
-        var expiresIn = document.RootElement.TryGetProperty("expires_in", out var expiresInElement)
-            && expiresInElement.TryGetInt32(out var parsedExpiresIn)
-                ? parsedExpiresIn
-                : 3600;
+        var googleUser = await GetGoogleUserAsync(httpClientFactory, accessToken, cancellationToken);
+        if (googleUser is null)
+        {
+            return TypedResults.BadRequest("Google userinfo request failed.");
+        }
 
-        return TypedResults.Ok(new GoogleCodeExchangeResponse(accessToken, expiresIn));
+        var localUser = await GetOrCreateLocalUserAsync(userManager, googleUser);
+        if (localUser is null)
+        {
+            return TypedResults.BadRequest("Unable to create local user.");
+        }
+
+        await signInManager.SignInAsync(localUser, isPersistent: false);
+
+        return TypedResults.NoContent();
     }
 
     [EndpointSummary("Log out")]
     [EndpointDescription("Logs out the current user by clearing the authentication cookie.")]
-    public static async Task<Results<Ok, UnauthorizedHttpResult>> Logout(SignInManager<ApplicationUser> signInManager, [FromBody] object empty)
+    public static async Task<Ok> Logout(SignInManager<ApplicationUser> signInManager)
     {
-        if (empty != null)
-        {
-            await signInManager.SignOutAsync();
-            return TypedResults.Ok();
-        }
-
-        return TypedResults.Unauthorized();
+        await signInManager.SignOutAsync();
+        return TypedResults.Ok();
     }
 
-    public sealed record GoogleCodeExchangeRequest(string Code, string CodeVerifier, string RedirectUri, string ClientId);
+    public sealed record GoogleCodeExchangeRequest(string Code, string CodeVerifier, string RedirectUri);
 
-    public sealed record GoogleCodeExchangeResponse(string AccessToken, int ExpiresIn);
+    private static async Task<GoogleUserInfo?> GetGoogleUserAsync(IHttpClientFactory httpClientFactory, string accessToken, CancellationToken cancellationToken)
+    {
+        var httpClient = httpClientFactory.CreateClient();
+        using var request = new HttpRequestMessage(HttpMethod.Get, GoogleUserInfoEndpoint);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
+
+        await using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        using var document = await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken);
+        var root = document.RootElement;
+
+        return new GoogleUserInfo(
+            root.TryGetProperty("email", out var emailValue) ? emailValue.GetString() : null,
+            root.TryGetProperty("email_verified", out var emailVerifiedValue) && emailVerifiedValue.GetBoolean()
+        );
+    }
+
+    private static async Task<ApplicationUser?> GetOrCreateLocalUserAsync(UserManager<ApplicationUser> userManager, GoogleUserInfo googleUser)
+    {
+        if (string.IsNullOrWhiteSpace(googleUser.Email) || !googleUser.EmailVerified)
+        {
+            return null;
+        }
+
+        var existingUser = await userManager.FindByEmailAsync(googleUser.Email);
+        if (existingUser is not null)
+        {
+            return existingUser;
+        }
+
+        var localUser = new ApplicationUser
+        {
+            UserName = googleUser.Email,
+            Email = googleUser.Email,
+            EmailConfirmed = googleUser.EmailVerified,
+        };
+
+        try
+        {
+            var createResult = await userManager.CreateAsync(localUser);
+            if (createResult.Succeeded)
+            {
+                return localUser;
+            }
+        }
+        catch (DbUpdateException)
+        {
+            // Concurrent sign-ins can race user creation; reload by email.
+        }
+
+        return await userManager.FindByEmailAsync(googleUser.Email);
+    }
+
+    private sealed record GoogleUserInfo(string? Email, bool EmailVerified);
 }

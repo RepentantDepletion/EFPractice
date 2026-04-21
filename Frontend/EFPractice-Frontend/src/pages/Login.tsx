@@ -11,8 +11,6 @@ const SCOPES = ['openid', 'email', 'profile'].join(' ');
 const OAUTH_STORAGE_KEYS = {
   state: 'google_oauth_state',
   codeVerifier: 'google_oauth_code_verifier',
-  accessToken: 'google_access_token',
-  tokenExpiry: 'google_access_token_expiry',
 } as const;
 
 const createRandomString = (length: number): string => {
@@ -94,6 +92,7 @@ function Login() {
       try {
         const exchangeResponse = await fetch(`${API_BASE_URL}/Users/google/exchange`, {
           method: 'POST',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -101,7 +100,6 @@ function Login() {
             code,
             codeVerifier,
             redirectUri: REDIRECT_URI,
-            clientId: CLIENT_ID,
           }),
         });
 
@@ -109,22 +107,6 @@ function Login() {
           const message = await exchangeResponse.text();
           throw new Error(message || 'Could not exchange authorization code.');
         }
-
-        const exchangeData = (await exchangeResponse.json()) as {
-          accessToken?: string;
-          expiresIn?: number;
-        };
-
-        if (!exchangeData.accessToken) {
-          throw new Error('No access token was returned by the server.');
-        }
-
-        const expiresIn = Number(exchangeData.expiresIn ?? 3600);
-        const expiresInMs = (Number.isFinite(expiresIn) ? expiresIn : 3600) * 1000;
-        const expiryTs = String(Date.now() + expiresInMs);
-
-        sessionStorage.setItem(OAUTH_STORAGE_KEYS.accessToken, exchangeData.accessToken);
-        sessionStorage.setItem(OAUTH_STORAGE_KEYS.tokenExpiry, expiryTs);
 
         sessionStorage.removeItem(OAUTH_STORAGE_KEYS.state);
         sessionStorage.removeItem(OAUTH_STORAGE_KEYS.codeVerifier);

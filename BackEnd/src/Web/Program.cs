@@ -4,6 +4,9 @@ using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var allowedCorsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? new[] { "http://localhost:5173", "https://localhost:5173" };
+
 // Add services to the container.
 builder.AddServiceDefaults();
 
@@ -31,10 +34,11 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
-app.UseCors(static builder => 
-    builder.AllowAnyMethod()
+app.UseCors(policy =>
+    policy.WithOrigins(allowedCorsOrigins)
+        .AllowAnyMethod()
         .AllowAnyHeader()
-        .AllowAnyOrigin());
+        .AllowCredentials());
 
 app.UseFileServer();
 

@@ -3,23 +3,15 @@ import type { Task } from '../types/Task';
 import { format } from 'date-fns';
 
 const BASE_URL = 'http://localhost:5278/api';
-const GOOGLE_ACCESS_TOKEN_KEY = 'google_access_token';
 
 type RawTaskResponse = Record<string, unknown>;
 
 type CreateTaskRequest = Omit<Task, 'id'>;
 
-const authHeaders = (): HeadersInit => {
-  const accessToken = sessionStorage.getItem(GOOGLE_ACCESS_TOKEN_KEY);
-
-  if (!accessToken) {
-    return {};
-  }
-
-  return {
-    Authorization: `Bearer ${accessToken}`,
-  };
-};
+const withCredentials = (init: RequestInit = {}): RequestInit => ({
+  ...init,
+  credentials: 'include',
+});
 
 
 const parseDate = (value: unknown): Date => {
@@ -45,18 +37,15 @@ const normalizeTask = (rawTask: RawTaskResponse): Task => ({
 });
 
 export async function fetchTasks(): Promise<Task[]> {
-  const response = await fetch(`${BASE_URL}/UserTasks/GetAll`, {
-    headers: authHeaders(),
-  });
+  const response = await fetch(`${BASE_URL}/UserTasks/GetAll`, withCredentials());
   const responseData = await response.json();
   return responseData.map(normalizeTask);
 }
 export async function createTask(taskData: CreateTaskRequest): Promise<Task> {
-  const response = await fetch(`${BASE_URL}/UserTasks`, {
+  const response = await fetch(`${BASE_URL}/UserTasks`, withCredentials({
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...authHeaders(),
     },
     body: JSON.stringify({
       Title: taskData.title,
@@ -67,7 +56,7 @@ export async function createTask(taskData: CreateTaskRequest): Promise<Task> {
       ListId: taskData.list === null || taskData.list === '' ? null : Number(taskData.list),
       Recurrence: Number(taskData.recurrence),
     }),
-  });
+  }));
 
     if (!response.ok) {
         const text = await response.text();
@@ -79,11 +68,10 @@ export async function createTask(taskData: CreateTaskRequest): Promise<Task> {
 }
 
 export async function updateTask(id: number, task: Task) {
-  const response = await fetch(`${BASE_URL}/UserTasks/UpdateDetail/${id}`, {
+  const response = await fetch(`${BASE_URL}/UserTasks/UpdateDetail/${id}`, withCredentials({
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      ...authHeaders(),
     },
     body: JSON.stringify({
       Title: task.title,
@@ -94,7 +82,7 @@ export async function updateTask(id: number, task: Task) {
       ListId: task.list === null || task.list === '' ? null : Number(task.list),
       Recurrence: Number(task.recurrence),
     }),
-  });
+  }));
 
     if (!response.ok) {
         const text = await response.text();
@@ -105,17 +93,14 @@ export async function updateTask(id: number, task: Task) {
 }
 
 export async function deleteTask(id: number) {
-    await fetch(`${BASE_URL}/UserTasks/${id}`, {
+  await fetch(`${BASE_URL}/UserTasks/${id}`, withCredentials({
         method: 'DELETE',
-    headers: authHeaders(),
-    });
+  }));
 }
 
 export async function fetchTaskById(id: number) {
     console.log(`Fetching task with ID: ${id}`);
-    const response = await fetch(`${BASE_URL}/UserTasks/${id}`, {
-      headers: authHeaders(),
-    });
+    const response = await fetch(`${BASE_URL}/UserTasks/${id}`, withCredentials());
     if (!response.ok) {
         throw new Error('Failed to fetch task');
     }
@@ -124,10 +109,9 @@ export async function fetchTaskById(id: number) {
 }
 
 export async function completeTask(id: number) {
-    const response = await fetch(`${BASE_URL}/UserTasks/Complete/${id}`, {
+    const response = await fetch(`${BASE_URL}/UserTasks/Complete/${id}`, withCredentials({
         method: 'PUT',
-      headers: authHeaders(),
-    });
+    }));
 
   if (!response.ok) {
     const text = await response.text();
@@ -139,21 +123,18 @@ export async function completeTask(id: number) {
 
 
 export async function fetchTaskLists() {
-    const response = await fetch(`${BASE_URL}/TaskLists`, {
-      headers: authHeaders(),
-    });
+    const response = await fetch(`${BASE_URL}/TaskLists`, withCredentials());
     return response.json();
 }
 
 export async function createTaskList(name: string) {
-    const response = await fetch(`${BASE_URL}/TaskLists`, {
+  const response = await fetch(`${BASE_URL}/TaskLists`, withCredentials({
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-        ...authHeaders(),
         },
     body: JSON.stringify({ Title: name }),
-    });
+  }));
 
   if (!response.ok) {
     const text = await response.text();
@@ -176,40 +157,35 @@ export async function updateTaskList(
         ListID?: number;
     }>
 ) {
-    const response = await fetch(`${BASE_URL}/TaskLists/${id}`, {
+    const response = await fetch(`${BASE_URL}/TaskLists/${id}`, withCredentials({
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-        ...authHeaders(),
         },
         body: JSON.stringify({
             id,
             ...(name && { title: name }),
             ...(items && { items }),
         }),
-    });
+    }));
     return response.json();
 }
 
 export async function deleteTaskList(id: number) {
-    await fetch(`${BASE_URL}/TaskLists/${id}`, {
+  await fetch(`${BASE_URL}/TaskLists/${id}`, withCredentials({
         method: 'DELETE',
-      headers: authHeaders(),
-    });
+  }));
 }
 
 export async function fetchTaskListById(id: number) {
-    const response = await fetch(`${BASE_URL}/TaskLists/${id}`, {
-      headers: authHeaders(),
-    });
+    const response = await fetch(`${BASE_URL}/TaskLists/${id}`, withCredentials());
     return response.json();
 }
 
 export async function completeTaskList(id: number) {
-    const response = await fetch(`${BASE_URL}/TaskLists/${id}/complete`, {
+    const response = await fetch(`${BASE_URL}/TaskLists/${id}/complete`, withCredentials({
         method: 'POST',
-      headers: authHeaders(),
-    });
+    }));
 
   if (!response.ok) {
     const text = await response.text();
@@ -217,4 +193,15 @@ export async function completeTaskList(id: number) {
   }
 
   return;
+}
+
+export async function logout() {
+  const response = await fetch(`${BASE_URL}/Users/logout`, withCredentials({
+    method: 'POST',
+  }));
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Logout failed ${response.status}: ${text}`);
+  }
 }

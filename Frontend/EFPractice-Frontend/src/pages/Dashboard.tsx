@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask, createTask, createTaskList, completeTask, completeTaskList } from '../api/Api.ts'
+import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask, createTask, createTaskList, completeTask, completeTaskList, logout } from '../api/Api.ts'
 import type { Task } from '../types/Task.ts'
 import TaskView from '../components/TaskView.tsx'
 import TaskEditForm from '../components/TaskEditForm.tsx'
@@ -8,13 +8,6 @@ import Notifications, { type NotificationItem, type NotificationVariant } from '
 
 import '../styles/App.css'
 import '../styles/Dashboard.css'
-
-const OAUTH_STORAGE_KEYS = {
-    state: 'google_oauth_state',
-    codeVerifier: 'google_oauth_code_verifier',
-    accessToken: 'google_access_token',
-    tokenExpiry: 'google_access_token_expiry',
-} as const;
 
 type list = {
     id: number;
@@ -66,13 +59,21 @@ function Dashboard() {
         return widthCapacity * heightMultiplier;
     };
 
-    const showNotification = (message: string, variant: NotificationVariant, title?: string) => {
-        const id = `notification-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-        setNotifications((current) => [{ id, message, variant, title }, ...current]);
-    };
-
     const dismissNotification = (id: string) => {
         setNotifications((current) => current.filter((notification) => notification.id !== id));
+    };
+
+    const showNotification = (message: string, variant: NotificationVariant, title?: string) => {
+        const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        setNotifications((current) => [
+            ...current,
+            {
+                id,
+                message,
+                variant,
+                title,
+            },
+        ]);
     };
 
 
@@ -328,12 +329,12 @@ function Dashboard() {
         setNewListTitle('');
     };
 
-    const handleLogout = () => {
-        sessionStorage.removeItem(OAUTH_STORAGE_KEYS.state);
-        sessionStorage.removeItem(OAUTH_STORAGE_KEYS.codeVerifier);
-        sessionStorage.removeItem(OAUTH_STORAGE_KEYS.accessToken);
-        sessionStorage.removeItem(OAUTH_STORAGE_KEYS.tokenExpiry);
-        navigate('/', { replace: true });
+    const handleLogout = async () => {
+        try {
+            await logout();
+        } finally {
+            navigate('/', { replace: true });
+        }
     };
 
     const handleCancelAddList = () => {
@@ -516,7 +517,7 @@ function Dashboard() {
                 <div className="dashboard-header">
                     <div className="dashboard-header-row">
                         <h1>Task Manager</h1>
-                        <button className="logout-button" onClick={handleLogout} type="button">
+                        <button className="logout-button" onClick={() => void handleLogout()} type="button">
                             Logout
                         </button>
                     </div>
