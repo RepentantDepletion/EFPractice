@@ -90,19 +90,6 @@ const TaskPage = () => {
     if (error) return <p>{error}</p>;
     if (!task) return <p>No task found</p>;
 
-    const handleDelete = async () => {
-        if (!task) return;
-
-        if (window.confirm("Are you sure you want to delete this task?")) {
-            try {
-                await deleteTask(task.id);
-                navigate('/');
-            } catch {
-                alert("Failed to delete task");
-            }
-        }
-    };
-
     return (
         <div id="task-page">
             <header className="taskpage-header">
@@ -121,7 +108,7 @@ const TaskPage = () => {
                         recurrenceOptions={recurrenceOptions}
                     />
                 ) : (
-                    <TaskView task={task} lists={lists} onDelete={handleDelete} />
+                    <TaskView task={task} lists={lists} />
                 )}
             </div>
 
