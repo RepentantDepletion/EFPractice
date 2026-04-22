@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFPractice.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260408031028_Setup")]
+    [Migration("20260330035751_Setup")]
     partial class Setup
     {
         /// <inheritdoc />
@@ -45,11 +45,11 @@ namespace EFPractice.Infrastructure.Migrations
 
             modelBuilder.Entity("EFPractice.Domain.Entities.UserTask", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("TaskID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TaskID"));
 
                     b.Property<DateTime?>("Deadline")
                         .HasColumnType("datetime2");
@@ -60,6 +60,15 @@ namespace EFPractice.Infrastructure.Migrations
 
                     b.Property<bool>("Done")
                         .HasColumnType("bit");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset>("LastModified")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ListID")
                         .HasColumnType("int");
@@ -73,22 +82,16 @@ namespace EFPractice.Infrastructure.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("ListID");
+                    b.HasKey("TaskID");
 
                     b.ToTable("UserTasks");
                 });
 
             modelBuilder.Entity("EFPractice.Domain.Entities.UserTask", b =>
                 {
-                    b.HasOne("EFPractice.Domain.Entities.TaskList", "TaskList")
+                    b.HasOne("EFPractice.Domain.Entities.TaskList", null)
                         .WithMany("Items")
-                        .HasForeignKey("ListID")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .IsRequired();
-
-                    b.Navigation("TaskList");
+                        .HasForeignKey("TaskListId");
                 });
 
             modelBuilder.Entity("EFPractice.Domain.Entities.TaskList", b =>

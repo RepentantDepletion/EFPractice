@@ -1,6 +1,4 @@
 ﻿using System;
-using Microsoft.Build.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -13,57 +11,73 @@ namespace EFPractice.Infrastructure.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "TaskLists",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TaskLists", x => x.Id);
-                });
+            migrationBuilder.Sql(@"
+        -- Create TaskLists if it does not exist
+        IF NOT EXISTS (
+            SELECT 1 
+            FROM sys.tables 
+            WHERE name = 'TaskLists'
+        )
+        BEGIN
+            CREATE TABLE [dbo].[TaskLists] (
+                [Id] INT IDENTITY(1,1) NOT NULL,
+                [Title] NVARCHAR(200) NOT NULL,
+                CONSTRAINT [PK_TaskLists] PRIMARY KEY ([Id])
+            );
+        END
+    ");
 
-            migrationBuilder.CreateTable(
-                name: "UserTasks",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    Priority = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Done = table.Column<bool>(type: "bit", nullable: false),
-                    ListID = table.Column<int>(type: "int", nullable: true),
-                    Deadline = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserTasks", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserTasks_TaskLists_ListID",
-                        column: x => x.ListID,
-                        principalTable: "TaskLists",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
-                });
+            migrationBuilder.Sql(@"
+        -- Create UserTasks if it does not exist
+        IF NOT EXISTS (
+            SELECT 1 
+            FROM sys.tables 
+            WHERE name = 'UserTasks'
+        )
+        BEGIN
+            CREATE TABLE [dbo].[UserTasks] (
+                [Id] INT NOT NULL,
+                [Title] NVARCHAR(200) NOT NULL,
+                [Description] NVARCHAR(1000) NULL,
+                [Priority] NVARCHAR(MAX) NOT NULL,
+                [Done] BIT NOT NULL,
+                [ListID] INT NOT NULL,
+                [Deadline] DATETIME2 NULL,
+                CONSTRAINT [PK_UserTasks] PRIMARY KEY ([Id]),
+                CONSTRAINT [FK_UserTasks_TaskLists_ListID]
+                    FOREIGN KEY ([ListID])
+                    REFERENCES [dbo].[TaskLists] ([Id])
+            );
 
-            migrationBuilder.CreateIndex(
-                name: "IX_UserTasks_ListID",
-                table: "UserTasks",
-                column: "ListID");
+            CREATE INDEX [IX_UserTasks_ListID]
+                ON [dbo].[UserTasks] ([ListID]);
+        END
+    ");
         }
-
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "UserTasks");
+            migrationBuilder.Sql(@"
+        IF EXISTS (
+            SELECT 1 
+            FROM sys.tables 
+            WHERE name = 'UserTasks'
+        )
+        BEGIN
+            DROP TABLE [dbo].[UserTasks];
+        END
+    ");
 
-            migrationBuilder.DropTable(
-                name: "TaskLists");
+            migrationBuilder.Sql(@"
+        IF EXISTS (
+            SELECT 1 
+            FROM sys.tables 
+            WHERE name = 'TaskLists'
+        )
+        BEGIN
+            DROP TABLE [dbo].[TaskLists];
+        END
+    ");
         }
     }
 }
