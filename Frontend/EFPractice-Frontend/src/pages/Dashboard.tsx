@@ -9,7 +9,7 @@ import {
 import { useDashboardPage } from '../features/dashboard/DashboardController.tsx'
 
 import '../styles/App.css'
-import '../styles/Dashboard.css'
+import '../styles/DashboardPage.css'
 
 function Dashboard() {
     const dashboard = useDashboardPage()

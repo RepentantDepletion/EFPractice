@@ -11,7 +11,7 @@ import {
     Title,
     Tooltip,
 } from 'chart.js';
-import '../styles/Analytics.css';
+import '../styles/AnalyticsPage.css';
 import * as AnalyticsConstants from '../features/analytics/Analytics.constants';
 import { useAnalyticsPage } from '../features/analytics/AnalyticsController';
 

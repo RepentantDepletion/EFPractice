@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import '../styles/Login.css';
+import '../styles/LoginPage.css';
 
 const API_BASE_URL = 'http://localhost:5278/api';
 
