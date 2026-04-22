@@ -1,5 +1,5 @@
-import { getRecurrenceLabel } from "../types/RecurrencePattern";
-import type { Task } from "../types/Task";
+import { getRecurrenceLabel } from "../../../shared/types/RecurrencePattern";
+import type { Task } from "../../../shared/types/Task";
 
 type Props = {
     task: Task;

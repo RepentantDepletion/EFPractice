@@ -7,7 +7,7 @@ import {
   saveAppearanceSettings,
   type AppearancePresetKey,
   type AppearanceSettings,
-} from '../theme/appearance';
+} from '../shared/theme/appearance';
 import '../styles/SettingsPage.css';
 
 function SettingsPage() {

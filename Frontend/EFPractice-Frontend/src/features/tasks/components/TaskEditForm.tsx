@@ -1,4 +1,4 @@
-import type { Task } from "../types/Task";
+import type { Task } from "../../../shared/types/Task";
 import { format, parse } from "date-fns";
 
 type Props = {

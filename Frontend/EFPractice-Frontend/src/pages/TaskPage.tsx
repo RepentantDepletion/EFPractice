@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchTaskById, updateTask, deleteTask, fetchTaskLists } from "../api/Api";
-import type { Task } from "../types/Task";
-import TaskView from "../components/TaskView";
-import TaskEditForm from "../components/TaskEditForm";
+import { fetchTaskById, updateTask, deleteTask, fetchTaskLists } from "../shared/api/Api";
+import type { Task } from "../shared/types/Task";
+import TaskView from "../features/tasks/components/TaskView";
+import TaskEditForm from "../features/tasks/components/TaskEditForm";
 import { useNavigate } from "react-router-dom";
-import './TaskPage.css';  // Add this import
+import './TaskPage.css';
+import { recurrenceLabels, type RecurrencePattern } from "../shared/types/RecurrencePattern";
 
 const TaskPage = () => {
     const { id } = useParams<{ id: string }>();
@@ -17,14 +18,12 @@ const TaskPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [lists, setLists] = useState<Array<{ id: number; title: string }>>([]);
-    const [recurrenceType] = useState([
-        { value: 0, label: 'None' },
-        { value: 1, label: 'Daily' },
-        { value: 2, label: 'Weekly' },
-        { value: 3, label: 'Monthly' },
-        { value: 4, label: 'Yearly' },
-        { value: 5, label: 'Custom' }
-    ]);
+    const recurrenceOptions: Array<{ value: RecurrencePattern; label: string }> = Object.entries(recurrenceLabels).map(
+        ([value, label]) => ({
+            value: Number(value) as RecurrencePattern,
+            label,
+        })
+    );
 
     useEffect(() => {
         async function loadTask() {
@@ -60,13 +59,11 @@ const TaskPage = () => {
         if (!task) return;
 
         if (!isEditing) {
-            // ✅ ENTER edit mode
             setFormData({ ...task });
             setIsEditing(true);
             return;
         }
 
-        // ✅ SAVE
         if (!formData) return;
 
         try {
@@ -108,7 +105,7 @@ const TaskPage = () => {
                         formData={formData}
                         setFormData={setFormData}
                         listOptions={lists}
-                        recurrenceOptions={recurrenceType}
+                        recurrenceOptions={recurrenceOptions}
                     />
                 ) : (
                     <TaskView task={task} lists={lists} onDelete={handleDelete} />
