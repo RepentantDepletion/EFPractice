@@ -1,151 +1,88 @@
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { fetchTasks, fetchTaskLists, fetchTaskById, updateTask, deleteTask } from '../api/Api.ts'
-import type { Task } from '../types/Task.ts'
-import TaskView from '../components/TaskView.tsx'
-import TaskEditForm from '../components/TaskEditForm.tsx'
-import deleteIcon from '../assets/delete-icon.jpg'
+import TaskView from '../features/tasks/components/TaskView.tsx'
+import TaskEditForm from '../features/tasks/components/TaskEditForm.tsx'
+import Notifications from '../shared/components/Notifications.tsx'
+import {
+    DASHBOARD_NAV_LINKS,
+    TASK_SORT_OPTIONS,
+    type TaskSortMode,
+} from '../features/dashboard/Dashboard.constants.tsx'
+import { useDashboardPage } from '../features/dashboard/DashboardController.tsx'
 
 import '../styles/App.css'
 import '../styles/Dashboard.css'
-import { fr } from 'date-fns/locale'
-
-type list = {
-    id: number;
-    title: string;
-}
 
 function Dashboard() {
-    const navigate = useNavigate();
-    const [tasks, setTasks] = useState<Task[]>([]);
-    const [lists, setLists] = useState<list[]>([]);
-    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-    const [formData, setFormData] = useState<Task | null>(null);
-    const [isEditing, setIsEditing] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [selectedLoading, setSelectedLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-
-    const normalizeTask = (task: any): Task => ({
-        ...task,
-        deadline: new Date(task.deadline),
-    });
-
-    useEffect(() => {
-        async function loadTasks() {
-            try {
-                const data = await fetchTasks();
-                setTasks(data.map(normalizeTask));
-            } catch {
-                setError('Failed to load tasks');
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        loadTasks();
-    }, []);
-
-    useEffect(() => {
-        async function loadLists() {
-            try {
-                const data = await fetchTaskLists();
-                setLists(data.lists);
-            } catch {
-                setError('Failed to load lists');
-            }
-        }
-
-        loadLists();
-    }, []);
-
-    const handleSelectTask = async (id: number) => {
-        setSelectedLoading(true);
-        setError(null);
-
-        try {
-            const task = await fetchTaskById(id);
-            setSelectedTask(normalizeTask(task));
-            setFormData(null);
-            setIsEditing(false);
-        } catch {
-            setError('Failed to load task details');
-        } finally {
-            setSelectedLoading(false);
-        }
-    };
-
-    const handleEdit = async () => {
-        if (!selectedTask) return;
-
-        if (!isEditing) {
-            setFormData({ ...selectedTask });
-            setIsEditing(true);
-            return;
-        }
-
-        if (!formData) return;
-
-        try {
-            await updateTask(formData.id, formData);
-            setSelectedTask(formData);
-            setIsEditing(false);
-        } catch {
-            alert('Failed to save task');
-        }
-    };
+    const dashboard = useDashboardPage()
 
     return (
         <div className="dashboard-layout">
+            <Notifications notifications={dashboard.notifications} onDismiss={dashboard.dismissNotification} position='top-right' />
             <aside className="dashboard-sidebar">
                 <div className="dashboard-header">
-                    <h1>Task Manager</h1>
+                    <div className="dashboard-header-row">
+                        <h1>Task Manager</h1>
+                        <button className="logout-button" onClick={() => void dashboard.handleLogout()} type="button">
+                            Logout
+                        </button>
+                    </div>
+                    <input
+                        className="sidebar-search"
+                        type="text"
+                        placeholder="Search tasks and lists"
+                        value={dashboard.searchQuery}
+                        onChange={(event) => dashboard.setSearchQuery(event.target.value)}
+                    />
                 </div>
 
-                <main className="task-details-panel">
-                    {selectedLoading ? (
+                <main className={dashboard.showTaskDetails ? "task-details-panel is-visible" : "task-details-panel is-hidden"}>
+                    <div key={dashboard.detailsTransitionKey} className="task-details-content">
+                    {dashboard.selectedLoading ? (
                         <p>Loading task details…</p>
-                    ) : selectedTask ? (
+                    ) : dashboard.isCreatingTask && dashboard.newTaskData ? (
                         <>
                             <div className="task-details-header">
-                                <button className="close-button" onClick={() => {
-                                    setSelectedTask(null);
-                                    setFormData(null);
-                                    setIsEditing(false);
-                                }}>
+                                <button className="close-button" onClick={dashboard.handleCancelAddTask}>
                                     Close
                                 </button>
                             </div>
 
-                            {isEditing && formData ? (
-                                <TaskEditForm formData={formData} setFormData={setFormData} />
+                            <h2>Create New Task</h2>
+                            <TaskEditForm formData={dashboard.newTaskData} setFormData={dashboard.setNewTaskData} listOptions={dashboard.lists} recurrenceOptions={dashboard.recurrenceType} />
+
+                            <div className="button-row">
+                                <button onClick={dashboard.handleSaveNewTask}>Create</button>
+                                <button className="cancel-button" onClick={dashboard.handleCancelAddTask}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </>
+                    ) : dashboard.selectedTask ? (
+                        <>
+                            <div className="task-details-header">
+                                <button className="close-button" onClick={dashboard.handleCloseTaskDetails}>
+                                    Close
+                                </button>
+                            </div>
+
+                            {dashboard.isEditing && dashboard.formData ? (
+                                <TaskEditForm formData={dashboard.formData} setFormData={dashboard.setFormData} listOptions={dashboard.lists} recurrenceOptions={dashboard.recurrenceType} />
                             ) : (
-                                <TaskView task={selectedTask} lists={lists} />
+                                <TaskView task={dashboard.selectedTask} lists={dashboard.lists} />
                             )}
 
 
                             <div className="button-row">
-                                <button className="delete-button" onClick={async () => {
-                                    if (!selectedTask) return;
-                                    if (window.confirm('Are you sure you want to delete this task?')) {
-                                        try {
-                                            await deleteTask(selectedTask.id);
-                                            setSelectedTask(null);
-                                            setFormData(null);
-                                            setIsEditing(false);
-                                        } catch {
-                                            alert('Failed to delete task');
-                                        }
-                                    }
-                                }}>
-                                    <img src={deleteIcon} alt="Delete" />
+                                <button onClick={dashboard.handleEdit}>
+                                    {dashboard.isEditing ? 'Save' : 'Edit'}
                                 </button>
-                                <button onClick={handleEdit}>
-                                    {isEditing ? 'Save' : 'Edit'}
-                                </button>
-                                {isEditing && (
-                                    <button onClick={() => setIsEditing(false)}>
+                                {dashboard.isEditing && (
+                                    <button onClick={() => dashboard.setIsEditing(false)}>
                                         Cancel
+                                    </button>
+                                )}
+                                {!dashboard.isEditing && (
+                                    <button className="delete-button" onClick={() => void dashboard.handleDeleteSelectedTask()}>
+                                        Delete
                                     </button>
                                 )}
                             </div>
@@ -154,7 +91,8 @@ function Dashboard() {
                         <p>Select a task from the list to view its details here.</p>
                     )}
 
-                    {error && <p className="error-message">{error}</p>}
+                    {dashboard.error && <p className="error-message">{dashboard.error}</p>}
+                    </div>
                 </main>
             </aside>
 
@@ -162,48 +100,123 @@ function Dashboard() {
                 <section className="navigation-panel">
                     <h2>Navigation Panel</h2>
                     <ul>
-                        <button className='navigation-buttons' onClick={() => navigate('/')}>Home</button>
-                        <button className='navigation-buttons' onClick={() => navigate('/settings')}>Settings</button>
+                        {DASHBOARD_NAV_LINKS.map((item) => (
+                            <button key={item.path} className='navigation-buttons' onClick={() => dashboard.navigate(item.path)}>
+                                {item.label}
+                            </button>
+                        ))}
                     </ul>
 
                     <div className="task-container">
                         <div className="task-list">
-                            <h3>Tasks</h3>
-                            {loading ? (
+                            <div className="task-list-header-row">
+                                <h3>Tasks</h3>
+                                <div className='task-list-actions'>
+                                    <label htmlFor='dashboard-sort-task-select' className='sort-task-label'>Sort:</label>
+                                    <select
+                                        id='dashboard-sort-task-select'
+                                        className='sort-task-select'
+                                        value={dashboard.sortMode}
+                                        onChange={(event) => dashboard.setSortMode(event.target.value as TaskSortMode)}
+                                    >
+                                        {TASK_SORT_OPTIONS.map((option) => (
+                                            <option key={option} value={option}>{option}</option>
+                                        ))}
+                                    </select>
+                                    <button className='add-task-button' onClick={dashboard.handleAddTaskClick}>Add Task</button>
+                                </div>
+                            </div>
+                            {dashboard.loading ? (
                                 <p>Loading tasks…</p>
-                            ) : tasks.length === 0 ? (
+                            ) : dashboard.filteredTasks.length === 0 ? (
                                 <p>No tasks available. Please add some tasks.</p>
                             ) : (
                                 <ul className="task-list">
-                                    {tasks.map((task) => (
-                                        <li key={task.id}>
-                                            <button
-                                                className='task-card'
-                                                onClick={() => handleSelectTask(task.id)}
-                                            >
-                                                {task.title}
-                                            </button>
-                                        </li>
-                                    ))}
+                                    {dashboard.visibleTasks.map((task) => {
+                                        const taskListId = task.list;
+                                        const listName = taskListId === null
+                                            ? 'No List'
+                                            : dashboard.lists.find(list => list.id === parseInt(taskListId, 10))?.title || 'Unknown List';
+                                        const isTaskOverdue = !task.done && new Date(task.deadline).getTime() < Date.now();
+                                        const taskStateClassName = isTaskOverdue
+                                            ? 'task-card-overdue'
+                                            : task.done
+                                                ? 'task-card-completed'
+                                                : 'task-card-pending';
+                                        return (
+                                            <li key={task.id}>
+                                                <button
+                                                    className={`task-card ${taskStateClassName}`}
+                                                    onDoubleClick={() => dashboard.handleTaskCardDoubleClick(task.id)}
+                                                    onClick={() => dashboard.handleTaskCardClick(task.id)}
+                                                    draggable
+                                                    onDragStart={(event) => dashboard.handleTaskDragStart(event, task.id)}
+                                                    onDragEnd={dashboard.handleTaskDragEnd}
+                                                >
+                                                    <div>{task.title}</div>
+                                                    <div style={{ fontSize: '0.85em', opacity: 0.7 }}>{listName}</div>
+                                                </button>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
                             )}
                         </div>
                     </div>
 
                     <div className='list-container'>
+                        <div className='list-header-row'>
+                            <h3>Lists</h3>
+                            <button className='add-list-button' onClick={dashboard.handleAddListClick}>New List</button>
+                        </div>
+
+                        {dashboard.isCreatingList && (
+                            <div className='list-create-row'>
+                                <input
+                                    className='editable-input'
+                                    type='text'
+                                    placeholder='List name'
+                                    value={dashboard.newListTitle}
+                                    onChange={(event) => dashboard.setNewListTitle(event.target.value)}
+                                />
+                                <button onClick={dashboard.handleSaveNewList}>Create</button>
+                                <button className='cancel-button' onClick={dashboard.handleCancelAddList}>Cancel</button>
+                            </div>
+                        )}
+
                         <div className='list-record'>
-                            <h3>Task Lists</h3>
-                            {lists.length === 0 ? (
+                            {dashboard.filteredLists.length === 0 ? (
                                 <p>No lists available. Please add some lists.</p>
                             ) : (
                                 <ul className='list-record'>
-                                    {lists.map((list) => (
-                                        <li key={list.id}>
-                                            <button className="task-card" onClick={() => navigate(`/lists/${list.id}`)}>
-                                                {list.title}
-                                            </button>
-                                        </li>
-                                    ))}
+                                    {dashboard.filteredLists.map((list) => {
+                                        const tasksInList = dashboard.tasks.filter((task) => task.list === String(list.id));
+                                        const taskCount = tasksInList.length;
+                                        const allTasksCompleted = taskCount > 0 && tasksInList.every((task) => task.done);
+                                        const hasOverdueTask = tasksInList.some(
+                                            (task) => !task.done && new Date(task.deadline).getTime() < Date.now()
+                                        );
+                                        const listStateClassName = hasOverdueTask
+                                            ? 'list-card-overdue'
+                                            : allTasksCompleted
+                                                ? 'list-card-completed'
+                                                : 'list-card-pending';
+                                        return (
+                                            <li key={list.id}>
+                                                <button
+                                                    className={`task-card ${listStateClassName} ${dashboard.dropTargetListId === list.id ? 'drop-target' : ''}`}
+                                                    onDoubleClick={() => dashboard.handleListCardDoubleClick(list.id)}
+                                                    onClick={() => dashboard.handleListCardClick(list.id)}
+                                                    onDragOver={(event) => dashboard.handleListDragOver(event, list.id)}
+                                                    onDragLeave={dashboard.handleListDragLeave}
+                                                    onDrop={(event) => void dashboard.handleTaskDropOnList(event, list.id)}
+                                                >
+                                                    <div>{list.title}</div>
+                                                    <div style={{ fontSize: '0.85em', opacity: 0.7 }}>{taskCount} {taskCount === 1 ? 'task' : 'tasks'}</div>
+                                                </button>
+                                            </li>
+                                        );
+                                    })}
                                 </ul>
                             )}
                         </div>

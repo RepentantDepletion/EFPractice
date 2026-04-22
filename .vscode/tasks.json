@@ -1,0 +1,23 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "dev",
+      "path": "Frontend/EFPractice-Frontend",
+      "label": "npm: dev (frontend)",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "typescript",
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^\\s*VITE\\s+v",
+          "endsPattern": "Local:\\s+http://localhost:5173/"
+        }
+      }
+    }
+  ]
+}

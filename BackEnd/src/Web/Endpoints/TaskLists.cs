@@ -1,3 +1,4 @@
+using EFPractice.Application.TaskLists.Commands.CompleteTaskList;
 using EFPractice.Application.TaskLists.Commands.CreateTaskList;
 using EFPractice.Application.TaskLists.Commands.DeleteTaskList;
 using EFPractice.Application.TaskLists.Commands.UpdateTaskList;
@@ -19,6 +20,7 @@ public class TaskLists : IEndpointGroup
         groupBuilder.MapPut(UpdateTaskList, "{id}");
         groupBuilder.MapDelete(DeleteTaskList, "{id}");
         groupBuilder.MapGet(GetTaskList, "{id}");
+        groupBuilder.MapPost(CompleteTaskList, "{id}/complete");
     }
 
     [EndpointSummary("Get all Task Lists")]
@@ -64,5 +66,13 @@ public class TaskLists : IEndpointGroup
     {
         var taskList = await sender.Send(new GetTaskListByIDQuery(id));
         return TypedResults.Ok(taskList);
+    }
+    [EndpointSummary("Complete a Task List")]
+    [EndpointDescription("Marks all tasks in the specified task list as completed.")]
+    public static async Task<NoContent> CompleteTaskList(ISender sender, int id)
+    {
+        await sender.Send(new CompleteTaskListCommand(id));
+
+        return TypedResults.NoContent();
     }
 }

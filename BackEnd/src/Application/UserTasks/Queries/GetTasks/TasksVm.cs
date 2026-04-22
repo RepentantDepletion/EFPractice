@@ -8,10 +8,3 @@ public class TasksVm
     public IList<UserTaskDto> Tasks { get; init; } = new List<UserTaskDto>();
     public IReadOnlyCollection<TaskListDto> Lists { get; init; } = [];
 }
-
-public class ColourDto
-{
-    public string Code { get; init; } = string.Empty;
-
-    public string Name { get; init; } = string.Empty;
-}

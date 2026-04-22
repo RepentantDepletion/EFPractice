@@ -27,6 +27,17 @@ namespace EFPractice.Infrastructure.Migrations
             // Seed UserTasks
             migrationBuilder.InsertData(
                 table: "UserTasks",
+                columnTypes: new[]
+                {
+                "int",
+                "nvarchar(200)",
+                "nvarchar(1000)",
+                "datetime2",
+                "int",
+                "bit",
+                "nvarchar(max)",
+                "int"
+                },
                 columns: new[]
                 {
                 "Id",
@@ -35,7 +46,8 @@ namespace EFPractice.Infrastructure.Migrations
                 "Deadline",
                 "ListID",
                 "Done",
-                "Priority"
+                "Priority",
+                "Recurrence"
                 },
                 values: new object[,]
                 {
@@ -46,7 +58,8 @@ namespace EFPractice.Infrastructure.Migrations
                     new DateTime(2024, 7, 1, 18, 0, 0),
                     1,
                     false,
-                    "1"
+                    "1",
+                    1
                 },
                 {
                     2,
@@ -55,7 +68,8 @@ namespace EFPractice.Infrastructure.Migrations
                     new DateTime(2024, 7, 1, 18, 0, 0),
                     1,
                     false,
-                    "2"
+                    "2",
+                    1
                 },
                 {
                     3,
@@ -64,7 +78,8 @@ namespace EFPractice.Infrastructure.Migrations
                     new DateTime(2024, 7, 2, 7, 0, 0),
                     1,
                     false,
-                    "3"
+                    "3",
+                    1
                 },
                 {
                     4,
@@ -73,7 +88,8 @@ namespace EFPractice.Infrastructure.Migrations
                     new DateTime(2024, 7, 3, 20, 0, 0),
                     1,
                     false,
-                    "4"
+                    "4",
+                    1
                 },
                 {
                     5,
@@ -82,7 +98,8 @@ namespace EFPractice.Infrastructure.Migrations
                     new DateTime(2024, 7, 1, 19, 0, 0),
                     1,
                     false,
-                    "5"
+                    "5",
+                    1
                 },
                 {
                     6,
@@ -91,7 +108,8 @@ namespace EFPractice.Infrastructure.Migrations
                     new DateTime(2024, 7, 4, 10, 0, 0),
                     1,
                     false,
-                    "6"
+                    "6",
+                    1
                 },
                 {
                     7,
@@ -100,7 +118,8 @@ namespace EFPractice.Infrastructure.Migrations
                     new DateTime(2024, 7, 5, 17, 0, 0),
                     1,
                     false,
-                    "7"
+                    "7",
+                    1
                 },
                 {
                     8,
@@ -109,7 +128,8 @@ namespace EFPractice.Infrastructure.Migrations
                     new DateTime(2024, 7, 6, 12, 0, 0),
                     1,
                     false,
-                    "8"
+                    "8",
+                    1
                 },
                 {
                     9,
@@ -118,7 +138,8 @@ namespace EFPractice.Infrastructure.Migrations
                     new DateTime(2024, 7, 7, 18, 0, 0),
                     1,
                     false,
-                    "9"
+                    "9",
+                    1
                 }
                 });
         }

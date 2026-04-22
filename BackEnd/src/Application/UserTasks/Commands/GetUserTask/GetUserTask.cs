@@ -21,15 +21,20 @@ public record GetUserTaskCommand : IRequest<UserTask?>
 public class GetUserTaskCommandHandler : IRequestHandler<GetUserTaskCommand, UserTask?>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IUser _user;
 
-    public GetUserTaskCommandHandler(IApplicationDbContext context)
+    public GetUserTaskCommandHandler(IApplicationDbContext context, IUser user)
     {
         _context = context;
+        _user = user;
     }
 
     public async Task<UserTask?> Handle(GetUserTaskCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.UserTasks.FindAsync(request.TaskID , cancellationToken);
+        if(string.IsNullOrEmpty(_user.Id))
+            throw new ArgumentException("User ID cannot be null or empty.");
+
+        var entity = await _context.UserTasks.SingleOrDefaultAsync(x => x.Id == request.TaskID && x.UserID == _user.Id, cancellationToken);
 
         if (entity == null || entity.ListID != request.ListId)
         {

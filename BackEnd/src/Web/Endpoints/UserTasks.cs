@@ -7,8 +7,7 @@ using EFPractice.Application.UserTasks.Commands.GetAllTasks;
 using EFPractice.Domain.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
 using EFPractice.Application.TaskLists.Queries.GetTasks;
-using EFPractice.Application.UserTasks.Queries.PatchTasks;
-using EFPractice.Domain.Enums;
+using EFPractice.Application.Common.Security;
 
 namespace EFPractice.Web.Endpoints;
 
@@ -17,12 +16,12 @@ public class UserTasks : IEndpointGroup
     public static void Map(RouteGroupBuilder groupBuilder)
     {
 
-        groupBuilder.MapPost(CreateUserTask);
-        groupBuilder.MapPut(UpdateUserTaskDetail, "UpdateDetail/{id:int}");
-        groupBuilder.MapDelete(DeleteUserTask, "{id:int}");
-        groupBuilder.MapPut(MarkTaskAsCompleted, "Complete/{id:int}");
-        groupBuilder.MapGet(GetUserTask, "{id:int}");
-        groupBuilder.MapGet(GetAllTasks, "GetAll");
+        groupBuilder.MapPost(CreateUserTask).RequireAuthorization();
+        groupBuilder.MapPut(UpdateUserTaskDetail, "UpdateDetail/{id:int}").RequireAuthorization();
+        groupBuilder.MapDelete(DeleteUserTask, "{id:int}").RequireAuthorization();
+        groupBuilder.MapPut(MarkTaskAsCompleted, "Complete/{id:int}").RequireAuthorization();
+        groupBuilder.MapGet(GetUserTask, "{id:int}").RequireAuthorization();
+        groupBuilder.MapGet(GetAllTasks, "GetAll").RequireAuthorization();
     }
 
     [EndpointSummary("Create a new task")]
@@ -48,10 +47,11 @@ public class UserTasks : IEndpointGroup
             ID = id,
             Title = body.Title,
             ListID = body.ListId,
-            Priority = (PriorityLevel)body.Priority,
+            Priority = body.Priority,
             Description = body.Description,
             Deadline = body.Deadline,
-            Done = body.Done
+            Done = body.Done,
+            Recurrence = body.Recurrence
         };
 
         if (id != command.ID) return TypedResults.BadRequest();

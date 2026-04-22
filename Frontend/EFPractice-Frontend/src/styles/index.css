@@ -1,16 +1,19 @@
 :root {
+  --font-scale: 1;
   --text: #cbd5e1;
   --text-h: #f8fafc;
   --bg: #090b13;
   --surface: #111827;
   --surface-alt: #0f172a;
   --surface-strong: #161b2f;
+  --select-bg: #1f2937;
   --border: rgba(96, 165, 250, 0.18);
   --code-bg: #111827;
   --accent: #60a5fa;
   --accent-strong: #38bdf8;
   --accent-green: #22c55e;
   --accent-red: #fb7185;
+  --deadline-overdue: #fb7185;
   --accent-bg: rgba(56, 189, 248, 0.15);
   --accent-border: rgba(56, 189, 248, 0.35);
   --social-bg: rgba(30, 41, 59, 0.5);
@@ -20,7 +23,9 @@
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
-  font: 18px/145% var(--sans);
+  font-size: calc(18px * var(--font-scale));
+  line-height: 145%;
+  font-family: var(--sans);
   letter-spacing: 0.18px;
   color-scheme: dark;
   color: var(--text);
@@ -31,8 +36,27 @@
   -moz-osx-font-smoothing: grayscale;
 
   @media (max-width: 1024px) {
-    font-size: 16px;
+    font-size: calc(16px * var(--font-scale));
   }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  padding: clamp(0.25rem, 0.25vw, 0.5rem) clamp(0.5rem, 1.15vw, 0.5rem);
+  font-size: clamp(0.72rem, 0.82vw, 0.84rem);
+  border-radius: clamp(8px, 0.75vw, 10px);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -62,6 +86,8 @@
 
 #root {
   max-width: 100%;
+  width: 100%;
+  height: 100%;
   margin: 0 auto;
   text-align: center;
   border-inline: 1px solid rgba(255, 255, 255, 0.05);
@@ -70,12 +96,14 @@
   flex-direction: row;
   box-sizing: border-box;
   background: var(--bg);
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
+  overflow-x: hidden;
 }
 
 h1,
@@ -86,21 +114,21 @@ h2 {
 }
 
 h1 {
-  font-size: 56px;
+  font-size: calc(56px * var(--font-scale));
   letter-spacing: -1.68px;
   margin: 32px 0;
   @media (max-width: 1024px) {
-    font-size: 36px;
+    font-size: calc(36px * var(--font-scale));
     margin: 20px 0;
   }
 }
 h2 {
-  font-size: 24px;
+  font-size: calc(24px * var(--font-scale));
   line-height: 118%;
   letter-spacing: -0.24px;
   margin: 0 0 8px;
   @media (max-width: 1024px) {
-    font-size: 20px;
+    font-size: calc(20px * var(--font-scale));
   }
 }
 p {
@@ -116,7 +144,7 @@ code,
 }
 
 code {
-  font-size: 15px;
+  font-size: calc(15px * var(--font-scale));
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);
