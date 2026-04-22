@@ -14,7 +14,6 @@ p{
 .delete-button {
     display: flex;
     background: var(--accent-red);
-    width: 5%;
     height: fit-content;
     color: white;
     border: none;

@@ -93,9 +93,6 @@ button {
   justify-content: center;
 }
 
-#task-details .delete-button {
-    background: var(--accent-red);
-}
 
 #header {
 
@@ -106,14 +103,6 @@ button {
     justify-content: center;
     align-items: center;
     padding: 10px;
-    color: white;
-}
-
-#task-page .back-button {
-    align-self: flex-start;
-    margin-right: 20px;
-    background: var(--accent-red);
-    left: 10%;
     color: white;
 }
 
