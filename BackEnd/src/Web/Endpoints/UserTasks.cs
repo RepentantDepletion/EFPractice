@@ -7,7 +7,6 @@ using EFPractice.Application.UserTasks.Commands.GetAllTasks;
 using EFPractice.Domain.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
 using EFPractice.Application.TaskLists.Queries.GetTasks;
-using EFPractice.Application.Common.Security;
 
 namespace EFPractice.Web.Endpoints;
 

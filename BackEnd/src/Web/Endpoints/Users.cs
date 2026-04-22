@@ -7,6 +7,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
+using EFPractice.Application.Login.Commands.StartGoogleSignIn;
 
 namespace EFPractice.Web.Endpoints;
 
@@ -30,39 +31,11 @@ public class Users : IEndpointGroup
 
     [EndpointSummary("Start Google OAuth sign-in")]
     [EndpointDescription("Starts the Google OAuth flow from the backend and redirects to Google.")]
-    public static RedirectHttpResult StartGoogleSignIn(
-        HttpContext httpContext,
-        IConfiguration configuration)
+    public static async Task<RedirectHttpResult> StartGoogleSignIn(ISender sender, HttpContext httpContext, IConfiguration configuration)
     {
-        var clientId = configuration["GoogleOAuth:ClientId"];
-        if (string.IsNullOrWhiteSpace(clientId))
-        {
-            return TypedResults.Redirect(BuildFailureRedirectUri(configuration, "oauth_not_configured"));
-        }
+        if (sender is null) throw new ArgumentNullException(nameof(sender));
 
-        var callbackUri = GetBackendCallbackUri(httpContext, configuration);
-        var state = GenerateRandomToken(48);
-        var codeVerifier = GenerateRandomToken(64);
-        var codeChallenge = ComputeCodeChallenge(codeVerifier);
-
-        var cookieOptions = BuildOAuthCookieOptions(httpContext);
-        httpContext.Response.Cookies.Append(OAuthStateCookieName, state, cookieOptions);
-        httpContext.Response.Cookies.Append(OAuthCodeVerifierCookieName, codeVerifier, cookieOptions);
-
-        var parameters = new Dictionary<string, string>
-        {
-            ["client_id"] = clientId,
-            ["redirect_uri"] = callbackUri,
-            ["response_type"] = "code",
-            ["scope"] = GoogleScope,
-            ["include_granted_scopes"] = "true",
-            ["code_challenge"] = codeChallenge,
-            ["code_challenge_method"] = "S256",
-            ["state"] = state,
-        };
-
-        var authorizationUri = BuildUriWithQuery(GoogleAuthorizationEndpoint, parameters);
-        return TypedResults.Redirect(authorizationUri);
+        return await sender.Send(new StartGoogleSignInCommand(httpContext, configuration));
     }
 
     [EndpointSummary("Handle Google OAuth callback")]

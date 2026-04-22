@@ -174,7 +174,21 @@ function Notifications({
 							</header>
 						)}
 
-						<p style={{ margin: 0, fontSize: '0.79rem', lineHeight: 1.45 }}>{notification.message}</p>
+						<p
+							style={{
+								margin: 0,
+								padding: '0 2px',
+								textAlign: 'center',
+								fontSize: '0.9rem',
+								lineHeight: 1.5,
+								fontWeight: 500,
+								letterSpacing: '0.01em',
+								opacity: 0.95,
+								fontFamily: 'Kind sans, sans-serif',
+							}}
+						>
+							{notification.message}
+						</p>
 
 						{notification.actionLabel && notification.onAction && (
 							<div style={{ marginTop: 8 }}>
